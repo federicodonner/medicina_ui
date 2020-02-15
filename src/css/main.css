@@ -1,5 +1,5 @@
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 .scrollable {
@@ -16,8 +16,7 @@ body {
 }
 
 .header {
-  border-bottom: solid 1px white;
-  margin-bottom: 30px;
+
 }
 
 .withGradient {
@@ -25,36 +24,8 @@ body {
 }
 
 .logo {
-  width: 200px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  position: relative;
-  margin-left: 11px;
-  margin-top: 11px;
-  display: inline-block;
-}
 
-.blackLogo {
-  background-image: url("/images/logoSmallBlack.png");
-}
-
-.whiteLogo {
-  background-image: url("/images/logoSmallWhite.png");
-}
-
-.whiteGreeting {
-  color: white;
-  display: inline-block;
-  position: relative;
-  bottom: 5px;
-  left: 37px;
-}
-
-.logo:before {
-  content: "";
-  display: block;
-  height: 0;
-  padding-bottom: 22%;
+  background-image: url("/images/logo.png");
 }
 
 .blue {
@@ -128,10 +99,6 @@ ul.libros li {
   display: block;
 }
 
-.loader {
-  margin-top: 0%;
-  margin-left: 20%;
-}
 
 .pretty-form {
   margin-bottom: 30px;
@@ -283,7 +250,7 @@ button {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: none;
-  font-family: "Roboto", sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 p {
@@ -302,6 +269,20 @@ body {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
+
+  background-image: url(/images/bgpattern.jpg);
+  background-repeat-y: repeat;
+  background-repeat-x: repeat;
+  background-size: 22%;
+  background-attachment: local;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+
 }
 
 .wrapper {
@@ -332,19 +313,28 @@ body {
 /* RESPONSIVE */
 @media only screen and (max-width: 800px) {
   .logo {
-    width: 38%;
-    background-size: contain;
     background-repeat: no-repeat;
-    position: relative;
+    background-position: center;
+    background-size: contain;
+    margin-top: 8%;
+    margin-bottom: 7%;
+    max-height: 13.1vh;
+    width: 30.5vw;
     margin-left: auto;
     margin-right: auto;
+    height: 16vh;
+  }
+
+  .logo:after{
+    content: "";
+    display:block;
   }
 
   .scrollable {
-    background-image: url("/images/bgpattern.jpg");
+    /* background-image: url(/images/bgpattern.jpg);
     background-repeat-y: repeat;
-    background-repeat-x: no-repeat;
-    background-size: contain;
+    background-repeat-x: repeat;
+    background-size: 22%;
     background-attachment: local;
     position: relative;
     width: 100%;
@@ -352,16 +342,20 @@ body {
     overflow: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    box-sizing: border-box;
+    box-sizing: border-box; */
+    background: rgb(255,255,255);
+    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 72%, rgba(255,255,255,1) 100%);
   }
 
   .header {
+    /*
     background-repeat: no-repeat;
     width: 100%;
     text-align: center;
     padding-top: 7%;
     margin-bottom: 30px;
     border-bottom: none;
+    */
   }
 
   .content {
@@ -369,21 +363,6 @@ body {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-  }
-
-  .whiteGreeting {
-    color: white;
-    display: block;
-    position: relative;
-    bottom: 0px;
-    left: 0px;
-  }
-
-  .logo:before {
-    content: "";
-    display: block;
-    height: 0;
-    padding-bottom: 27%;
   }
 
   .bookCover {
@@ -395,7 +374,7 @@ body {
   }
 
   .content p {
-    color: white;
+    color: #aab1b7;
     font-weight: 600;
     padding-left: 6%;
     padding-right: 6%;
@@ -416,7 +395,7 @@ body {
   }
 
   .loader {
-    margin-top: 50%;
+    /* margin-top: 50%; */
     margin-left: 0%;
   }
 }

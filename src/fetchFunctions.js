@@ -1,6 +1,8 @@
-export function fetchCompanies() {
+import variables from './var/variables.js'
+
+export function fetchPastilleros() {
   return fetch(
-    "http://www.federicodonner.com/clublibros_api/public/api/empresas"
+    variables.api_url+"/pastillero"
   );
 }
 
@@ -48,19 +50,6 @@ export function fetchActiveUser(token) {
   });
 }
 
-export function loginUser(user) {
-  const data = { grant_type: "password", user: user };
-  const url = "http://www.federicodonner.com/clublibros_api/public/api/oauth";
-
-  return fetch(url, {
-    method: "POST", // or 'PUT'
-    body: JSON.stringify(data), // data can be `string` or {object}!
-    headers: {
-      "Content-Type": "application/json",
-      "accept-encoding": "gzip, deflate"
-    }
-  });
-}
 
 export function fetchBooks(token, availables) {
   const url =
@@ -177,15 +166,41 @@ export function getBookCover(bookName) {
   });
 }
 
-// This function verifies login information in local storage
-// If not found, it navigates to userselect
-// Should be called from componentDidMount in every route
+// Verifica la información en local storageº
+// Si encuentra el pastillero lo devuelve
+// Debería ser llamado desde componentDidMount en cualquier ruta
 export function verifyLogin() {
-  const username = localStorage.getItem("libroclub_username");
-  const token = localStorage.getItem("libroclub_token");
-  const user_id = localStorage.getItem("libroclub_id");
-
-  if (username && token && user_id) {
-    return { username: username, user_id: user_id, token: token };
+  const pastillero = localStorage.getItem("midosis_pastillero");
+  if (pastillero) {
+    return { pastillero: pastillero };
   }
+}
+
+
+
+
+
+//.-----------------
+
+
+export function fetchCompanies() {
+  return fetch(
+    variables.api_url+"/pastillero"
+  );
+}
+
+
+
+export function loginUser(user) {
+  const data = { grant_type: "password", user: user };
+  const url = "http://www.federicodonner.com/clublibros_api/public/api/oauth";
+
+  return fetch(url, {
+    method: "POST", // or 'PUT'
+    body: JSON.stringify(data), // data can be `string` or {object}!
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate"
+    }
+  });
 }

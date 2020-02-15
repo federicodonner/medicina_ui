@@ -4,8 +4,6 @@ import Home from "./Home";
 import Book from "./Book";
 import User from "./User";
 import Me from "./Me";
-import CompanySelect from "./CompanySelect";
-import UserSelect from "./UserSelect";
 import Credits from "./Credits";
 import Redirect from "./Redirect";
 import Signup from "./Signup";
@@ -14,6 +12,7 @@ import Review from "./Review";
 import Rental from "./Rental";
 import Return from "./Return";
 import NotFound from "./NotFound";
+import SeleccionarPastillero from "./SeleccionarPastillero";
 
 class Router extends React.Component {
   render() {
@@ -26,9 +25,6 @@ class Router extends React.Component {
           <Route path="/me" component={Me} />
           <Route path="/user/:id" component={User} />
           <Route path="/user" component={Redirect} />
-          <Route path="/companySelect" component={CompanySelect} />
-          <Route path="/userselect/:id" component={UserSelect} />
-          <Route path="/userselect" component={Redirect} />
           <Route path="/credits" component={Credits} />
           <Route path="/signup/:id" component={Signup} />
           <Route path="/signup" component={Redirect} />
@@ -36,6 +32,7 @@ class Router extends React.Component {
           <Route path="/rental/:id" component={Rental} />
           <Route path="/return/:id" component={Return} />
           <Route path="/addbook" component={AddBook} />
+          <Route path="/seleccionarPastillero" component={SeleccionarPastillero} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

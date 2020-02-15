@@ -7,7 +7,7 @@ import { convertDate } from "../dataFunctions";
 
 class Home extends React.Component {
   state: {
-    user: {},
+    user_info: {},
     activeUser: {},
     availableBooks: {}
   };
@@ -40,25 +40,25 @@ class Home extends React.Component {
   };
 
   componentDidMount() {
-    // Verify if the user has logged in before
-    const user = verifyLogin();
-    if (user) {
+    // Verifica si el usuario ya seleccionó el pastillero
+    const user_info = verifyLogin();
+    if (user_info && user_info.pastillero) {
       // If it has, store the information in state
-      this.setState({ user }, function() {
-        // Fetch the rest of the user information
-        fetchActiveUser(this.state.user.token)
-          .then(res => res.json())
-          .then(activeUser => this.setState({ activeUser }, function() {}));
-        // Load the available books
-        fetchBooks(this.state.user.token, "true")
-          .then(res => res.json())
-          .then(availableBooks => this.setState({ availableBooks }));
+      this.setState({ user_info }, function() {
+      //   // Fetch the rest of the user information
+      //   fetchActiveUser(this.state.user.token)
+      //     .then(res => res.json())
+      //     .then(activeUser => this.setState({ activeUser }, function() {}));
+      //   // Load the available books
+      //   fetchBooks(this.state.user.token, "true")
+      //     .then(res => res.json())
+      //     .then(availableBooks => this.setState({ availableBooks }));
       });
     } else {
-      // If there is no data in localStorage, go back to user select screen
+      // Si no hay data en localstorage, va a la pantalla de selección de pastillero
       // this.props.history.push(`/userselect`);
       this.props.history.push({
-        pathname: "/companyselect"
+        pathname: "/seleccionarPastillero"
         //state: { prueba: "hoooola" }
       });
     }
@@ -68,13 +68,8 @@ class Home extends React.Component {
     return (
       <div className="app-view cover">
         <div className="scrollable">
-          {this.state && this.state.user && (
-            <Header
-              logoType="blackLogo"
-              withGradient={false}
-              withGreeting={true}
-              username={this.state.user.username}
-            />
+          {this.state && this.state.user_info && (
+            <Header/>
           )}
           <div className="content">
             {this.state && !this.state.activeUser && (

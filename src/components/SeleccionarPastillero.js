@@ -22,6 +22,7 @@ class SeleccionarPastillero extends React.Component {
   };
 
   componentDidMount() {
+    this.setState({ loader: true });
     var user_info = verifyLogin();
     if (user_info && user_info.pastillero) {
       this.props.history.push({

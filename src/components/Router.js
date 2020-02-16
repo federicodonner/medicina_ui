@@ -13,6 +13,7 @@ import Rental from "./Rental";
 import Return from "./Return";
 import NotFound from "./NotFound";
 import SeleccionarPastillero from "./SeleccionarPastillero";
+import VerDosis from "./VerDosis";
 
 class Router extends React.Component {
   render() {
@@ -33,6 +34,7 @@ class Router extends React.Component {
           <Route path="/return/:id" component={Return} />
           <Route path="/addbook" component={AddBook} />
           <Route path="/seleccionarPastillero" component={SeleccionarPastillero} />
+          <Route path="/verDosis" component={VerDosis} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

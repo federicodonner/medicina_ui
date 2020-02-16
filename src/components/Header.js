@@ -11,9 +11,11 @@ const Header = props => {
   });
 
   return (
-    <div className={headerClasses}>
-      <div className={logoClasses} />
-    </div>
+    <a href="/">
+      <div className={headerClasses}>
+        <div className={logoClasses} />
+      </div>
+    </a>
   );
 };
 

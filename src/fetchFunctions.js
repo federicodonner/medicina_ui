@@ -6,6 +6,12 @@ export function fetchPastilleros() {
   );
 }
 
+export function fetchDosis(idPastillero) {
+  return fetch(
+    variables.api_url+"/pastillero/"+idPastillero
+  );
+}
+
 export function fetchUsers(empresa) {
   return fetch(
     "http://www.federicodonner.com/clublibros_api/public/api/usuarios?empresa=" +

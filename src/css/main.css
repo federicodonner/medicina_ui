@@ -46,6 +46,7 @@ body {
   height: 11vh;
   display: block;
   margin-bottom: 1vh;
+  background-position: center;
 }
 
 .nav-icon-ver-dosis {
@@ -68,6 +69,33 @@ body {
   display: block;
 }
 
+ul {
+  list-style-type: none;
+  text-align: left;
+}
+
+ul.dosis-horario {
+  padding-left: 3vw;
+  font-size: 14pt;
+}
+
+ul.dosis-droga {
+  font-size: 12pt;
+  padding: 0;
+  border-bottom: 1px #e7eced solid;
+  padding-bottom: 3vh;
+  margin-bottom: 2vh;
+}
+
+li.dosis-horario {
+  padding: 0;
+}
+
+li.dosis-droga {
+  color: black;
+  padding-left: 3vw;
+}
+
 .blue {
   color: #3a506b;
 }
@@ -81,6 +109,7 @@ body {
   padding-left: 16px;
   margin-bottom: 30px;
 }
+
 .content p .reviewText {
   display: block;
 }
@@ -103,7 +132,9 @@ a:visited,
 a:hover,
 a:active {
   text-decoration: none;
-  color: #c1c1c2;
+  color: red;
+  font-size: 16pt;
+  font-weight: 600;
 }
 
 ul.usuarios li,
@@ -209,7 +240,6 @@ h6,
 p,
 blockquote,
 pre,
-a,
 abbr,
 acronym,
 address,
@@ -308,7 +338,6 @@ body {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-
   background-image: url(/images/bgpattern.jpg);
   background-repeat-y: repeat;
   background-repeat-x: repeat;
@@ -402,6 +431,8 @@ body {
   }
 
   .content {
+    text-align: center;
+    margin-bottom: 100px;
   }
 
   .bookCover {

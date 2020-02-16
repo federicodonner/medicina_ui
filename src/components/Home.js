@@ -2,36 +2,22 @@ import React from "react";
 import Header from "./Header";
 import BookName from "./BookName";
 import UserName from "./UserName";
-import { verifyLogin, fetchActiveUser, fetchBooks } from "../fetchFunctions";
+import { verifyLogin, fetchDosis } from "../fetchFunctions";
 import { convertDate } from "../dataFunctions";
 
 class Home extends React.Component {
   state: {
-    user_info: {},
-    activeUser: {},
-    availableBooks: {}
+    user_info: {}
   };
 
-  goToAddBook = () => event => {
+  navigateToSection = section => event => {
     event.preventDefault();
     this.props.history.push({
-      pathname: "/addbook"
+      pathname: "/verDosis"
     });
   };
 
-  goToPersonalDetails = event => {
-    event.preventDefault();
-    this.props.history.push({
-      pathname: "/me"
-    });
-  };
 
-  goToReturnBook = event => {
-    event.preventDefault();
-    this.props.history.push({
-      pathname: "/return/" + this.state.activeUser.alquilerActivo.id_libro
-    });
-  };
 
   signOut = event => {
     event.preventDefault();
@@ -60,7 +46,10 @@ class Home extends React.Component {
           {this.state && this.state.user_info && <Header />}
           <div className="content">
             <div className="nav-buttons">
-              <div className="nav-button">
+              <div
+                className="nav-button"
+                onClick={this.navigateToSection("hola")}
+              >
                 <div className="nav-icon nav-icon-ver-dosis"></div>
                 <span className="single-line">ver</span>
                 <span>mis dosis</span>
@@ -69,11 +58,13 @@ class Home extends React.Component {
                 <div className="nav-icon nav-icon-editar-dosis"></div>
                 <span className="single-line">editar</span>
                 <span>mis dosis</span>
-              </div><div className="nav-button">
+              </div>
+              <div className="nav-button">
                 <div className="nav-icon nav-icon-consultar-stock"></div>
                 <span className="single-line">consultar</span>
                 <span>stock</span>
-              </div><div className="nav-button">
+              </div>
+              <div className="nav-button">
                 <div className="nav-icon nav-icon-ingresar-compra"></div>
                 <span className="single-line">ingresar</span>
                 <span>compra</span>

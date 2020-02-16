@@ -58,10 +58,10 @@ class SeleccionarPastillero extends React.Component {
                 <ul className="usuarios">
                   {this.state.pastilleros.map(obj => {
                     return (
-                      <li key={obj.dueno}>
-                        <a href onClick={this.seleccionarPastillero(obj.id)}>
+                      <li key={obj.id}>
+                        <span onClick={this.seleccionarPastillero(obj.id)}>
                           {obj.dueno}
-                        </a>
+                        </span>
                       </li>
                     );
                   })}

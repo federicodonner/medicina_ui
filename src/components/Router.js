@@ -15,6 +15,7 @@ import NotFound from "./NotFound";
 import SeleccionarPastillero from "./SeleccionarPastillero";
 import VerDosis from "./VerDosis";
 import ImprimirPastillero from "./ImprimirPastillero";
+import EditarDosis from "./EditarDosis";
 
 class Router extends React.Component {
   render() {
@@ -40,6 +41,7 @@ class Router extends React.Component {
           />
           <Route path="/verDosis" component={VerDosis} />
           <Route path="/imprimirPastillero" component={ImprimirPastillero} />
+            <Route path="/editarDosis" component={EditarDosis} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

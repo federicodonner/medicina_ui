@@ -64,6 +64,14 @@ body {
   background-image: url("/images/icono_ingresar_compra.png");
 }
 
+.nav-icon-agregar-dosis {
+  background-image: url("/images/icono_agregar_dosis.png");
+}
+
+.nav-icon-editar-dosis-in {
+  background-image: url("/images/icono_editar_dosis_in.png");
+}
+
 .single-line {
   display: block;
 }

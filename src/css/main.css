@@ -1,5 +1,6 @@
 body {
   font-family: "Open Sans", sans-serif;
+  color: #aab1b7;
 }
 
 .scrollable {
@@ -16,7 +17,6 @@ body {
 }
 
 .header {
-
 }
 
 .withGradient {
@@ -24,8 +24,48 @@ body {
 }
 
 .logo {
-
   background-image: url("/images/logo.png");
+}
+
+.nav-buttons {
+  margin-top: 7vh;
+  display: grid;
+  grid-template-columns: auto auto;
+  margin-left: auto;
+  margin-right: auto;
+  -webkit-justify-content: space-evenly;
+  justify-content: space-evenly;
+  grid-row-gap: 5vh;
+  text-align: center;
+}
+
+.nav-icon {
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 20vw;
+  height: 11vh;
+  display: block;
+  margin-bottom: 1vh;
+}
+
+.nav-icon-ver-dosis {
+  background-image: url("/images/icono_ver_dosis.png");
+}
+
+.nav-icon-editar-dosis {
+  background-image: url("/images/icono_editar_dosis.png");
+}
+
+.nav-icon-consultar-stock {
+  background-image: url("/images/icono_ver_stock.png");
+}
+
+.nav-icon-ingresar-compra {
+  background-image: url("/images/icono_ingresar_compra.png");
+}
+
+.single-line {
+  display: block;
 }
 
 .blue {
@@ -98,7 +138,6 @@ ul.libros li {
 .newLine {
   display: block;
 }
-
 
 .pretty-form {
   margin-bottom: 30px;
@@ -236,7 +275,7 @@ mark,
 audio,
 video {
   margin: 0;
-  border: 0;
+  /* border: 0; */
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
@@ -282,7 +321,6 @@ body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
-
 }
 
 .wrapper {
@@ -325,9 +363,9 @@ body {
     height: 16vh;
   }
 
-  .logo:after{
+  .logo:after {
     content: "";
-    display:block;
+    display: block;
   }
 
   .scrollable {
@@ -343,8 +381,13 @@ body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     box-sizing: border-box; */
-    background: rgb(255,255,255);
-    background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 72%, rgba(255,255,255,1) 100%);
+    background: rgb(255, 255, 255);
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 1) 72%,
+      rgba(255, 255, 255, 1) 100%
+    );
   }
 
   .header {
@@ -359,10 +402,6 @@ body {
   }
 
   .content {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
   }
 
   .bookCover {

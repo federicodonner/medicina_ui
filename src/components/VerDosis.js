@@ -12,13 +12,6 @@ class VerDosis extends React.Component {
     pastillero: {}
   };
 
-  navigateToSection = section => event => {
-    event.preventDefault();
-    this.props.history.push({
-      pathname: "/verDosis"
-    });
-  };
-
   componentDidMount() {
     this.setState({ loader: true });
     // Verifica si el usuario ya seleccionó el pastillero
@@ -76,7 +69,9 @@ class VerDosis extends React.Component {
                     })}
                   </ul>
                 )}
-                <a href="/imprimrPastillero" target="_blank">Imprimir</a>
+                <a href="/imprimirPastillero" target="_blank">
+                  Imprimir
+                </a>
               </>
             )}
           </div>

@@ -13,7 +13,7 @@ class Home extends React.Component {
   navigateToSection = section => event => {
     event.preventDefault();
     this.props.history.push({
-      pathname: "/verDosis"
+      pathname: section
     });
   };
 
@@ -48,7 +48,7 @@ class Home extends React.Component {
             <div className="nav-buttons">
               <div
                 className="nav-button"
-                onClick={this.navigateToSection("hola")}
+                onClick={this.navigateToSection("verDosis")}
               >
                 <div className="nav-icon nav-icon-ver-dosis"></div>
                 <span className="single-line">ver</span>

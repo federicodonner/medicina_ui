@@ -2,13 +2,16 @@ import React from "react";
 import Header from "./Header";
 import BookName from "./BookName";
 import UserName from "./UserName";
-import { verifyLogin, fetchDosis } from "../fetchFunctions";
+import { verifyLogin, fetchDosis, fetchDroga } from "../fetchFunctions";
 
-class EditarDosis extends React.Component {
+class AgregarDroga extends React.Component {
   state: {
     user_info: {},
     loader: true,
-    pastillero: {}
+    pastillero: {},
+    drogas: [],
+    suggestions: [],
+    value: ""
   };
 
   navigateToSection = section => event => {
@@ -31,7 +34,14 @@ class EditarDosis extends React.Component {
           })
           .then(response => {
             this.setState({ pastillero: response });
-            this.setState({ loader: false });
+            fetchDroga()
+              .then(results => {
+                return results.json();
+              })
+              .then(response => {
+                this.setState({ drogas: response });
+                this.setState({ loader: false });
+              });
           });
       });
     } else {
@@ -48,24 +58,17 @@ class EditarDosis extends React.Component {
         <div className="scrollable">
           {this.state && this.state.user_info && <Header />}
           <div className="content">
-            <div className="nav-buttons">
-              <div
-                className="nav-button"
-                onClick={this.navigateToSection("agregarDroga")}
-              >
-                <div className="nav-icon nav-icon-agregar-dosis"></div>
-                <span className="single-line">agregar</span>
-                <span>droga</span>
-              </div>
-              <div
-                className="nav-button"
-                onClick={this.navigateToSection("editarDosis")}
-              >
-                <div className="nav-icon nav-icon-editar-dosis-in"></div>
-                <span className="single-line">editar</span>
-                <span>dosis droga</span>
-              </div>
-            </div>
+            {this.state && this.state.loader && (
+              <p>
+                <img className="loader" src="/images/loader.svg" />
+              </p>
+            )}
+            {this.state && !this.state.loader && (
+              <>
+                <h1>Agregar droga a tus dosis</h1>
+                <p>Escribe la droga, puedes seleccionarla de las sugerencias</p>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -73,4 +76,4 @@ class EditarDosis extends React.Component {
   }
 }
 
-export default EditarDosis;
+export default AgregarDroga;

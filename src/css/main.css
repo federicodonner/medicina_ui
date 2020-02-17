@@ -120,7 +120,6 @@ h1 {
 
 .content p {
   color: white;
-  font-weight: 600;
   padding-left: 16px;
   margin-bottom: 30px;
 }
@@ -155,19 +154,6 @@ a:active {
 ul.usuarios li,
 ul.libros li {
   margin-bottom: 15px;
-}
-
-.usuarios {
-  list-style: none;
-  margin-left: -26px;
-  font-weight: 600;
-}
-
-.libros {
-  list-style: none;
-  margin-left: -26px;
-  color: white;
-  font-weight: 600;
 }
 
 .hidden {
@@ -450,7 +436,6 @@ body {
 
   .content p {
     color: #aab1b7;
-    font-weight: 600;
     padding-left: 6%;
     padding-right: 6%;
     margin-bottom: 30px;

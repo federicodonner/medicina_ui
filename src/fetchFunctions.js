@@ -12,6 +12,12 @@ export function fetchDosis(idPastillero) {
   );
 }
 
+export function fetchDroga() {
+  return fetch(
+    variables.api_url+"/droga"
+  );
+}
+
 export function fetchUsers(empresa) {
   return fetch(
     "http://www.federicodonner.com/clublibros_api/public/api/usuarios?empresa=" +

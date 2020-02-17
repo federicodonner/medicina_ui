@@ -3,7 +3,6 @@ import Header from "./Header";
 import BookName from "./BookName";
 import UserName from "./UserName";
 import { verifyLogin, fetchDosis } from "../fetchFunctions";
-import { convertDate } from "../dataFunctions";
 
 class VerDosis extends React.Component {
   state: {

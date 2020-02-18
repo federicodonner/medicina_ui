@@ -1,7 +1,5 @@
 import React from "react";
 import Header from "./Header";
-import BookName from "./BookName";
-import UserName from "./UserName";
 import Select from "react-select";
 import {
   verifyLogin,

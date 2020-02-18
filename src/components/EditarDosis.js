@@ -1,7 +1,5 @@
 import React from "react";
 import Header from "./Header";
-import BookName from "./BookName";
-import UserName from "./UserName";
 import { verifyLogin, fetchDosis } from "../fetchFunctions";
 
 class EditarDosis extends React.Component {

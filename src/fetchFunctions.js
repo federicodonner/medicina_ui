@@ -1,21 +1,28 @@
-import variables from './var/variables.js'
+import variables from "./var/variables.js";
 
 export function fetchPastilleros() {
-  return fetch(
-    variables.api_url+"/pastillero"
-  );
+  return fetch(variables.api_url + "/pastillero");
 }
 
 export function fetchDosis(idPastillero) {
-  return fetch(
-    variables.api_url+"/pastillero/"+idPastillero
-  );
+  return fetch(variables.api_url + "/pastillero/" + idPastillero);
 }
 
 export function fetchDroga() {
-  return fetch(
-    variables.api_url+"/droga"
-  );
+  return fetch(variables.api_url + "/droga");
+}
+
+export function addDroga(nombreDroga) {
+  const data = { nombre: nombreDroga };
+  const url = variables.api_url + "/droga";
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate"
+    },
+    body: JSON.stringify(data)
+  });
 }
 
 export function fetchUsers(empresa) {
@@ -61,7 +68,6 @@ export function fetchActiveUser(token) {
     }
   });
 }
-
 
 export function fetchBooks(token, availables) {
   const url =
@@ -188,20 +194,11 @@ export function verifyLogin() {
   }
 }
 
-
-
-
-
 //.-----------------
 
-
 export function fetchCompanies() {
-  return fetch(
-    variables.api_url+"/pastillero"
-  );
+  return fetch(variables.api_url + "/pastillero");
 }
-
-
 
 export function loginUser(user) {
   const data = { grant_type: "password", user: user };

@@ -111,6 +111,21 @@ h1 {
   color: black;
 }
 
+.pretty-input {
+  margin-bottom: 30px;
+  width: 82%;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 400px;
+}
+
+.pretty-text {
+  width: 77%;
+  border: 1px #aab1b7 solid;
+  font-size: 14pt;
+  padding: 3px 3px 3px 11px;
+}
+
 .blue {
   color: #3a506b;
 }
@@ -162,26 +177,6 @@ ul.libros li {
 
 .newLine {
   display: block;
-}
-
-.pretty-form {
-  margin-bottom: 30px;
-  margin-left: 17px;
-  text-align: left;
-}
-
-.pretty-form .form-input {
-  display: block;
-  margin-bottom: 10px;
-  color: white;
-  font-weight: 600;
-  margin-left: 13vw;
-}
-
-.pretty-form .form-input .pretty-input {
-  padding: 5px;
-  font-size: 10pt;
-  width: 83%;
 }
 
 .pretty-form .form-input .label {

@@ -57,6 +57,11 @@ class VerDosis extends React.Component {
                               return (
                                 <li key={droga.id} className="dosis-droga">
                                   {droga.nombre} - {droga.cantidad_mg} mg
+                                  {droga.notas && (
+                                    <span className="notas-dosis">
+                                      - {droga.notas}
+                                    </span>
+                                  )}
                                 </li>
                               );
                             })}

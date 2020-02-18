@@ -74,8 +74,7 @@ class ImprimirPastillero extends React.Component {
                           {dosis.drogas.map(droga => {
                             return (
                               <li key={droga.id} className="dosis-droga">
-                                {droga.nombre} - {droga.cantidad_mg}
-                                mg
+                                {droga.nombre} - {droga.cantidad_mg} mg - {droga.notas}
                               </li>
                             );
                           })}

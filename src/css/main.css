@@ -127,6 +127,15 @@ h1 {
   padding: 3px 3px 3px 11px;
 }
 
+.notas-dosis {
+  display: block;
+  margin-left: 20px;
+  font-size: 10pt;
+  font-style: bold;
+  color: #ebba16;
+  font-weight: 600;
+}
+
 .blue {
   color: #3a506b;
 }

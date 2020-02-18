@@ -7,13 +7,15 @@ import {
   verifyLogin,
   fetchDosis,
   fetchDroga,
-  addDroga
+  addDroga,
+  addDrogaxdosis
 } from "../fetchFunctions";
 
 class AgregarDroga extends React.Component {
   state: {
     user_info: {},
     loader: true,
+    mensajeLoader: "",
     pastillero: {},
     drogas: [],
     drogaSeleccionada: null,
@@ -24,6 +26,7 @@ class AgregarDroga extends React.Component {
 
   drogaRef = React.createRef();
   concentracionRef = React.createRef();
+  notasRef = React.createRef();
 
   navigateToSection = section => event => {
     event.preventDefault();
@@ -59,66 +62,98 @@ class AgregarDroga extends React.Component {
     this.setState({ horarioSeleccionado });
   };
 
-  // signupUser = event => {
-  //   // Stop form from submitting
-  //   event.preventDefault();
-  //   const user = {
-  //     nombre: this.nameRef.current.value,
-  //     email: this.emailRef.current.value
-  //   };
-  //   this.setState({ loading: true });
-  //
-  //   signupUser(user, this.props.match.params.id)
-  //     .then(res => res.json())
-  //     .then(
-  //       function(signupResponse) {
-  //         if (signupResponse.status == "success") {
-  //           console.log(signupResponse);
-  //           loginUser(signupResponse.usuario)
-  //             .then(res => res.json())
-  //             .then(response => {
-  //               localStorage.setItem("libroclub_token", response.token);
-  //               localStorage.setItem("libroclub_username", user.nombre);
-  //               localStorage.setItem("libroclub_id", response.id);
-  //               this.props.history.push({ pathname: "/" });
-  //             })
-  //             .catch(error => console.error("Error:", error));
-  //         }
-  //       }.bind(this)
-  //     );
-  // };
-
+  // Este proceso se ejecuta al ingresar el formulario
   ingresarDroga = event => {
+    // Previene la navegación automática del botón
     event.preventDefault();
-    const dataEnviar = {}
 
-    if (this.drogaRef.current.value) {
-      const nuevaDroga = this.drogaRef.current.value;
-      addDroga(nuevaDroga).then(function() {
-        fetchDroga()
+    // Verifica que todos los campos se hayan ingresado
+    if (!this.state.drogaSeleccionada && !this.drogaRef.current.value) {
+      alert("Debes ingresar o seleccionar una droga");
+      return false;
+    } else if (!this.state.horarioSeleccionado) {
+      alert("Debes seleccionar un horario para la dosis");
+      return false;
+    } else if (!this.concentracionRef.current.value) {
+      alert("Debes ingresar una dosis en miligramos");
+      return false;
+    }
+
+    // Si todos los datos están correctos, se enciende el loader
+    this.setState({ loader: true, mensajeLoader: "Cargando tus datos..." });
+
+    // Genera un objeto vacío con los datos para enviar
+    const dataEnviar = {};
+    dataEnviar.dosis_id = this.state.horarioSeleccionado.value;
+    dataEnviar.cantidad_mg = this.concentracionRef.current.value;
+
+    // Si el usuario ingresó notas, se cargan en el objeto a enviar
+    if (this.notasRef && this.notasRef.current) {
+      dataEnviar.notas = this.notasRef.current.value;
+    }
+
+    // Esta promesa resuelve la creación de la nueva droga si es necesario antes
+    // de actualizar la dosis
+    let promesaCrearDroga = new Promise((resolve, reject) => {
+      // Si el usuario ingresó el nombre de una droga en lugar de seleccionarla
+      // de la lista se debe ingresar a la db
+      if (
+        this.drogaRef &&
+        this.drogaRef.current &&
+        this.drogaRef.current.value
+      ) {
+        const nuevaDroga = this.drogaRef.current.value;
+        // Se agrega la droga a través del endpoint
+        addDroga(nuevaDroga).then(function() {
+          fetchDroga()
+            .then(results => {
+              return results.json();
+            })
+            .then(response => {
+              // Si la carga fue correcta, se hace una consulta de las drogas,
+              // se selecciona la nueva y se carga en el objeto a enviar
+              response.forEach(function(droga, index) {
+                if (droga.nombre == nuevaDroga) {
+                  // Resuelve la promesa pasando el id de la droga creada
+                  resolve(droga.id);
+                }
+              });
+            });
+        });
+      } else {
+        // Resuelve la promesa pasando el id de la droga seleccionada
+        resolve(this.state.drogaSeleccionada.value);
+      }
+    });
+
+    // Función llamada luego de resolver la promesa de creación de droga
+    // recibe el id de la droga creada o seleccionada
+    promesaCrearDroga.then(
+      function(droga_id) {
+        dataEnviar.droga_id = droga_id;
+        // Se agrega la dosis a través del endpoint
+        addDrogaxdosis(dataEnviar)
           .then(results => {
             return results.json();
           })
           .then(response => {
-            response.forEach(function(droga, index) {
-              if (droga.nombre == nuevaDroga) {
-                dataEnviar.droga_id = droga.id;
-              }
-            });
+            alert("Dosis agregada exitosamente");
+            fetchDroga()
+              .then(results => {
+                return results.json();
+              })
+              .then(response => {
+                this.setState({ drogas: response });
+                this.procesarDrogas(this.state.drogas, this.state.pastillero);
+                this.setState({
+                  loader: false,
+                  drogaSeleccionada: null,
+                  horarioSeleccionado: null
+                });
+              });
           });
-      });
-    }
-
-    // console.log(
-    //   "droga seleccionada ",
-    //   this.state.drogaSeleccionada.value,
-    //   "droga ingresada ",
-    //   this.drogaRef.current.value,
-    //   "horario seleccionado ",
-    //   this.state.horarioSeleccionado.value,
-    //   "concentracion ingresada ",
-    //   this.concentracionRef.current.value
-    // );
+      }.bind(this)
+    );
   };
 
   componentDidMount() {
@@ -162,6 +197,7 @@ class AgregarDroga extends React.Component {
             {this.state && this.state.loader && (
               <p>
                 <img className="loader" src="/images/loader.svg" />
+                <span className="single-line">{this.state.mensajeLoader}</span>
               </p>
             )}
             {this.state && !this.state.loader && (
@@ -204,8 +240,15 @@ class AgregarDroga extends React.Component {
                   ref={this.concentracionRef}
                   className="pretty-input pretty-text"
                 />
+                <p> Si quieres puedes escribir notas para la aplicación.</p>
+                <input
+                  name="notas"
+                  type="text"
+                  ref={this.notasRef}
+                  className="pretty-input pretty-text"
+                />
                 <a href="#" onClick={this.ingresarDroga}>
-                  Imprimir
+                  Ingresar
                 </a>
               </>
             )}

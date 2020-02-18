@@ -1,4 +1,5 @@
-import variables from "./var/variables.js";
+// import variables from "./var/variables.js";
+const variables = { api_url: "http://localhost:8888/medicina_api/public/api" };
 
 export function fetchPastilleros() {
   return fetch(variables.api_url + "/pastillero");
@@ -24,6 +25,19 @@ export function addDroga(nombreDroga) {
     body: JSON.stringify(data)
   });
 }
+
+export function addDrogaxdosis(data) {
+  const url = variables.api_url + "/drogaxdosis";
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate"
+    },
+    body: JSON.stringify(data)
+  });
+}
+
 
 export function fetchUsers(empresa) {
   return fetch(

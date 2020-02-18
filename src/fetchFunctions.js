@@ -1,6 +1,5 @@
-// import variables from "./var/variables.js";
-const variables = { api_url: "http://localhost:8888/medicina_api/public/api" };
-
+ import variables from "./var/variables.js";
+ 
 export function fetchPastilleros() {
   return fetch(variables.api_url + "/pastillero");
 }

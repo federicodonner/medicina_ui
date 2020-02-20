@@ -1,5 +1,5 @@
  import variables from "./var/variables.js";
- 
+
 export function fetchPastilleros() {
   return fetch(variables.api_url + "/pastillero");
 }
@@ -36,6 +36,25 @@ export function addDrogaxdosis(data) {
     body: JSON.stringify(data)
   });
 }
+
+export function editDrogaxdosis(data) {
+  const url = variables.api_url + "/drogaxdosis";
+  return fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate"
+    },
+    body: JSON.stringify(data)
+  });
+}
+
+
+
+
+
+
+
 
 
 export function fetchUsers(empresa) {

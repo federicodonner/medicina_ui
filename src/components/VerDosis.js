@@ -59,7 +59,7 @@ class VerDosis extends React.Component {
                                   {droga.nombre} - {droga.cantidad_mg} mg
                                   {droga.notas && (
                                     <span className="notas-dosis">
-                                      - {droga.notas}
+                                      {droga.notas}
                                     </span>
                                   )}
                                 </li>

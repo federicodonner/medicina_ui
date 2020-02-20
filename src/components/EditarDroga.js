@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import Select from "react-select";
-import { verifyLogin, fetchDosis } from "../fetchFunctions";
+import { verifyLogin, fetchDosis, editDrogaxdosis } from "../fetchFunctions";
 
 class EditarDroga extends React.Component {
   state: {
@@ -10,9 +10,9 @@ class EditarDroga extends React.Component {
     pastillero: {},
     mostrarModal: false,
     datosModal: {
-      horario: null,
+      dosis: null,
       droga: null,
-      cantidad: null,
+      cantidad_mg: null,
       notas: null,
       horarios: null
     },
@@ -21,7 +21,7 @@ class EditarDroga extends React.Component {
   };
 
   cantidadRef = React.createRef();
-
+  notasRef = React.createRef();
 
   // Función necesaria para mostrar el combobox de horarios del modal
   procesarHorarios = () => {
@@ -38,11 +38,37 @@ class EditarDroga extends React.Component {
     this.setState({ datosModal });
   };
 
+  // Muestra o esconde el modal
+  toggleModal = () => {
+    var mostrarModal = this.state.mostrarModal;
+    mostrarModal = !mostrarModal;
+    this.setState({ mostrarModal });
+  };
+
+  // Carga los datos en el modal y lo muestra
+  loadModal = drogaSeleccionada => event => {
+    var datosModal = drogaSeleccionada;
+    var horarios = this.state.datosModal.horarios;
+    datosModal.horarios = horarios;
+    this.setState({ datosModal }, function() {
+      this.toggleModal();
+    });
+  };
+
   // Funcion que corre al cambiar la selección de horario del modal
   seleccionHorario = horarioSeleccionado => {
     var datosModal = this.state.datosModal;
     datosModal.horario = horarioSeleccionado;
     this.setState({ datosModal });
+  };
+
+  ingresarDroga = event => {
+    var dataEditDrogaxdosis = {};
+    dataEditDrogaxdosis.droga_id = this.state.datosModal.droga_id;
+    dataEditDrogaxdosis.dosis_id = this.state.datosModal.horario.value;
+    dataEditDrogaxdosis.cantidad_mg = this.state.datosModal.cantidad_mg;
+    dataEditDrogaxdosis.notas = this.state.datosModal.notas;
+    console.log(dataEditDrogaxdosis);
   };
 
   componentDidMount() {
@@ -67,17 +93,13 @@ class EditarDroga extends React.Component {
                 pastillero: response
               });
               this.setState({
-                mostrarModal: true
+                mostrarModal: false
               });
               this.setState({
                 loader: false
               });
               this.setState({
                 datosModal: {
-                  horario: { value: 3, label: "un horario" },
-                  droga: "Tacrolimus",
-                  cantidad: 100,
-                  notas: "las notas",
                   horarios: []
                 }
               });
@@ -113,10 +135,13 @@ class EditarDroga extends React.Component {
                     (this.state.mostrarModal ? "show" : "hidden")
                   }
                 >
-                  <h1> Editar dosis </h1>
-                  <span className="single-line">
-                    Droga {this.state.datosModal.droga}
-                  </span>
+                  <div
+                    className="modal-boton-cerrar"
+                    onClick={this.toggleModal}
+                  >
+                    X
+                  </div>
+                  <h1>{this.state.datosModal.droga}</h1>
                   <span className="single-line"> Horario: </span>
                   <Select
                     className="pretty-input"
@@ -131,8 +156,27 @@ class EditarDroga extends React.Component {
                     type="number"
                     ref={this.cantidadRef}
                     className="pretty-input pretty-text"
-                    defaultValue={this.state.datosModal.cantidad}
+                    defaultValue={this.state.datosModal.cantidad_mg}
                   />
+                  <span className="single-line"> Notas: </span>
+                  <input
+                    name="notas"
+                    type="textr"
+                    ref={this.notasdRef}
+                    className="pretty-input pretty-text"
+                    defaultValue={this.state.datosModal.notas}
+                  />
+                  <a
+                    className="boton-guardar"
+                    href="#"
+                    onClick={this.ingresarDroga}
+                  >
+                    Guardar cambios
+                  </a>
+                  <span className="single-line">o</span>
+                  <a href="#" onClick={this.ingresarDroga}>
+                    Eliminiar dósis
+                  </a>
                 </div>
               </>
             )}
@@ -152,12 +196,26 @@ class EditarDroga extends React.Component {
                           <ul className="dosis-droga">
                             {dosis.drogas.map(droga => {
                               return (
-                                <li key={droga.id} className="dosis-droga">
+                                <li
+                                  key={droga.id}
+                                  className="dosis-droga"
+                                  onClick={this.loadModal({
+                                    horario: {
+                                      value: dosis.id,
+                                      label: dosis.horario
+                                    },
+                                    droga: droga.nombre,
+                                    droga_id: droga.id,
+                                    cantidad_mg: droga.cantidad_mg,
+                                    notas: droga.notas,
+                                    horarios: []
+                                  })}
+                                >
                                   {droga.nombre} - {droga.cantidad_mg}
                                   mg
                                   {droga.notas && (
                                     <span className="notas-dosis">
-                                      -{droga.notas}
+                                      {droga.notas}
                                     </span>
                                   )}
                                 </li>

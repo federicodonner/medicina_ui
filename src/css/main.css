@@ -141,7 +141,6 @@ h1 {
 }
 
 .editar-droga-modal {
-  height: 400px;
   background-color: white;
   width: 74vw;
   position: absolute;
@@ -149,6 +148,7 @@ h1 {
   border: 3px #aab1b7 solid;
   border-radius: 26px;
   padding: 16px;
+  top: 100px;
 }
 
 .modal-cover {
@@ -160,12 +160,39 @@ h1 {
   opacity: 0.4;
 }
 
+.modal-boton-cerrar {
+  position: absolute;
+  right: 16px;
+  top: 13px;
+  font-size: 16pt;
+  font-weight: 900;
+  background-color: #aab1b7;
+  padding: 0px 6px 2px 6px;
+  color: white;
+  border-radius: 7px;
+}
+
 .hidden {
   display: none;
 }
 
 .show {
   display: block;
+}
+
+.boton-guardar {
+  display: block;
+  color: green;
+}
+
+a.boton-guardar,
+a:visited.boton-guardar,
+a:hover.boton-guardar,
+a:active.boton-guardar {
+  text-decoration: none;
+  color: green;
+  font-size: 16pt;
+  font-weight: 600;
 }
 
 .content {
@@ -204,9 +231,10 @@ a:active {
   font-weight: 600;
 }
 
-ul.usuarios li,
-ul.libros li {
+ul.usuarios li {
   margin-bottom: 15px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hidden {

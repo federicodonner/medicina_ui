@@ -57,7 +57,7 @@ class EditarDosis extends React.Component {
               </div>
               <div
                 className="nav-button"
-                onClick={this.navigateToSection("editarDosis")}
+                onClick={this.navigateToSection("editarDroga")}
               >
                 <div className="nav-icon nav-icon-editar-dosis-in"></div>
                 <span className="single-line">editar</span>

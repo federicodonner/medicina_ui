@@ -140,6 +140,34 @@ h1 {
   color: #3a506b;
 }
 
+.editar-droga-modal {
+  height: 400px;
+  background-color: white;
+  width: 74vw;
+  position: absolute;
+  margin-left: 7vw;
+  border: 3px #aab1b7 solid;
+  border-radius: 26px;
+  padding: 16px;
+}
+
+.modal-cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  background-color: black;
+  opacity: 0.4;
+}
+
+.hidden {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
 .content {
 }
 

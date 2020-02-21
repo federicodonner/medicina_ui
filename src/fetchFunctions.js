@@ -1,4 +1,4 @@
- import variables from "./var/variables.js";
+import variables from "./var/variables.js";
 
 export function fetchPastilleros() {
   return fetch(variables.api_url + "/pastillero");
@@ -37,8 +37,8 @@ export function addDrogaxdosis(data) {
   });
 }
 
-export function editDrogaxdosis(data) {
-  const url = variables.api_url + "/drogaxdosis";
+export function editDrogaxdosis(data, drogaxdosis_id, callback) {
+  const url = variables.api_url + "/drogaxdosis/" + drogaxdosis_id;
   return fetch(url, {
     method: "PUT",
     headers: {
@@ -46,16 +46,23 @@ export function editDrogaxdosis(data) {
       "accept-encoding": "gzip, deflate"
     },
     body: JSON.stringify(data)
+  }).then(function() {
+    callback();
   });
 }
 
-
-
-
-
-
-
-
+export function deleteDrogaxdosis(drogaxdosis_id, callback) {
+  const url = variables.api_url + "/drogaxdosis/" + drogaxdosis_id;
+  return fetch(url, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate"
+    }
+  }).then(function() {
+    callback();
+  });
+}
 
 export function fetchUsers(empresa) {
   return fetch(

@@ -100,24 +100,29 @@ class AgregarDroga extends React.Component {
         this.drogaRef.current &&
         this.drogaRef.current.value
       ) {
-        const nuevaDroga = this.drogaRef.current.value;
+        const nuevaDroga = {
+          nombre: this.drogaRef.current.value,
+          pastillero: this.state.pastillero.id
+        };
         // Se agrega la droga a través del endpoint
-        addDroga(nuevaDroga).then(function() {
-          fetchDroga()
-            .then(results => {
-              return results.json();
-            })
-            .then(response => {
-              // Si la carga fue correcta, se hace una consulta de las drogas,
-              // se selecciona la nueva y se carga en el objeto a enviar
-              response.forEach(function(droga, index) {
-                if (droga.nombre == nuevaDroga) {
-                  // Resuelve la promesa pasando el id de la droga creada
-                  resolve(droga.id);
-                }
+        addDroga(nuevaDroga).then(
+          function() {
+            fetchDroga(this.state.pastillero.id)
+              .then(results => {
+                return results.json();
+              })
+              .then(response => {
+                // Si la carga fue correcta, se hace una consulta de las drogas,
+                // se selecciona la nueva y se carga en el objeto a enviar
+                response.forEach(function(droga, index) {
+                  if (droga.nombre == nuevaDroga.nombre) {
+                    // Resuelve la promesa pasando el id de la droga creada
+                    resolve(droga.id);
+                  }
+                });
               });
-            });
-        });
+          }.bind(this)
+        );
       } else {
         // Resuelve la promesa pasando el id de la droga seleccionada
         resolve(this.state.drogaSeleccionada.value);
@@ -128,6 +133,7 @@ class AgregarDroga extends React.Component {
     // recibe el id de la droga creada o seleccionada
     promesaCrearDroga.then(
       function(droga_id) {
+        console.log("hola");
         dataEnviar.droga_id = droga_id;
         // Se agrega la dosis a través del endpoint
         addDrogaxdosis(dataEnviar)
@@ -136,7 +142,7 @@ class AgregarDroga extends React.Component {
           })
           .then(response => {
             alert("Dosis agregada exitosamente");
-            fetchDroga()
+            fetchDroga(this.state.pastillero.id)
               .then(results => {
                 return results.json();
               })
@@ -167,7 +173,7 @@ class AgregarDroga extends React.Component {
           })
           .then(response => {
             this.setState({ pastillero: response });
-            fetchDroga()
+            fetchDroga(this.state.pastillero.id)
               .then(results => {
                 return results.json();
               })

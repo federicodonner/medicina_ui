@@ -8,12 +8,17 @@ export function fetchDosis(idPastillero) {
   return fetch(variables.api_url + "/pastillero/" + idPastillero);
 }
 
-export function fetchDroga() {
-  return fetch(variables.api_url + "/droga");
+export function fetchDroga(pastillero) {
+  if (pastillero) {
+    console.log("pastillero" + pastillero);
+    return fetch(variables.api_url + "/droga?pastillero=" + pastillero);
+  } else {
+    console.log("sin pastillero");
+    return fetch(variables.api_url + "/droga");
+  }
 }
 
-export function addDroga(nombreDroga) {
-  const data = { nombre: nombreDroga };
+export function addDroga(data) {
   const url = variables.api_url + "/droga";
   return fetch(url, {
     method: "POST",

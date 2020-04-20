@@ -10,14 +10,13 @@ export function fetchDosis(idPastillero) {
 
 export function fetchDroga(pastillero) {
   if(pastillero){
-    return fetch(variables.api_url + "/droga?pastillero="+pastillero);    
+    return fetch(variables.api_url + "/droga?pastillero="+pastillero);
   }else{
     return fetch(variables.api_url + "/droga");
   }
 }
 
-export function addDroga(nombreDroga) {
-  const data = { nombre: nombreDroga };
+export function addDroga(data) {
   const url = variables.api_url + "/droga";
   return fetch(url, {
     method: "POST",

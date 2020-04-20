@@ -8,8 +8,12 @@ export function fetchDosis(idPastillero) {
   return fetch(variables.api_url + "/pastillero/" + idPastillero);
 }
 
-export function fetchDroga() {
-  return fetch(variables.api_url + "/droga");
+export function fetchDroga(pastillero) {
+  if(pastillero){
+    return fetch(variables.api_url + "/droga?pastillero="+pastillero);    
+  }else{
+    return fetch(variables.api_url + "/droga");
+  }
 }
 
 export function addDroga(nombreDroga) {
@@ -67,13 +71,13 @@ export function deleteDrogaxdosis(drogaxdosis_id, callback) {
 export function fetchUsers(empresa) {
   return fetch(
     "http://www.federicodonner.com/clublibros_api/public/api/usuarios?empresa=" +
-      empresa
+    empresa
   );
 }
 
 export function fetchUser(token, id) {
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/usuarios/" + id;
+  "http://www.federicodonner.com/clublibros_api/public/api/usuarios/" + id;
 
   return fetch(url, {
     method: "GET",
@@ -86,7 +90,7 @@ export function fetchUser(token, id) {
 export function signupUser(user, companyId) {
   const data = { nombre: user.nombre, email: user.email, empresa: companyId };
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/usuarios";
+  "http://www.federicodonner.com/clublibros_api/public/api/usuarios";
   return fetch(url, {
     method: "POST",
     headers: {
@@ -110,8 +114,8 @@ export function fetchActiveUser(token) {
 
 export function fetchBooks(token, availables) {
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/libros?disponibles=" +
-    availables;
+  "http://www.federicodonner.com/clublibros_api/public/api/libros?disponibles=" +
+  availables;
 
   return fetch(url, {
     method: "GET",
@@ -123,7 +127,7 @@ export function fetchBooks(token, availables) {
 
 export function fetchBook(token, id) {
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/libros/" + id;
+  "http://www.federicodonner.com/clublibros_api/public/api/libros/" + id;
 
   return fetch(url, {
     method: "GET",
@@ -169,7 +173,7 @@ export function addReview(data, token) {
 
 export function rentBook(data, token) {
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/alquileres";
+  "http://www.federicodonner.com/clublibros_api/public/api/alquileres";
   return fetch(url, {
     method: "POST",
     headers: {
@@ -183,8 +187,8 @@ export function rentBook(data, token) {
 
 export function returnBook(book_id, token) {
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/alquileres/" +
-    book_id;
+  "http://www.federicodonner.com/clublibros_api/public/api/alquileres/" +
+  book_id;
   return fetch(url, {
     method: "PUT",
     headers: {
@@ -198,10 +202,10 @@ export function returnBook(book_id, token) {
 export function enableBook(enable, book_id, token) {
   const enableText = enable ? "enable" : "disable";
   const url =
-    "http://www.federicodonner.com/clublibros_api/public/api/libros/" +
-    book_id +
-    "?operation=" +
-    enableText;
+  "http://www.federicodonner.com/clublibros_api/public/api/libros/" +
+  book_id +
+  "?operation=" +
+  enableText;
   return fetch(url, {
     method: "PUT",
     headers: {
@@ -215,9 +219,9 @@ export function enableBook(enable, book_id, token) {
 export function getBookCover(bookName) {
   const formattedBookName = bookName.replace(/\s/g, "+");
   var url =
-    "https://www.googleapis.com/customsearch/v1?key=AIzaSyBiRqnIECMCs9LKRyf_CD8795BRc7Bpbzg&cx=009973845365108789937:h0kxgycmpmu&searchType=image&q=" +
-    formattedBookName +
-    "+book+cover";
+  "https://www.googleapis.com/customsearch/v1?key=AIzaSyBiRqnIECMCs9LKRyf_CD8795BRc7Bpbzg&cx=009973845365108789937:h0kxgycmpmu&searchType=image&q=" +
+  formattedBookName +
+  "+book+cover";
   return fetch(url, {
     method: "GET"
   });

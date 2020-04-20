@@ -167,7 +167,7 @@ class AgregarDroga extends React.Component {
           })
           .then(response => {
             this.setState({ pastillero: response });
-            fetchDroga()
+            fetchDroga(user_info.pastillero)
               .then(results => {
                 return results.json();
               })

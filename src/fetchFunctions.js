@@ -215,18 +215,8 @@ export function enableBook(enable, book_id, token) {
   });
 }
 
-export function getBookCover(bookName) {
-  const formattedBookName = bookName.replace(/\s/g, "+");
-  var url =
-  "https://www.googleapis.com/customsearch/v1?key=AIzaSyBiRqnIECMCs9LKRyf_CD8795BRc7Bpbzg&cx=009973845365108789937:h0kxgycmpmu&searchType=image&q=" +
-  formattedBookName +
-  "+book+cover";
-  return fetch(url, {
-    method: "GET"
-  });
-}
 
-// Verifica la información en local storageº
+// Verifica la información en local storage
 // Si encuentra el pastillero lo devuelve
 // Debería ser llamado desde componentDidMount en cualquier ruta
 export function verifyLogin() {

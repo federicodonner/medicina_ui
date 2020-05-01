@@ -10,6 +10,7 @@ import ImprimirPastillero from "./ImprimirPastillero";
 import EditarDosis from "./EditarDosis";
 import AgregarDroga from "./AgregarDroga";
 import EditarDroga from "./EditarDroga";
+import IngresarCompra from "./IngresarCompra";
 
 class Router extends React.Component {
   render() {
@@ -28,6 +29,7 @@ class Router extends React.Component {
           <Route path="/editarDosis" component={EditarDosis} />
           <Route path="/agregarDroga" component={AgregarDroga} />
           <Route path="/editarDroga" component={EditarDroga} />
+          <Route path="/ingresarCompra" component={IngresarCompra} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

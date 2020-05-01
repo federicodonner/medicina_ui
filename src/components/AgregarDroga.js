@@ -133,7 +133,6 @@ class AgregarDroga extends React.Component {
     // recibe el id de la droga creada o seleccionada
     promesaCrearDroga.then(
       function(droga_id) {
-        console.log("hola");
         dataEnviar.droga_id = droga_id;
         // Se agrega la dosis a través del endpoint
         addDrogaxdosis(dataEnviar)
@@ -206,7 +205,7 @@ class AgregarDroga extends React.Component {
             )}
             {this.state && !this.state.loader && (
               <>
-                <h1>Agregar droga a tus dosis</h1>
+                <h1>Agrega droga a tus dosis</h1>
                 <p>
                   Si quieres agregar una dosis de una droga ya ingresada,
                   selecciónala de la lista.

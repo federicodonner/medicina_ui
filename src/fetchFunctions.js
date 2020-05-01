@@ -67,6 +67,33 @@ export function deleteDrogaxdosis(drogaxdosis_id, callback) {
   });
 }
 
+export function addCompra(data) {
+  const url = variables.api_url + "/compra";
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate"
+    },
+    body: JSON.stringify(data)
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export function fetchUsers(empresa) {
   return fetch(
     "http://www.federicodonner.com/clublibros_api/public/api/usuarios?empresa=" +

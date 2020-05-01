@@ -11,6 +11,7 @@ import EditarDosis from "./EditarDosis";
 import AgregarDroga from "./AgregarDroga";
 import EditarDroga from "./EditarDroga";
 import IngresarCompra from "./IngresarCompra";
+import VerStock from "./VerStock";
 
 class Router extends React.Component {
   render() {
@@ -30,6 +31,7 @@ class Router extends React.Component {
           <Route path="/agregarDroga" component={AgregarDroga} />
           <Route path="/editarDroga" component={EditarDroga} />
           <Route path="/ingresarCompra" component={IngresarCompra} />
+          <Route path="/verStock" component={VerStock} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

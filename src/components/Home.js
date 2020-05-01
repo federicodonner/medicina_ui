@@ -57,7 +57,10 @@ class Home extends React.Component {
                 <span className="single-line">editar</span>
                 <span>mis dosis</span>
               </div>
-              <div className="nav-button">
+              <div
+                className="nav-button"
+                onClick={this.navigateToSection("verStock")}
+              >
                 <div className="nav-icon nav-icon-consultar-stock"></div>
                 <span className="single-line">consultar</span>
                 <span>stock</span>

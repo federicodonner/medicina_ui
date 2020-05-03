@@ -53,6 +53,29 @@ class VerStock extends React.Component {
                       return (
                         <li key={"dosis" + droga.id} className="dosis-horario">
                           {droga.nombre}
+
+                          {droga.dias_disponible > 7 && (
+                            <span className="dias-stock verde">
+                              - {droga.dias_disponible} días de stock
+                            </span>
+                          )}
+                          {droga.dias_disponible < 8 &&
+                            droga.dias_disponible > 0 && (
+                              <span className="dias-stock amarillo">
+                                - {droga.dias_disponible} días de stock
+                              </span>
+                            )}
+
+                          {droga.dias_disponible == 0 && (
+                            <span className="dias-stock rojo">- sin stock</span>
+                          )}
+
+                          {droga.dias_disponible < 0 && (
+                            <span className="dias-stock gris">
+                              - no ingresada en el pastillero
+                            </span>
+                          )}
+
                           <ul className="dosis-droga">
                             {droga.stocks.map((stock) => {
                               return (

@@ -103,6 +103,29 @@ li.dosis-droga {
   padding-left: 3vw;
 }
 
+.dias-stock {
+  font-size: 12pt;
+  color:black;
+  margin-left: 2%;
+}
+
+.verde{
+  color: green;
+}
+
+.amarillo{
+  color: #ebba16;
+}
+
+.rojo{
+  color: red;
+}
+
+.gris{
+  color: #aab1b7;
+}
+
+
 h1 {
   font-size: 16pt;
 }

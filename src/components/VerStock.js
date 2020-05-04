@@ -91,9 +91,14 @@ class VerStock extends React.Component {
                     })}
                   </ul>
                 )}
-                <a href="/imprimirPastillero" target="_blank">
-                  Ajustar stock
-                </a>
+                <div className="nav-buttons">
+                  <div className="nav-button">
+                    <div className="nav-icon nav-icon-edit"></div>
+                    <span className="single-line">ajustar</span>
+                    <span>stock</span>
+                  </div>
+
+                </div>
               </>
             )}
           </div>

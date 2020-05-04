@@ -27,9 +27,8 @@ body {
 }
 
 .nav-buttons {
-  margin-top: 7vh;
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: repeat(4, auto);
   margin-left: auto;
   margin-right: auto;
   -webkit-justify-content: space-evenly;
@@ -38,7 +37,20 @@ body {
   text-align: center;
 }
 
+.nav-buttons.home {
+  margin-top: 7vh;
+}
+
+.nav-button {
+  grid-column: span 2;
+}
+
+.nav-button:nth-last-child(1):nth-child(odd) {
+  grid-column: 2 / span 2;
+}
+
 .nav-icon {
+  margin: auto;
   background-size: contain;
   background-repeat: no-repeat;
   width: 20vw;
@@ -72,6 +84,22 @@ body {
   background-image: url("/images/icono_editar_dosis_in.png");
 }
 
+.nav-icon-imprimir {
+  background-image: url("/images/icono_imprimir.png");
+}
+
+.nav-icon-check {
+  background-image: url("/images/icono_check.png");
+}
+
+.nav-icon-cross {
+  background-image: url("/images/icono_cruz.png");
+}
+
+.nav-icon-edit {
+  background-image: url("/images/icono_editar.png");
+}
+
 .single-line {
   display: block;
 }
@@ -103,28 +131,39 @@ li.dosis-droga {
   padding-left: 3vw;
 }
 
+ul.dosis-armado-pastillero {
+  font-size: 12pt;
+  padding: 0;
+  padding-bottom: 2vh;
+}
+
+li.dosis-armado-pastillero {
+  color: black;
+  padding-left: 3vw;
+  padding-bottom: 1vh;
+}
+
 .dias-stock {
   font-size: 12pt;
-  color:black;
+  color: black;
   margin-left: 2%;
 }
 
-.verde{
+.verde {
   color: green;
 }
 
-.amarillo{
+.amarillo {
   color: #ebba16;
 }
 
-.rojo{
+.rojo {
   color: red;
 }
 
-.gris{
+.gris {
   color: #aab1b7;
 }
-
 
 h1 {
   font-size: 16pt;
@@ -157,6 +196,10 @@ h1 {
   font-style: bold;
   color: #ebba16;
   font-weight: 600;
+}
+
+.notas-dosis.rojo {
+  color: red;
 }
 
 .blue {
@@ -216,6 +259,7 @@ a:active.boton-guardar {
   color: green;
   font-size: 16pt;
   font-weight: 600;
+  margin-bottom: 30px;
 }
 
 .content {
@@ -516,6 +560,8 @@ body {
   .content {
     text-align: center;
     margin-bottom: 100px;
+    margin-left: 1vw;
+    margin-right: 1vw;
   }
 
   .content p {

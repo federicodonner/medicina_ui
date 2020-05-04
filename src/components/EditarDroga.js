@@ -5,7 +5,7 @@ import {
   verifyLogin,
   fetchDosis,
   editDrogaxdosis,
-  deleteDrogaxdosis
+  deleteDrogaxdosis,
 } from "../fetchFunctions";
 
 class EditarDroga extends React.Component {
@@ -19,10 +19,10 @@ class EditarDroga extends React.Component {
       droga: null,
       cantidad_mg: null,
       notas: null,
-      horarios: null
+      horarios: null,
     },
     horariosParaMostrar: [],
-    datosModal: {}
+    datosModal: {},
   };
 
   cantidadRef = React.createRef();
@@ -31,23 +31,23 @@ class EditarDroga extends React.Component {
   cargarHorariosIniciales = () => {
     var user_info = this.state.user_info;
     fetchDosis(user_info.pastillero)
-      .then(results => {
+      .then((results) => {
         return results.json();
       })
-      .then(response => {
+      .then((response) => {
         this.setState({
-          pastillero: response
+          pastillero: response,
         });
         this.setState({
-          mostrarModal: false
+          mostrarModal: false,
         });
         this.setState({
-          loader: false
+          loader: false,
         });
         this.setState({
           datosModal: {
-            horarios: []
-          }
+            horarios: [],
+          },
         });
         this.procesarHorarios();
       });
@@ -58,7 +58,7 @@ class EditarDroga extends React.Component {
     var horarios = [];
     var horario = {};
     // Por cada horario del pastillero se carga en el array en state
-    this.state.pastillero.dosis.forEach(function(dosis, index) {
+    this.state.pastillero.dosis.forEach(function (dosis, index) {
       horario.label = dosis.horario;
       horario.value = dosis.id;
       horarios.push(Object.assign({}, horario));
@@ -76,24 +76,24 @@ class EditarDroga extends React.Component {
   };
 
   // Carga los datos en el modal y lo muestra
-  loadModal = drogaSeleccionada => event => {
+  loadModal = (drogaSeleccionada) => (event) => {
     var datosModal = drogaSeleccionada;
     var horarios = this.state.datosModal.horarios;
     datosModal.horarios = horarios;
-    this.setState({ datosModal }, function() {
+    this.setState({ datosModal }, function () {
       this.toggleModal();
     });
   };
 
   // Funcion que corre al cambiar la selección de horario del modal
-  seleccionHorario = horarioSeleccionado => {
+  seleccionHorario = (horarioSeleccionado) => {
     var datosModal = this.state.datosModal;
     datosModal.horario = horarioSeleccionado;
     this.setState({ datosModal });
   };
 
   // Arma el objeto e invoca la API para editar la dosis
-  submitEditarDroga = event => {
+  submitEditarDroga = (event) => {
     var dataEditDrogaxdosis = {};
     dataEditDrogaxdosis.droga_id = this.state.datosModal.droga_id;
     dataEditDrogaxdosis.dosis_id = this.state.datosModal.horario.value;
@@ -112,7 +112,7 @@ class EditarDroga extends React.Component {
     );
   };
 
-  submitEliminarDroga = event => {
+  submitEliminarDroga = (event) => {
     if (
       window.confirm(
         "¿Seguro que desea eliminar la dósis de " +
@@ -134,7 +134,7 @@ class EditarDroga extends React.Component {
 
   componentDidMount() {
     this.setState({
-      loader: true
+      loader: true,
     });
     // Verifica si el usuario ya seleccionó el pastillero
     const user_info = verifyLogin();
@@ -142,16 +142,16 @@ class EditarDroga extends React.Component {
       // Si la tiene, la guarda en el estado
       this.setState(
         {
-          user_info
+          user_info,
         },
-        function() {
+        function () {
           this.cargarHorariosIniciales();
         }
       );
     } else {
       // Si no hay data en localstorage, va a la pantalla de selección de pastillero
       this.props.history.push({
-        pathname: "/seleccionarPastillero"
+        pathname: "/seleccionarPastillero",
       });
     }
   }
@@ -207,17 +207,23 @@ class EditarDroga extends React.Component {
                     className="pretty-input pretty-text"
                     defaultValue={this.state.datosModal.notas}
                   />
-                  <a
-                    className="boton-guardar"
-                    href="#"
-                    onClick={this.submitEditarDroga}
-                  >
-                    Guardar cambios
-                  </a>
-                  <span className="single-line">o</span>
-                  <a href="#" onClick={this.submitEliminarDroga}>
-                    Eliminiar dósis
-                  </a>
+
+                  <div className="nav-buttons">
+                    <div
+                      className="nav-button"
+                      onClick={this.submitEditarDroga}
+                    >
+                      <div className="nav-icon nav-icon-check"></div>
+                      <span className="single-line">aceptar</span>
+                    </div>
+                    <div
+                      className="nav-button"
+                      onClick={this.submitEliminarDroga}
+                    >
+                      <div className="nav-icon nav-icon-cross"></div>
+                      <span className="single-line">eliminar</span>
+                    </div>
+                  </div>
                 </div>
               </>
             )}
@@ -228,14 +234,15 @@ class EditarDroga extends React.Component {
             )}
             {this.state && !this.state.loader && (
               <>
+                <h1>Seleccione una dosis para editarla</h1>
                 {this.state && this.state.pastillero && (
                   <ul className="dosis-horario">
-                    {this.state.pastillero.dosis.map(dosis => {
+                    {this.state.pastillero.dosis.map((dosis) => {
                       return (
                         <li key={"dosis" + dosis.id} className="dosis-horario">
                           {dosis.horario}
                           <ul className="dosis-droga">
-                            {dosis.drogas.map(droga => {
+                            {dosis.drogas.map((droga) => {
                               return (
                                 <li
                                   key={droga.id}
@@ -243,14 +250,14 @@ class EditarDroga extends React.Component {
                                   onClick={this.loadModal({
                                     horario: {
                                       value: dosis.id,
-                                      label: dosis.horario
+                                      label: dosis.horario,
                                     },
                                     droga: droga.nombre,
                                     drogaxdosis_id: droga.id,
                                     droga_id: droga.droga_id,
                                     cantidad_mg: droga.cantidad_mg,
                                     notas: droga.notas,
-                                    horarios: []
+                                    horarios: [],
                                   })}
                                 >
                                   {droga.nombre} - {droga.cantidad_mg}

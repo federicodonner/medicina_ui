@@ -40,7 +40,7 @@ class Home extends React.Component {
         <div className="scrollable">
           {this.state && this.state.user_info && <Header />}
           <div className="content">
-            <div className="nav-buttons">
+            <div className="nav-buttons home">
               <div
                 className="nav-button"
                 onClick={this.navigateToSection("verDosis")}

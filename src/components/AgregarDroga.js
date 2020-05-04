@@ -6,7 +6,7 @@ import {
   fetchDosis,
   fetchDroga,
   addDroga,
-  addDrogaxdosis
+  addDrogaxdosis,
 } from "../fetchFunctions";
 
 class AgregarDroga extends React.Component {
@@ -19,24 +19,24 @@ class AgregarDroga extends React.Component {
     drogaSeleccionada: null,
     drogasParaMostrar: [],
     horarioSeleccionado: null,
-    horariosParaMostrar: []
+    horariosParaMostrar: [],
   };
 
   drogaRef = React.createRef();
   concentracionRef = React.createRef();
   notasRef = React.createRef();
 
-  navigateToSection = section => event => {
+  navigateToSection = (section) => (event) => {
     event.preventDefault();
     this.props.history.push({
-      pathname: section
+      pathname: section,
     });
   };
 
   procesarDrogas = (drogas, pastillero) => {
     const nombreDrogas = [];
     const drogaParaGuardar = {};
-    drogas.forEach(function(droga, index) {
+    drogas.forEach(function (droga, index) {
       drogaParaGuardar.label = droga.nombre;
       drogaParaGuardar.value = droga.id;
       nombreDrogas.push(Object.assign({}, drogaParaGuardar));
@@ -44,7 +44,7 @@ class AgregarDroga extends React.Component {
     this.setState({ drogasParaMostrar: nombreDrogas });
     const nombreHorarios = [];
     const horarioParaGuardar = {};
-    pastillero.dosis.forEach(function(dosis, index) {
+    pastillero.dosis.forEach(function (dosis, index) {
       horarioParaGuardar.label = dosis.horario;
       horarioParaGuardar.value = dosis.id;
       nombreHorarios.push(Object.assign({}, horarioParaGuardar));
@@ -52,16 +52,16 @@ class AgregarDroga extends React.Component {
     this.setState({ horariosParaMostrar: nombreHorarios });
   };
 
-  seleccionDroga = drogaSeleccionada => {
+  seleccionDroga = (drogaSeleccionada) => {
     this.setState({ drogaSeleccionada });
   };
 
-  seleccionHorario = horarioSeleccionado => {
+  seleccionHorario = (horarioSeleccionado) => {
     this.setState({ horarioSeleccionado });
   };
 
   // Este proceso se ejecuta al ingresar el formulario
-  ingresarDroga = event => {
+  ingresarDroga = (event) => {
     // Previene la navegación automática del botón
     event.preventDefault();
 
@@ -102,19 +102,19 @@ class AgregarDroga extends React.Component {
       ) {
         const nuevaDroga = {
           nombre: this.drogaRef.current.value,
-          pastillero: this.state.pastillero.id
+          pastillero: this.state.pastillero.id,
         };
         // Se agrega la droga a través del endpoint
         addDroga(nuevaDroga).then(
-          function() {
+          function () {
             fetchDroga(this.state.pastillero.id)
-              .then(results => {
+              .then((results) => {
                 return results.json();
               })
-              .then(response => {
+              .then((response) => {
                 // Si la carga fue correcta, se hace una consulta de las drogas,
                 // se selecciona la nueva y se carga en el objeto a enviar
-                response.forEach(function(droga, index) {
+                response.forEach(function (droga, index) {
                   if (droga.nombre == nuevaDroga.nombre) {
                     // Resuelve la promesa pasando el id de la droga creada
                     resolve(droga.id);
@@ -132,26 +132,26 @@ class AgregarDroga extends React.Component {
     // Función llamada luego de resolver la promesa de creación de droga
     // recibe el id de la droga creada o seleccionada
     promesaCrearDroga.then(
-      function(droga_id) {
+      function (droga_id) {
         dataEnviar.droga_id = droga_id;
         // Se agrega la dosis a través del endpoint
         addDrogaxdosis(dataEnviar)
-          .then(results => {
+          .then((results) => {
             return results.json();
           })
-          .then(response => {
+          .then((response) => {
             alert("Dosis agregada exitosamente");
             fetchDroga(this.state.pastillero.id)
-              .then(results => {
+              .then((results) => {
                 return results.json();
               })
-              .then(response => {
+              .then((response) => {
                 this.setState({ drogas: response });
                 this.procesarDrogas(this.state.drogas, this.state.pastillero);
                 this.setState({
                   loader: false,
                   drogaSeleccionada: null,
-                  horarioSeleccionado: null
+                  horarioSeleccionado: null,
                 });
               });
           });
@@ -165,18 +165,18 @@ class AgregarDroga extends React.Component {
     const user_info = verifyLogin();
     if (user_info && user_info.pastillero) {
       // Si la tiene, la guarda en el estado
-      this.setState({ user_info }, function() {
+      this.setState({ user_info }, function () {
         fetchDosis(user_info.pastillero)
-          .then(results => {
+          .then((results) => {
             return results.json();
           })
-          .then(response => {
+          .then((response) => {
             this.setState({ pastillero: response });
             fetchDroga(user_info.pastillero)
-              .then(results => {
+              .then((results) => {
                 return results.json();
               })
-              .then(response => {
+              .then((response) => {
                 this.setState({ drogas: response });
                 this.procesarDrogas(this.state.drogas, this.state.pastillero);
                 this.setState({ loader: false });
@@ -186,7 +186,7 @@ class AgregarDroga extends React.Component {
     } else {
       // Si no hay data en localstorage, va a la pantalla de selección de pastillero
       this.props.history.push({
-        pathname: "/seleccionarPastillero"
+        pathname: "/seleccionarPastillero",
       });
     }
   }
@@ -250,9 +250,14 @@ class AgregarDroga extends React.Component {
                   ref={this.notasRef}
                   className="pretty-input pretty-text"
                 />
-                <a href="#" onClick={this.ingresarDroga}>
-                  Ingresar
-                </a>
+
+                <div className="nav-buttons" onClick={this.ingresarDroga}>
+                  <div className="nav-button">
+                    <div className="nav-icon nav-icon-check"></div>
+                    <span className="single-line">agregar</span>
+                    <span>droga</span>
+                  </div>
+                </div>
               </>
             )}
           </div>

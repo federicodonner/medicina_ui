@@ -139,9 +139,13 @@ class IngresarCompra extends React.Component {
                   ref={this.cantidadRef}
                   className="pretty-input pretty-text"
                 />
-                <a href="#" onClick={this.ingresarCompra}>
-                  Ingresar
-                </a>
+                <div className="nav-buttons" onClick={this.ingresarCompra}>
+                  <div className="nav-button">
+                    <div className="nav-icon nav-icon-check"></div>
+                    <span className="single-line">ingresar</span>
+                    <span>compra</span>
+                  </div>
+                </div>
               </>
             )}
           </div>

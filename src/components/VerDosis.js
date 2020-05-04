@@ -6,7 +6,14 @@ class VerDosis extends React.Component {
   state: {
     user_info: {},
     loader: true,
-    pastillero: {}
+    pastillero: {},
+  };
+
+  navigateToSection = (section) => (event) => {
+    event.preventDefault();
+    this.props.history.push({
+      pathname: section,
+    });
   };
 
   componentDidMount() {
@@ -15,12 +22,12 @@ class VerDosis extends React.Component {
     const user_info = verifyLogin();
     if (user_info && user_info.pastillero) {
       // Si la tiene, la guarda en el estado
-      this.setState({ user_info }, function() {
+      this.setState({ user_info }, function () {
         fetchDosis(user_info.pastillero)
-          .then(results => {
+          .then((results) => {
             return results.json();
           })
-          .then(response => {
+          .then((response) => {
             this.setState({ pastillero: response });
             this.setState({ loader: false });
           });
@@ -28,7 +35,7 @@ class VerDosis extends React.Component {
     } else {
       // Si no hay data en localstorage, va a la pantalla de selección de pastillero
       this.props.history.push({
-        pathname: "/seleccionarPastillero"
+        pathname: "/seleccionarPastillero",
       });
     }
   }
@@ -48,12 +55,12 @@ class VerDosis extends React.Component {
               <>
                 {this.state && this.state.pastillero && (
                   <ul className="dosis-horario">
-                    {this.state.pastillero.dosis.map(dosis => {
+                    {this.state.pastillero.dosis.map((dosis) => {
                       return (
                         <li key={"dosis" + dosis.id} className="dosis-horario">
                           {dosis.horario}
                           <ul className="dosis-droga">
-                            {dosis.drogas.map(droga => {
+                            {dosis.drogas.map((droga) => {
                               return (
                                 <li key={droga.id} className="dosis-droga">
                                   {droga.nombre} - {droga.cantidad_mg} mg
@@ -71,9 +78,23 @@ class VerDosis extends React.Component {
                     })}
                   </ul>
                 )}
-                <a href="/imprimirPastillero" target="_blank">
-                  Imprimir
-                </a>
+                <div className="nav-buttons">
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("descontarStock")}
+                  >
+                    <div className="nav-icon nav-icon-ver-dosis"></div>
+                    <span className="single-line">pastillero</span>
+                    <span>armado</span>
+                  </div>
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("imprimirPastillero")}
+                  >
+                    <div className="nav-icon nav-icon-imprimir"></div>
+                    <span className="single-line">imprimir</span>
+                  </div>
+                </div>
               </>
             )}
           </div>

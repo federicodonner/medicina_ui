@@ -54,12 +54,12 @@ class VerStock extends React.Component {
                         <li key={"dosis" + droga.id} className="dosis-horario">
                           {droga.nombre}
 
-                          {droga.dias_disponible > 7 && (
+                          {droga.dias_disponible > 6 && (
                             <span className="dias-stock verde">
                               - {droga.dias_disponible} días
                             </span>
                           )}
-                          {droga.dias_disponible < 8 &&
+                          {droga.dias_disponible < 7 &&
                             droga.dias_disponible > 0 && (
                               <span className="dias-stock amarillo">
                                 - {droga.dias_disponible} días

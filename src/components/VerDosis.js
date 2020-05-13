@@ -94,6 +94,22 @@ class VerDosis extends React.Component {
                     <div className="nav-icon nav-icon-imprimir"></div>
                     <span className="single-line">imprimir</span>
                   </div>
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("agregarDroga")}
+                  >
+                    <div className="nav-icon nav-icon-agregar-dosis"></div>
+                    <span className="single-line">agregar</span>
+                    <span>droga</span>
+                  </div>
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("editarDroga")}
+                  >
+                    <div className="nav-icon nav-icon-editar-dosis-in"></div>
+                    <span className="single-line">editar</span>
+                    <span>dosis droga</span>
+                  </div>
                 </div>
               </>
             )}

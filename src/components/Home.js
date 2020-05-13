@@ -51,14 +51,6 @@ class Home extends React.Component {
               </div>
               <div
                 className="nav-button"
-                onClick={this.navigateToSection("editarDosis")}
-              >
-                <div className="nav-icon nav-icon-editar-dosis"></div>
-                <span className="single-line">editar</span>
-                <span>mis dosis</span>
-              </div>
-              <div
-                className="nav-button"
                 onClick={this.navigateToSection("verStock")}
               >
                 <div className="nav-icon nav-icon-consultar-stock"></div>

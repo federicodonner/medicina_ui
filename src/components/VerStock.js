@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import { verifyLogin, fetchStock } from "../fetchFunctions";
+import { translateStock } from "../dataFunctions";
 
 class VerStock extends React.Component {
   state: {
@@ -80,8 +81,8 @@ class VerStock extends React.Component {
                             {droga.stocks.map((stock) => {
                               return (
                                 <li key={stock.id} className="dosis-droga">
-                                  {stock.comprimido}mg - {stock.cantidad}{" "}
-                                  comprimidos
+                                  {stock.comprimido}mg -{" "}
+                                  {translateStock(stock.cantidad_doceavos)}
                                 </li>
                               );
                             })}
@@ -97,7 +98,6 @@ class VerStock extends React.Component {
                     <span className="single-line">ajustar</span>
                     <span>stock</span>
                   </div>
-
                 </div>
               </>
             )}

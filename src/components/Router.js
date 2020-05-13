@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "./Home";
 import Credits from "./Credits";
-import Signup from "./Signup";
 import NotFound from "./NotFound";
 import SeleccionarPastillero from "./SeleccionarPastillero";
 import VerDosis from "./VerDosis";
@@ -21,7 +20,6 @@ class Router extends React.Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/credits" component={Credits} />
-          <Route path="/signup/:id" component={Signup} />
           <Route
             path="/seleccionarPastillero"
             component={SeleccionarPastillero}

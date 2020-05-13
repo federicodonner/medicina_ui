@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "./Header";
-import { verifyLogin, fetchStock } from "../fetchFunctions";
+import { verifyLogin, fetchStock, processStock } from "../fetchFunctions";
 import { getCurrentDatePlus } from "../dataFunctions";
 
 class DescontarStock extends React.Component {
@@ -8,6 +8,53 @@ class DescontarStock extends React.Component {
     user_info: {},
     loader: true,
     stock: [],
+    mensajeLoader: "",
+  };
+
+  // Función que llama al endpoint para descontar el stock
+  armarPastillero = () => (event) => {
+    event.preventDefault();
+    // Genera el array para guardar las drogas para las que no tiene suficiente stock
+    var drogasFaltaStock = [];
+    var mensajeConfirmacion = "";
+
+    // Recorre todas las drogas buscando las que no tiene suficiente stock
+    // si encuentra alguna la guarda en el array
+    this.state.stock.forEach((droga) => {
+      if (droga.dosis_semanal > 0 && droga.dias_disponible < 7) {
+        drogasFaltaStock.push(droga.nombre);
+      }
+    });
+
+    // Si hay drogas cargadas en el array, le pregunto al usuario si quiere continuar
+    if (drogasFaltaStock.length) {
+      mensajeConfirmacion =
+        "No tiene suficiente stock de los siguientes medicamentos: " +
+        drogasFaltaStock.join(", ") +
+        ". Presione OK para continuar con el armado del pastillero de cualquier manera.";
+    } else {
+      mensajeConfirmacion =
+        "Presione OK para descontar el stock correspondiente a esta semana.";
+    }
+    if (window.confirm(mensajeConfirmacion)) {
+      // Estoy aquí si el cliente presionó OK a la alerta
+      // Si todos los datos están correctos, se enciende el loader
+      this.setState({
+        loader: true,
+        mensajeLoader: "Procesando pastillero...",
+      });
+
+      // Procesa el pastillero a través del endpoint
+      processStock({ pastillero: this.state.user_info.pastillero }).then(
+        function () {
+          alert("Stock actualizado correctamente");
+          this.props.history.push({
+            pathname: "/verStock",
+          });
+          // ACÁ VA EL CÓDIGO PARA REFRESCAR LA PÁGINA Y CONFIRMAR LA CREACIÓN DEL PASTILLERO
+        }.bind(this)
+      );
+    }
   };
 
   componentDidMount() {
@@ -43,14 +90,16 @@ class DescontarStock extends React.Component {
             {this.state && this.state.loader && (
               <p>
                 <img className="loader" src="/images/loader.svg" />
+                <span className="single-line">{this.state.mensajeLoader}</span>
               </p>
             )}
             {this.state && !this.state.loader && (
               <>
-                <h1>
-                  Armado del pastillero de la semana del {getCurrentDatePlus(0)}{" "}
+                <p>
+                  Armado del pastillero de la semana del {getCurrentDatePlus(0)}
                   al {getCurrentDatePlus(7)}.
-                </h1>
+                </p>
+
                 <p>Se descontarán:</p>
                 {this.state && this.state.stock && (
                   <ul className="dosis-armado-pastillero">
@@ -81,7 +130,7 @@ class DescontarStock extends React.Component {
                   </ul>
                 )}
                 <div className="nav-buttons">
-                  <div className="nav-button">
+                  <div className="nav-button" onClick={this.armarPastillero()}>
                     <div className="nav-icon nav-icon-check"></div>
                     <span className="single-line">aceptar</span>
                   </div>

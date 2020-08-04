@@ -36,7 +36,7 @@ class AgregarDroga extends React.Component {
   procesarDrogas = (drogas, pastillero) => {
     const nombreDrogas = [];
     const drogaParaGuardar = {};
-    drogas.forEach(function (droga, index) {
+    drogas.forEach((droga) => {
       drogaParaGuardar.label = droga.nombre;
       drogaParaGuardar.value = droga.id;
       nombreDrogas.push(Object.assign({}, drogaParaGuardar));
@@ -44,7 +44,7 @@ class AgregarDroga extends React.Component {
     this.setState({ drogasParaMostrar: nombreDrogas });
     const nombreHorarios = [];
     const horarioParaGuardar = {};
-    pastillero.dosis.forEach(function (dosis, index) {
+    pastillero.dosis.forEach((dosis) => {
       horarioParaGuardar.label = dosis.horario;
       horarioParaGuardar.value = dosis.id;
       nombreHorarios.push(Object.assign({}, horarioParaGuardar));
@@ -114,7 +114,7 @@ class AgregarDroga extends React.Component {
               .then((response) => {
                 // Si la carga fue correcta, se hace una consulta de las drogas,
                 // se selecciona la nueva y se carga en el objeto a enviar
-                response.forEach(function (droga, index) {
+                response.drogas.forEach((droga) => {
                   if (droga.nombre == nuevaDroga.nombre) {
                     // Resuelve la promesa pasando el id de la droga creada
                     resolve(droga.id);
@@ -140,14 +140,13 @@ class AgregarDroga extends React.Component {
             return results.json();
           })
           .then((response) => {
-            alert("Dosis agregada exitosamente");
+            alert(response.detail);
             fetchDroga(this.state.pastillero.id)
               .then((results) => {
                 return results.json();
               })
               .then((response) => {
-                this.setState({ drogas: response });
-                this.procesarDrogas(this.state.drogas, this.state.pastillero);
+                this.procesarDrogas(response.drogas, this.state.pastillero);
                 this.setState({
                   loader: false,
                   drogaSeleccionada: null,
@@ -177,8 +176,7 @@ class AgregarDroga extends React.Component {
                 return results.json();
               })
               .then((response) => {
-                this.setState({ drogas: response });
-                this.procesarDrogas(this.state.drogas, this.state.pastillero);
+                this.procesarDrogas(response.drogas, this.state.pastillero);
                 this.setState({ loader: false });
               });
           });

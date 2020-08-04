@@ -28,8 +28,7 @@ class EditarDosis extends React.Component {
             return results.json();
           })
           .then(response => {
-            this.setState({ pastillero: response });
-            this.setState({ loader: false });
+            this.setState({ pastillero: response, loader:false });
           });
       });
     } else {

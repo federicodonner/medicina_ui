@@ -22,8 +22,7 @@ class VerStock extends React.Component {
             return results.json();
           })
           .then((response) => {
-            this.setState({ stock: response });
-            this.setState({ loader: false });
+            this.setState({ stock: response.drogas, loader: false });
           });
       });
     } else {

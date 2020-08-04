@@ -5,10 +5,10 @@ import { fetchPastilleros, verifyLogin } from "../fetchFunctions";
 class SeleccionarPastillero extends React.Component {
   state = {
     pastilleros: [],
-    loader: true
+    loader: true,
   };
 
-  seleccionarPastillero = pastilleroId => event => {
+  seleccionarPastillero = (pastilleroId) => (event) => {
     // Frena la navegación automática cuando se submitea el form
     event.preventDefault();
 
@@ -17,7 +17,7 @@ class SeleccionarPastillero extends React.Component {
 
     localStorage.setItem("midosis_pastillero", pastilleroId);
     this.props.history.push({
-      pathname: "/"
+      pathname: "/",
     });
   };
 
@@ -26,17 +26,16 @@ class SeleccionarPastillero extends React.Component {
     var user_info = verifyLogin();
     if (user_info && user_info.pastillero) {
       this.props.history.push({
-        pathname: "/"
+        pathname: "/",
       });
     }
 
     fetchPastilleros()
-      .then(results => {
+      .then((results) => {
         return results.json();
       })
-      .then(response => {
-        this.setState({ pastilleros: response });
-        this.setState({ loader: false });
+      .then((response) => {
+        this.setState({ pastilleros: response.pastilleros, loader: false });
       });
   }
 
@@ -56,7 +55,7 @@ class SeleccionarPastillero extends React.Component {
                 <p>¡Bienvenid@ a mi dosis</p>
                 <p>Selecciona tu pastillero</p>
                 <ul className="usuarios">
-                  {this.state.pastilleros.map(obj => {
+                  {this.state.pastilleros.map((obj) => {
                     return (
                       <li key={obj.id}>
                         <span onClick={this.seleccionarPastillero(obj.id)}>

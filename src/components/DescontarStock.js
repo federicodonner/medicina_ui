@@ -69,8 +69,7 @@ class DescontarStock extends React.Component {
             return results.json();
           })
           .then((response) => {
-            this.setState({ stock: response });
-            this.setState({ loader: false });
+            this.setState({ stock: response.drogas, loader: false });
           });
       });
     } else {
@@ -96,7 +95,7 @@ class DescontarStock extends React.Component {
             {this.state && !this.state.loader && (
               <>
                 <p>
-                  Armado del pastillero de la semana del {getCurrentDatePlus(0)}
+                  Armado del pastillero de la semana del {getCurrentDatePlus(0)}{" "}
                   al {getCurrentDatePlus(7)}.
                 </p>
 

@@ -81,7 +81,7 @@ export function addCompra(data) {
 
 export function fetchStock(pastillero) {
   if (pastillero) {
-    return fetch(variables.api_url + "/stock?pastillero=" + pastillero);
+    return fetch(variables.api_url + "/stock/" + pastillero);
   } else {
     return fetch(variables.api_url + "/stock");
   }

@@ -66,7 +66,7 @@ class IngresarCompra extends React.Component {
         return results.json();
       })
       .then((response) => {
-        alert("Compra agregada exitosamente");
+        alert(response.detail);
         this.setState({
           loader: false,
           drogaSeleccionada: null,
@@ -87,8 +87,7 @@ class IngresarCompra extends React.Component {
           return results.json();
         })
         .then((response) => {
-          this.setState({ drogas: response });
-          this.procesarDrogas(this.state.drogas, this.state.pastillero);
+          this.procesarDrogas(response.drogas, this.state.pastillero);
           this.setState({ loader: false });
         });
     } else {

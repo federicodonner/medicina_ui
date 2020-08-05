@@ -12,6 +12,7 @@ import EditarDroga from "./EditarDroga";
 import IngresarCompra from "./IngresarCompra";
 import VerStock from "./VerStock";
 import DescontarStock from "./DescontarStock";
+import Login from "./Login";
 
 class Router extends React.Component {
   render() {
@@ -19,6 +20,7 @@ class Router extends React.Component {
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/home" component={Home} />
           <Route path="/credits" component={Credits} />
           <Route
             path="/seleccionarPastillero"
@@ -32,6 +34,7 @@ class Router extends React.Component {
           <Route path="/ingresarCompra" component={IngresarCompra} />
           <Route path="/verStock" component={VerStock} />
           <Route path="/descontarStock" component={DescontarStock} />
+          <Route path="/login" component={Login} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

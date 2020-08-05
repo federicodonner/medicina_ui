@@ -2,6 +2,8 @@ import React from "react";
 import Header from "./Header";
 import { verifyLogin, fetchDosis } from "../fetchFunctions";
 
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
+
 class Home extends React.Component {
   state: {
     user_info: {},
@@ -21,6 +23,18 @@ class Home extends React.Component {
   };
 
   componentDidMount() {
+    // Registrar push notifications
+
+    const beamsClient = new PusherPushNotifications.Client({
+      instanceId: "f1746db2-2f5b-47ab-9398-750bc69edb88",
+    });
+
+    beamsClient
+      .start()
+      .then(() => beamsClient.addDeviceInterest("hello"))
+      .then(() => console.log("Successfully registered and subscribed!"))
+      .catch(console.error);
+
     // Verifica si el usuario ya seleccionó el pastillero
     const user_info = verifyLogin();
     if (user_info && user_info.pastillero) {

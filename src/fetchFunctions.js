@@ -171,9 +171,3 @@ export function verifyLogin() {
     return { pastillero: pastillero };
   }
 }
-
-//.-----------------
-
-export function fetchCompanies() {
-  return fetch(variables.api_url + "/pastillero");
-}

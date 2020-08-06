@@ -2,11 +2,14 @@ import React from "react";
 
 const Header = (props) => {
   return (
-    <a href="/">
-      <div className={"header"}>
+    <div className={"header"}>
+      <a href="/">
         <div className={"logo"} />
-      </div>
-    </a>
+      </a>
+      {props.nombreCompleto && (
+        <div className={"saludo"}>Hola {props.nombreCompleto}.</div>
+      )}
+    </div>
   );
 };
 

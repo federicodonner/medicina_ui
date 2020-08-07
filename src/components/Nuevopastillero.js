@@ -19,7 +19,9 @@ class NuevoPastillero extends React.Component {
 
     // Recorre los campos y agrega las dosis que va encontrando
     if (this.dosis1Ref.current.value) {
-      dosisEnviar.push({ horario: this.dosis1Ref.current.value });
+      dosisEnviar.push(
+        JSON.stringify({ horario: this.dosis1Ref.current.value })
+      );
     }
     if (this.dosis2Ref.current && this.dosis2Ref.current.value) {
       dosisEnviar.push(

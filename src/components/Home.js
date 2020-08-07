@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
-import { fetchDosis, getData, borrarDesdeLS } from "../fetchFunctions";
+import Footer from "./Footer";
+import { getData, borrarDesdeLS } from "../fetchFunctions";
 
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
@@ -16,6 +17,10 @@ class Home extends React.Component {
     });
   };
 
+  navegarACambioPastillero = () => {
+    console.log("navegar");
+  };
+
   signOut = (event) => {
     if (event) {
       event.preventDefault();
@@ -25,51 +30,72 @@ class Home extends React.Component {
   };
 
   componentDidMount() {
-    // Verifica que el usuario esté logueado
-    getData("verificarlogin")
-      .then((response) => {
-        // Si el status es 200, encontró el usuario
-        if (response.status == 200) {
-          response.json().then((respuesta) => {
-            // Va a buscar los datos del usuario
-            getData("usuario").then((response_usuario) => {
-              if (response_usuario.status == 200) {
-                response_usuario.json().then((respuesta_usuario) => {
-                  // Registrar push notifications
-                  const beamsClient = new PusherPushNotifications.Client({
-                    instanceId: "f1746db2-2f5b-47ab-9398-750bc69edb88",
-                  });
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (this.props.location.state && this.props.location.state.userInfo) {
+      // Si se los pasó, verifica que tenga pastilleros,
+      // si no tiene navega
 
-                  beamsClient
-                    .start()
-                    .then(() => beamsClient.addDeviceInterest("hello"))
-                    .then(() =>
-                      console.log("Successfully registered and subscribed!")
-                    )
-                    .catch(console.error);
-
-                  // Guarda la información del usuario en el state
-                  // y apaga el loader
-                  this.setState({
-                    userInfo: respuesta_usuario,
-                    loader: { encendido: false },
-                  });
-                });
+      if (this.props.location.state.userInfo.pastilleros.length == 0) {
+        this.props.history.push(
+          { pathname: "/nuevopastillero" },
+          { userInfo: this.props.location.state.userInfo }
+        );
+      } else {
+        // Si tiene pastilleros, se queda
+        this.setState({
+          userInfo: this.props.location.state.userInfo,
+          loader: { encendido: false },
+        });
+      }
+    } else {
+      // Va a buscar los datos del usuario
+      getData("usuario")
+        .then((response_usuario) => {
+          if (response_usuario.status == 200) {
+            response_usuario.json().then((respuesta_usuario) => {
+              // Si no tiene pastilleros a su nombre,
+              // Navega a la sección de nuevo pastillero
+              if (respuesta_usuario.pastilleros.length == 0) {
+                this.props.history.push(
+                  { pathname: "/nuevopastillero" },
+                  { datos_usuario: respuesta_usuario }
+                );
               } else {
-                this.signOut();
+                // ------------------------------------
+                // Registrar push notifications
+                const beamsClient = new PusherPushNotifications.Client({
+                  instanceId: "f1746db2-2f5b-47ab-9398-750bc69edb88",
+                });
+
+                beamsClient
+                  .start()
+                  .then(() => beamsClient.addDeviceInterest("hello"))
+                  .then(() =>
+                    console.log("Successfully registered and subscribed!")
+                  )
+                  .catch(console.error);
+
+                // -------------------------
+
+                // Guarda la información del usuario en el state
+                // y apaga el loader
+                this.setState({
+                  userInfo: respuesta_usuario,
+                  loader: { encendido: false },
+                });
               }
             });
-          });
-        } else {
-          response.json().then((respuesta) => {
-            this.signOut();
-          });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-
+          } else {
+            response_usuario.json().then((respuesta_usuario) => {
+              alert(respuesta_usuario.details);
+              this.signOut();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
     // // Verifica si el usuario ya seleccionó el pastillero
     // const user_info = verifyLogin();
     // if (user_info && user_info.pastillero) {
@@ -99,12 +125,12 @@ class Home extends React.Component {
       <div className="app-view cover">
         <div className="scrollable">
           {this.state && this.state.loader.encendido && (
-            <>
+            <div className="loader-container">
               <p>
                 <img className="loader" src="/images/loader.svg" />
               </p>
-              <p className={"centrado negrita"}>{this.state.loader.texto}</p>
-            </>
+              <p className={"negrita"}>{this.state.loader.texto}</p>
+            </div>
           )}
           {this.state && !this.state.loader.encendido && (
             <>
@@ -141,8 +167,21 @@ class Home extends React.Component {
                     <span className="single-line">ingresar</span>
                     <span>compra</span>
                   </div>
+
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("nuevopastillero")}
+                  >
+                    <div className="nav-icon nav-icon-nuevo-pastillero"></div>
+                    <span className="single-line">nuevo</span>
+                    <span>pastillero</span>
+                  </div>
                 </div>
               </div>
+              <Footer
+                pastilleroSeleccionado={{ nombre: "Un usuario", id: 4 }}
+                navegar={this.navegarACambioPastillero}
+              />
             </>
           )}
         </div>

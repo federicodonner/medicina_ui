@@ -11,6 +11,7 @@ import EditarDroga from "./EditarDroga";
 import IngresarCompra from "./IngresarCompra";
 import VerStock from "./VerStock";
 import DescontarStock from "./DescontarStock";
+import NuevoPastillero from "./Nuevopastillero";
 import Login from "./Login";
 
 class Router extends React.Component {
@@ -20,6 +21,7 @@ class Router extends React.Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/home" component={Home} />
+          <Route exact path="/nuevopastillero" component={NuevoPastillero} />
           <Route
             path="/seleccionarPastillero"
             component={SeleccionarPastillero}

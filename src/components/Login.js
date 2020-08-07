@@ -34,14 +34,22 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    // Verifica el login, si está todo ok ingresa
-    getData("verificarlogin")
-      .then((result) => {
-        if (result.status == 200) {
-          this.props.history.push({
-            pathname: "home",
+    // Va a buscar los datos del usuario
+    // Si los encuentra, entra a la app y le pasa los datos al componente
+    getData("usuario")
+      .then((response_usuario) => {
+        if (response_usuario.status == 200) {
+          response_usuario.json().then((respuesta_usuario) => {
+            this.props.history.push(
+              {
+                pathname: "home",
+              },
+              { userInfo: respuesta_usuario }
+            );
           });
         } else {
+          // Si no los encuentra o hay un error en el request
+          // apaga el loader y permite el login
           this.setState({
             loader: {
               encendido: false,
@@ -178,7 +186,7 @@ class Login extends React.Component {
                     />
                     {this.state &&
                       this.state.formIngresada &&
-                      this.loginRef.current &&
+                      this.passwordRef.current &&
                       !this.passwordRef.current.value && (
                         <span className="login-error">
                           Debes completar tu contraseña.

@@ -62,6 +62,12 @@ body {
   background-position: center;
 }
 
+.nav-icon.chico {
+  width: 7vh;
+  height: 8vh;
+  display: inline-block;
+}
+
 .nav-icon-ver-dosis {
   background-image: url("/images/icono_ver_dosis.png");
 }
@@ -100,6 +106,14 @@ body {
 
 .nav-icon-edit {
   background-image: url("/images/icono_editar.png");
+}
+
+.nav-icon-nuevo-pastillero {
+  background-image: url("/images/icono_nuevo_pastillero.png");
+}
+
+.nav-icon-plus {
+  background-image: url("/images/icono_plus.png");
 }
 
 .single-line {
@@ -523,6 +537,7 @@ body {
     margin-left: auto;
     margin-right: auto;
     height: 16vh;
+    margin-bottom: 1vh;
   }
 
   .logo:after {
@@ -579,6 +594,17 @@ body {
     margin-left: 0px;
   }
 
+  .loader-container {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 80%;
+  }
+
   .loader {
     /* margin-top: 50%; */
     margin-left: 0%;
@@ -614,4 +640,19 @@ body {
   text-align: center;
   color: red;
   font-size: 11pt;
+}
+
+.footer {
+  width: 100%;
+  background-color: #ebba16;
+  position: absolute;
+  bottom: 0px;
+  text-align: center;
+  padding: 2vh 0;
+  color: white;
+  font-size: 14pt;
+}
+
+.negrita {
+  font-weight: 600;
 }

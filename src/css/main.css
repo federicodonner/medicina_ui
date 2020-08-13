@@ -8,7 +8,8 @@ body {
   background-attachment: local;
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: hidden;
+  position: fixed;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
   background-size: 440px;
@@ -18,6 +19,13 @@ body {
 .header {
   text-align: center;
   margin-bottom: 30px;
+}
+
+.header-boton-volver {
+  position: absolute;
+  top: 17px;
+  left: 22px;
+  font-size: 14pt;
 }
 
 .withGradient {
@@ -651,8 +659,44 @@ body {
   padding: 2vh 0;
   color: white;
   font-size: 14pt;
+  transition: height 0.65s, box-shadow 0.65s;
+  height: 30px;
+  box-shadow: 0px 0px 0px;
+}
+
+.footer.agrandado {
+  height: 200px;
+  box-shadow: 5px -1px 20px #aaa;
+}
+
+.titulo-footer {
+  width: 90%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.texto-sin-pastilleros-footer {
+  margin-bottom: 36px;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .negrita {
   font-weight: 600;
+}
+
+.fit {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.seleccion-pastillero {
+  margin: 10px 0px 38px 0px;
+  padding: 4px;
+  font-size: 14pt;
+  width: 65%;
+  border-radius: 8px;
 }

@@ -11,11 +11,15 @@ export function guardarEnLS(key, datosGuardar) {
   localStorage.setItem(key, datosGuardar);
 }
 
+// Lee desde LS
+export function leerDesdeLS(key) {
+  return localStorage.getItem(key);
+}
+
 // Borra el resgistro de LS
 export function borrarDesdeLS(key) {
   return localStorage.removeItem(key);
 }
-
 
 export function getData(endpoint) {
   var accessToken = getTokenDesdeLS();
@@ -34,8 +38,6 @@ export function getData(endpoint) {
   ]);
   return promise;
 }
-
-
 
 // Función genérica parea postear datos en la API
 export function postData(endpoint, data) {
@@ -59,8 +61,6 @@ export function postData(endpoint, data) {
   ]);
   return promise;
 }
-
-
 
 export function fetchPastilleros() {
   return fetch(variables.api_url + "/pastillero");
@@ -160,7 +160,6 @@ export function processStock(data) {
     body: JSON.stringify(data),
   });
 }
-
 
 // Verifica la información en local storage
 // Si encuentra el pastillero lo devuelve

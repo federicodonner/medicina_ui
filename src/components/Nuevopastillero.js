@@ -102,6 +102,12 @@ class NuevoPastillero extends React.Component {
     });
   };
 
+  volverAHome = () => {
+    this.props.history.push({
+      pathname: "home",
+    });
+  };
+
   componentDidMount() {
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (this.props.location.state && this.props.location.state.userInfo) {
@@ -158,26 +164,20 @@ class NuevoPastillero extends React.Component {
           )}
           {this.state && !this.state.loader.encendido && (
             <>
-              <div onClick={this.navegarASeccion("home")}>
-                <Header
-                  nombreCompleto={
-                    this.state.userInfo.nombre +
-                    " " +
-                    this.state.userInfo.apellido
-                  }
-                />
-              </div>
+              <Header
+                nombreCompleto={
+                  this.state.userInfo.nombre +
+                  " " +
+                  this.state.userInfo.apellido
+                }
+                mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
+                volverAHome={this.volverAHome}
+              />
+
               <div className="content">
                 <p>
-                  Aquí podrás crear tu pastillero y empezar a configurarlo. Una
-                  vez creado podrás agregar más usuarios para gestionarlo.{" "}
-                </p>
-                <p>
-                  Primero necesitas especificar en qué momentos del día harás
-                  las tomas de medicamentos. Puedes especificar hasta 6 y
-                  ponerles el nombre que quieras (por ejemplo: desauyno,
-                  almuerzo y cena; 9AM, 12PM, 6PM y 9PM; mañana, mediodía,
-                  noche; etc.).
+                  Especifica en qué momentos del día harás las tomas de
+                  medicamentos, hasta 6 Puedes ponerles el nombre que quieras.
                 </p>
                 <p>Tomas de medicamentos:</p>
 

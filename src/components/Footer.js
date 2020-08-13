@@ -1,12 +1,12 @@
 import React from "react";
 import Header from "./Header";
-import { guardarEnLS } from "../fetchFunctions";
+import { leerDesdeLS, guardarEnLS } from "../fetchFunctions";
 import variables from "../var/variables.js";
 
 import * as Fitty from "fitty/dist/fitty.min";
 
 class Footer extends React.Component {
-  state = {};
+  state = { pastilleroSeleccionado: null, pastilleros: null };
 
   // Invierte el flag de agrandado para que aparezcan
   // el resto de las opciones
@@ -22,45 +22,84 @@ class Footer extends React.Component {
   // Función ejecutada cuando se selecciona un pastillero nuevo
   // Actualiza el id en LS y ejecuta la función de home que lo actualiza en state
   seleccionPastillero = (event) => {
-    var pastilleroParaLS = { id: event.target.value };
+    var pastilleroSeleccionado = event.target.value;
     guardarEnLS(
       variables.LSPastilleroPorDefecto,
-      JSON.stringify(pastilleroParaLS)
+      JSON.stringify(pastilleroSeleccionado)
     );
-    this.props.procesarOtrosPastilleros();
+    // reinicia la seleccción del combo
     event.target.value = 0;
-    // Cierra el modal
-    this.setState({ agrandado: false });
+    // Procesa el state para actualizar el nombre del usuario y el combo
+    this.procesarPastilleros(pastilleroSeleccionado);
+  };
+
+  procesarPastilleros = () => {
+    // Verifica que ya haya un pastillero por defecto ya guardado
+    var pastilleroActual = JSON.parse(
+      leerDesdeLS(variables.LSPastilleroPorDefecto)
+    );
+    if (!pastilleroActual) {
+      // Si no hay un pastillero actual
+      // guarda el primer pastillero como pastillero por defecto
+      // el LS y en el state
+      pastilleroActual = this.props.pastilleros[0].id;
+      guardarEnLS(
+        variables.LSPastilleroPorDefecto,
+        JSON.stringify(pastilleroActual)
+      );
+    }
+    var pastilleroSeleccionado = {};
+    var otrosPastilleros = [];
+    // Recorre los pastilleros buscando al seleccionado
+    // Necesita eliminarlo de la lista de opciones y obtener el nombre del dueño
+    this.props.pastilleros.forEach((pastillero) => {
+      if (pastillero.id == pastilleroActual) {
+        pastilleroSeleccionado.nombreCompleto =
+          pastillero.paciente_nombre + " " + pastillero.paciente_apellido;
+      } else {
+        // Si no es el seleccionado lo guarda en un array para el state
+        otrosPastilleros.push(pastillero);
+      }
+    });
+    // Guarda los datos en el state y cierra el modal por si está abierto
+    this.setState(
+      {
+        pastilleroSeleccionado: pastilleroSeleccionado,
+        pastilleros: otrosPastilleros,
+        agrandado: false,
+      },
+      () => {
+        Fitty(".fit", { maxSize: 22 });
+      }
+    );
   };
 
   componentDidMount() {
-    Fitty(".fit", { maxSize: 22 });
-    // Establece el flag de agrandado en false
-    this.setState({ agrandado: false });
+    // Procesa los pastilleros recibidos para mostrar el seleccionado
+    // y la lista de otros posibles para cambiar
+    this.procesarPastilleros(this.props.pastilleroActual);
   }
 
   render() {
     return (
       <div className={this.state.agrandado ? "footer agrandado" : "footer"}>
         <div className="titulo-footer">
-          {this.props.pastilleroActual && (
+          {this.state.pastilleroSeleccionado && (
             <span className="fit" onClick={this.toggleTamaño(true)}>
               Pastillero de{" "}
               <span className="negrita">
-                {this.props.pastilleroActual.paciente_apellido +
-                  " " +
-                  this.props.pastilleroActual.paciente_nombre}
+                {this.state.pastilleroSeleccionado.nombreCompleto}
               </span>
             </span>
           )}
-          {!this.props.pastilleroActual && (
+          {!this.state.pastilleroSeleccionado && (
             <span className="fit" onClick={this.toggleTamaño(true)}>
               Sin pastillero. <span className="negrita">Selecciona uno</span>.
             </span>
           )}
         </div>
         <div className="modal-seleccion-pastillero">
-          {this.props.otrosPastilleros.length > 0 && (
+          {this.state.pastilleros && this.state.pastilleros.length > 0 && (
             <div>
               <p>Selecciona otro pastillero:</p>
               <select
@@ -72,7 +111,7 @@ class Footer extends React.Component {
                   {" "}
                   -- Tus pastilleros --{" "}
                 </option>
-                {this.props.otrosPastilleros.map((pastillero) => {
+                {this.state.pastilleros.map((pastillero) => {
                   return (
                     <option value={pastillero.id} key={pastillero.id}>
                       {pastillero.paciente_nombre +
@@ -84,7 +123,7 @@ class Footer extends React.Component {
               </select>
             </div>
           )}
-          {this.props.otrosPastilleros.length < 1 && (
+          {this.state.pastilleros && this.state.pastilleros.length < 1 && (
             <div className="texto-sin-pastilleros-footer">
               <p>
                 No tiene otros pastilleros, presiona{" "}

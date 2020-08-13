@@ -43,60 +43,6 @@ class Home extends React.Component {
     this.props.history.push({ pathname: "/login" });
   };
 
-  // Función que determina el pastillero por defecto y
-  // guarda los otros pastilleros para el select
-  procesarOtrosPastilleros = (userInfo) => {
-    // Verifica que haya recibido UserInfo como parámetro
-    // sino la levanta del state (ocurre cuando Footer ejecuta esta función)
-    if (!userInfo) {
-      userInfo = this.state.userInfo;
-    }
-    // Verifica que ya haya un pastillero por defecto ya guardado
-    var pastilleroActual = JSON.parse(
-      leerDesdeLS(variables.LSPastilleroPorDefecto)
-    );
-    if (pastilleroActual) {
-      // Recorre todos los pastilleros guardando los que no son por defecto
-      // en un array para seleccionar
-      var otrosPastilleros = [];
-      userInfo.pastilleros.forEach((pastillero) => {
-        if (pastillero.id != pastilleroActual.id) {
-          otrosPastilleros.push(pastillero);
-        } else {
-          // Por más que ya está guardado en LS, lo vuelve a guardar
-          // ya que algún proceso puede actualizar el id del pastillero en LS.
-          // Al volver a guardarlo se actualiza el resto de la información.
-          guardarEnLS(
-            variables.LSPastilleroPorDefecto,
-            JSON.stringify(pastillero)
-          );
-          pastilleroActual = pastillero;
-        }
-      });
-      this.setState({
-        otrosPastilleros: otrosPastilleros,
-        userInfo: userInfo,
-        loader: { encendido: false },
-        pastilleroActual: pastilleroActual,
-      });
-    } else {
-      // Guarda el último pastillero como pastillero por defecto
-      // el LS y en el state
-      var pastilleroActual = userInfo.pastilleros.pop();
-      guardarEnLS(
-        variables.LSPastilleroPorDefecto,
-        JSON.stringify(pastilleroActual)
-      );
-      // Guarda el resto del array para la selección
-      this.setState({
-        pastilleroActual: pastilleroActual,
-        otrosPastilleros: userInfo.pastilleros,
-        userInfo: userInfo,
-        loader: { encendido: false },
-      });
-    }
-  };
-
   componentDidMount() {
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (this.props.location.state && this.props.location.state.userInfo) {
@@ -145,8 +91,11 @@ class Home extends React.Component {
 
                 // -------------------------
 
-                // Procesa los pastilleros para determinar por defecto y el resto
-                this.procesarOtrosPastilleros(respuesta_usuario);
+                // Guarda los datos en state y apaga el loadr
+                this.setState({
+                  userInfo: respuesta_usuario,
+                  loader: { encendido: false },
+                });
               }
             });
           } else {
@@ -245,10 +194,8 @@ class Home extends React.Component {
                 </div>
               </div>
               <Footer
-                pastilleroActual={this.state.pastilleroActual}
                 navegarANuevoPastillero={this.navegarANuevoPastillero}
-                otrosPastilleros={this.state.otrosPastilleros}
-                procesarOtrosPastilleros={this.procesarOtrosPastilleros}
+                pastilleros={this.state.userInfo.pastilleros}
               />
             </>
           )}

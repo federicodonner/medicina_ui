@@ -1,6 +1,13 @@
 import React from "react";
 import Header from "./Header";
-import { verifyLogin, fetchDosis } from "../fetchFunctions";
+import Footer from "./Footer";
+import {
+  verifyLogin,
+  leerDesdeLS,
+  fetchDosis,
+  getData,
+} from "../fetchFunctions";
+import variables from "../var/variables.js";
 
 class VerDosis extends React.Component {
   state: {
@@ -16,41 +23,89 @@ class VerDosis extends React.Component {
     });
   };
 
+  volverAHome = () => {
+    this.props.history.push({
+      pathname: "home",
+    });
+  };
+
   componentDidMount() {
-    this.setState({ loader: true });
-    // Verifica si el usuario ya seleccionó el pastillero
-    const user_info = verifyLogin();
-    if (user_info && user_info.pastillero) {
-      // Si la tiene, la guarda en el estado
-      this.setState({ user_info }, function () {
-        fetchDosis(user_info.pastillero)
-          .then((results) => {
-            return results.json();
-          })
-          .then((response) => {
-            this.setState({ pastillero: response });
-            this.setState({ loader: false });
-          });
-      });
+    var userInfo = null;
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (this.props.location.state && this.props.location.state.userInfo) {
+      // Si se los pasó, los gaurda en state
+      userInfo = this.props.location.state.userInfo;
     } else {
-      // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-      this.props.history.push({
-        pathname: "/seleccionarPastillero",
+      // Sino, los va a buscar al servidor
+      // Va a buscar los datos del usuario
+      getData("usuario")
+        .then((response_usuario) => {
+          if (response_usuario.status == 200) {
+            response_usuario.json().then((respuesta_usuario) => {
+              // Guarda la información del usuario
+              userInfo = respuesta_usuario;
+            });
+          } else {
+            // Si el request da un error de login, sale
+            response_usuario.json().then((respuesta_usuario) => {
+              this.signOut();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+
+    // Verifica que haya un pastillero seleccionado en LS
+    var pastilleroSeleccionado = JSON.parse(
+      leerDesdeLS(variables.LSPastilleroPorDefecto)
+    );
+    if (pastilleroSeleccionado) {
+      // Si hay un pastillero seleccionado, carga los datos del mismo
+      getData("pastillero/" + pastilleroSeleccionado).then((respuesta) => {
+        respuesta.json().then((pastillero) => {
+          this.setState({
+            pastillero: pastillero,
+            loader: false,
+            userInfo: userInfo,
+          });
+        });
       });
     }
+  }
+
+  // prende el loader antes de cargar el componente
+  constructor(props) {
+    super(props);
+    this.state = {
+      loader: {
+        encendido: true,
+        texto: "Cargando datos del pastillero.",
+      },
+    };
   }
 
   render() {
     return (
       <div className="app-view cover">
         <div className="scrollable">
-          {this.state && this.state.user_info && <Header />}
-          <div className="content">
-            {this.state && this.state.loader && (
+          {this.state && this.state.loader.encendido && (
+            <div className="loader-container">
               <p>
                 <img className="loader" src="/images/loader.svg" />
               </p>
-            )}
+              <p className={"negrita"}>{this.state.loader.texto}</p>
+            </div>
+          )}
+          {this.state && this.state.userInfo && (
+            <Header
+              mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
+              volverAHome={this.volverAHome}
+              logoChico={true}
+            />
+          )}
+          <div className="content">
             {this.state && !this.state.loader && (
               <>
                 {this.state && this.state.pastillero && (
@@ -114,6 +169,13 @@ class VerDosis extends React.Component {
               </>
             )}
           </div>
+          {this.state && this.state.userInfo && (
+            <Footer
+              navegarANuevoPastillero={this.navegarANuevoPastillero}
+              pastilleros={this.state.userInfo.pastilleros}
+              navegarAHome={this.volverAHome}
+            />
+          )}
         </div>
       </div>
     );

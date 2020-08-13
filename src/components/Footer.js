@@ -16,7 +16,13 @@ class Footer extends React.Component {
   };
 
   navegarANuevoPastillero = () => (event) => {
+    event.preventDefault();
     this.props.navegarANuevoPastillero();
+  };
+
+  navegarAHome = () => (event) => {
+    event.preventDefault();
+    this.props.navegarAHome();
   };
 
   // Función ejecutada cuando se selecciona un pastillero nuevo
@@ -99,41 +105,57 @@ class Footer extends React.Component {
           )}
         </div>
         <div className="modal-seleccion-pastillero">
-          {this.state.pastilleros && this.state.pastilleros.length > 0 && (
-            <div>
-              <p>Selecciona otro pastillero:</p>
-              <select
-                defaultValue="0"
-                className="seleccion-pastillero"
-                onChange={this.seleccionPastillero}
-              >
-                <option disabled value="0">
-                  {" "}
-                  -- Tus pastilleros --{" "}
-                </option>
-                {this.state.pastilleros.map((pastillero) => {
-                  return (
-                    <option value={pastillero.id} key={pastillero.id}>
-                      {pastillero.paciente_nombre +
-                        " " +
-                        pastillero.paciente_apellido}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          )}
-          {this.state.pastilleros && this.state.pastilleros.length < 1 && (
+          {this.props.cambioPastilleroHabilitado &&
+            this.state.pastilleros &&
+            this.state.pastilleros.length > 0 && (
+              <div>
+                <p>Selecciona otro pastillero:</p>
+                <select
+                  defaultValue="0"
+                  className="seleccion-pastillero"
+                  onChange={this.seleccionPastillero}
+                >
+                  <option disabled value="0">
+                    {" "}
+                    -- Tus pastilleros --{" "}
+                  </option>
+                  {this.state.pastilleros.map((pastillero) => {
+                    return (
+                      <option value={pastillero.id} key={pastillero.id}>
+                        {pastillero.paciente_nombre +
+                          " " +
+                          pastillero.paciente_apellido}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            )}
+          {this.props.cambioPastilleroHabilitado &&
+            this.state.pastilleros &&
+            this.state.pastilleros.length < 1 && (
+              <div className="texto-sin-pastilleros-footer">
+                <p>
+                  No tiene otros pastilleros, presiona{" "}
+                  <span
+                    className="negrita"
+                    onClick={this.navegarANuevoPastillero()}
+                  >
+                    aquí
+                  </span>{" "}
+                  para crear uno nuevo.
+                </p>
+              </div>
+            )}
+          {!this.props.cambioPastilleroHabilitado && (
             <div className="texto-sin-pastilleros-footer">
               <p>
-                No tiene otros pastilleros, presiona{" "}
-                <span
-                  className="negrita"
-                  onClick={this.navegarANuevoPastillero()}
-                >
-                  aquí
-                </span>{" "}
-                para crear uno nuevo.
+                No puedes cambiar de pastillero desde sección. Para hacerlo
+                debes volver a la{" "}
+                <span className="negrita" onClick={this.navegarAHome()}>
+                  pantalla principal
+                </span>
+                .
               </p>
             </div>
           )}

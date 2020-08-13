@@ -2,8 +2,8 @@ import React from "react";
 
 const Header = (props) => {
   return (
-    <div className={"header"}>
-      <div className={"logo"} />
+    <div className={props.logoChico ? "header chico" : "header"}>
+      <div className={props.logoChico ? "logo chico" : "logo"} />
       {props.nombreCompleto && (
         <div className={"saludo"}>Hola {props.nombreCompleto}</div>
       )}

@@ -21,6 +21,10 @@ body {
   margin-bottom: 30px;
 }
 
+.header.chico {
+  margin-bottom: 10px;
+}
+
 .header-boton-volver {
   position: absolute;
   top: 17px;
@@ -548,6 +552,10 @@ body {
     margin-bottom: 1vh;
   }
 
+  .logo.chico {
+    max-height: 6vh;
+  }
+
   .logo:after {
     content: "";
     display: block;
@@ -580,6 +588,8 @@ body {
     margin-bottom: 100px;
     margin-left: 1vw;
     margin-right: 1vw;
+    overflow-y: auto;
+    height: 75vh;
   }
 
   .content p {

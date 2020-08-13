@@ -158,7 +158,9 @@ class Home extends React.Component {
                 <div className="nav-buttons home">
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("verDosis", null)}
+                    onClick={this.navigateToSection("verDosis", {
+                      userInfo: this.state.userInfo,
+                    })}
                   >
                     <div className="nav-icon nav-icon-ver-dosis"></div>
                     <span className="single-line">ver</span>
@@ -196,6 +198,7 @@ class Home extends React.Component {
               <Footer
                 navegarANuevoPastillero={this.navegarANuevoPastillero}
                 pastilleros={this.state.userInfo.pastilleros}
+                cambioPastilleroHabilitado={true}
               />
             </>
           )}

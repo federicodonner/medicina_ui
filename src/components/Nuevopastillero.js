@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { getData, postData, borrarDesdeLS } from "../fetchFunctions";
+import variables from "../var/variables.js";
 
 class NuevoPastillero extends React.Component {
   state: {};
@@ -91,7 +92,7 @@ class NuevoPastillero extends React.Component {
     if (event) {
       event.preventDefault();
     }
-    borrarDesdeLS("midosis_logintoken");
+    borrarDesdeLS(variables.LSLoginToken);
     this.props.history.push({ pathname: "/login" });
   };
 

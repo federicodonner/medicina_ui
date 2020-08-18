@@ -294,7 +294,7 @@ class AgregarDroga extends React.Component {
           <div className="content">
             {this.state && !this.state.loader.encendido && (
               <>
-                <h1>Agrega droga a tus dosis</h1>
+                <p>Agrega droga a tus dosis</p>
                 <p>
                   Si quieres agregar una dosis de una droga ya ingresada,
                   selecciónala de la lista.

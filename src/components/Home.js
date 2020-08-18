@@ -178,7 +178,9 @@ class Home extends React.Component {
                   </div>
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("ingresarCompra", null)}
+                    onClick={this.navigateToSection("ingresarCompra", {
+                      userInfo: this.state.userInfo,
+                    })}
                   >
                     <div className="nav-icon nav-icon-ingresar-compra"></div>
                     <span className="single-line">ingresar</span>

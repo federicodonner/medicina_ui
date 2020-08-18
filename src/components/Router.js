@@ -5,7 +5,6 @@ import NotFound from "./NotFound";
 import SeleccionarPastillero from "./SeleccionarPastillero";
 import VerDosis from "./VerDosis";
 import ImprimirPastillero from "./ImprimirPastillero";
-import EditarDosis from "./EditarDosis";
 import AgregarDroga from "./AgregarDroga";
 import EditarDroga from "./EditarDroga";
 import IngresarCompra from "./IngresarCompra";
@@ -28,7 +27,6 @@ class Router extends React.Component {
           />
           <Route path="/verDosis" component={VerDosis} />
           <Route path="/imprimirPastillero" component={ImprimirPastillero} />
-          <Route path="/editarDosis" component={EditarDosis} />
           <Route path="/agregarDroga" component={AgregarDroga} />
           <Route path="/editarDroga" component={EditarDroga} />
           <Route path="/ingresarCompra" component={IngresarCompra} />

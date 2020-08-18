@@ -1,7 +1,16 @@
 import React from "react";
 import Header from "./Header";
 import Select from "react-select";
-import { verifyLogin, fetchDroga, addCompra } from "../fetchFunctions";
+import Footer from "./Footer";
+import {
+  getData,
+  postData,
+  borrarDesdeLS,
+  verifyLogin,
+  fetchDroga,
+  addCompra,
+} from "../fetchFunctions";
+import variables from "../var/variables.js";
 
 class IngresarCompra extends React.Component {
   state: {
@@ -17,7 +26,13 @@ class IngresarCompra extends React.Component {
   comprimidoRef = React.createRef();
   cantidadRef = React.createRef();
 
-  procesarDrogas = (drogas, pastillero) => {
+  volverAHome = () => {
+    this.props.history.push({
+      pathname: "home",
+    });
+  };
+
+  procesarDrogas = (drogas) => {
     const nombreDrogas = [];
     const drogaParaGuardar = {};
     // Crea un array con los detalles de las drogas ingresadas para el pastillero
@@ -26,7 +41,9 @@ class IngresarCompra extends React.Component {
       drogaParaGuardar.value = droga.id;
       nombreDrogas.push(Object.assign({}, drogaParaGuardar));
     });
-    this.setState({ drogasParaMostrar: nombreDrogas });
+    this.setState({ drogasParaMostrar: nombreDrogas }, () => {
+      this.apagarLoader();
+    });
   };
 
   // Actualiza la droga seleccionada en state
@@ -52,7 +69,9 @@ class IngresarCompra extends React.Component {
     }
 
     // Si todos los datos están correctos, se enciende el loader
-    this.setState({ loader: true, mensajeLoader: "Cargando tus compra..." });
+    this.setState({
+      loader: { encendido: true, texto: "Cargando tus compra..." },
+    });
 
     // Genera un objeto vacío con los datos para enviar
     const dataEnviar = {};
@@ -61,7 +80,7 @@ class IngresarCompra extends React.Component {
     dataEnviar.droga = this.state.drogaSeleccionada.value;
 
     // Se agrega la compra a través del endpoint
-    addCompra(dataEnviar)
+    postData('compra',dataEnviar)
       .then((results) => {
         return results.json();
       })
@@ -74,45 +93,101 @@ class IngresarCompra extends React.Component {
       });
   };
 
-  componentDidMount() {
-    this.setState({ loader: true });
-    // Verifica si el usuario ya seleccionó el pastillero
-    const user_info = verifyLogin();
-    if (user_info && user_info.pastillero) {
-      //   // Si la tiene, la guarda en el estado
-      this.setState({ user_info });
-
-      fetchDroga(user_info.pastillero)
-        .then((results) => {
-          return results.json();
-        })
-        .then((response) => {
-          this.procesarDrogas(response.drogas, this.state.pastillero);
-          this.setState({ loader: false });
-        });
-    } else {
-      // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-      this.props.history.push({
-        pathname: "/seleccionarPastillero",
+  // Función que apaga el loader cuando verifica que
+  // todos los componentes terminaron de cargar su parte
+  // Cada uno debería invocarlo al terminar
+  apagarLoader = () => {
+    // Verifica que tenga los datos del pastillero
+    // Y del usuario para apagar el loader
+    if (this.state.userInfo && this.state.drogasParaMostrar) {
+      this.setState({
+        loader: { encendido: false },
       });
     }
+  };
+
+  // Recibe el pastillero seleccionado del Footer y lo guarda en state
+  establecerPastillero = (pastilleroId) => {
+    // Una vez que define cuál es el pastillero seleccionado
+    // busca los detalles en la API
+    getData("droga?pastillero=" + pastilleroId)
+      .then((respuesta) => {
+        respuesta.json().then((drogas) => {
+          this.procesarDrogas(drogas.drogas);
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  componentDidMount() {
+    var userInfo = null;
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (this.props.location.state && this.props.location.state.userInfo) {
+      // Si se los pasó, los gaurda en state
+      this.setState({ userInfo: this.props.location.state.userInfo }, () => {
+        this.apagarLoader();
+      });
+    } else {
+      // Sino, los va a buscar al servidor
+      // Va a buscar los datos del usuario
+      getData("usuario")
+        .then((response_usuario) => {
+          if (response_usuario.status == 200) {
+            response_usuario.json().then((respuesta_usuario) => {
+              // Guarda la información del usuario
+              this.setState({ userInfo: respuesta_usuario }, () => {
+                this.apagarLoader();
+              });
+            });
+          } else {
+            // Si el request da un error de login, sale
+            response_usuario.json().then((respuesta_usuario) => {
+              this.signOut();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }
+
+  // prende el loader antes de cargar el componente
+  constructor(props) {
+    super(props);
+    this.state = {
+      loader: {
+        encendido: true,
+        texto: "Cargando datos del pastillero.",
+      },
+    };
   }
 
   render() {
     return (
       <div className="app-view cover">
         <div className="scrollable">
-          {this.state && this.state.user_info && <Header />}
-          <div className="content">
-            {this.state && this.state.loader && (
+          {this.state && this.state.loader.encendido && (
+            <div className="loader-container">
               <p>
                 <img className="loader" src="/images/loader.svg" />
-                <span className="single-line">{this.state.mensajeLoader}</span>
               </p>
-            )}
-            {this.state && !this.state.loader && (
+              <p className={"negrita"}>{this.state.loader.texto}</p>
+            </div>
+          )}
+          {this.state && this.state.userInfo && (
+            <Header
+              mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
+              volver={this.volverAHome}
+              logoChico={true}
+            />
+          )}
+          <div className="content">
+            {this.state && !this.state.loader.encendido && (
               <>
-                <h1>Agrega una compra a tu stock</h1>
+                <p>Agrega una compra a tu stock</p>
                 <p>
                   Selecciona una droga de la lista. Sólo se muestran las drogas
                   que son parte de tus dosis diarias.
@@ -140,7 +215,7 @@ class IngresarCompra extends React.Component {
                 />
                 <div className="nav-buttons" onClick={this.ingresarCompra}>
                   <div className="nav-button">
-                    <div className="nav-icon nav-icon-check"></div>
+                    <div className="nav-icon chico nav-icon-check"></div>
                     <span className="single-line">ingresar</span>
                     <span>compra</span>
                   </div>
@@ -148,6 +223,13 @@ class IngresarCompra extends React.Component {
               </>
             )}
           </div>
+          {this.state && this.state.userInfo && (
+            <Footer
+              pastilleros={this.state.userInfo.pastilleros}
+              navegarAHome={this.volverAHome}
+              establecerPastillero={this.establecerPastillero}
+            />
+          )}
         </div>
       </div>
     );

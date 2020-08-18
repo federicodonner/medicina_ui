@@ -4,10 +4,6 @@ import Footer from "./Footer";
 import Select from "react-select";
 import variables from "../var/variables.js";
 import {
-  verifyLogin,
-  fetchDosis,
-  editDrogaxdosis,
-  deleteDrogaxdosis,
   getData,
   postData,
   putData,

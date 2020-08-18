@@ -140,7 +140,7 @@ class VerStock extends React.Component {
 
                           {droga.dias_disponible < 0 && (
                             <span className="dias-stock gris">
-                              - no ingresada
+                              - sin dosis
                             </span>
                           )}
 

@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
-import { leerDesdeLS, guardarEnLS } from "../fetchFunctions";
+import Select from "react-select";
+import { leerDesdeLS, guardarEnLS, getData } from "../fetchFunctions";
 import variables from "../var/variables.js";
 
 import * as Fitty from "fitty/dist/fitty.min";
@@ -27,16 +28,15 @@ class Footer extends React.Component {
 
   // Función ejecutada cuando se selecciona un pastillero nuevo
   // Actualiza el id en LS y ejecuta la función de home que lo actualiza en state
-  seleccionPastillero = (event) => {
-    var pastilleroSeleccionado = event.target.value;
+  seleccionPastillero = (pastilleroSeleccionado) => {
     guardarEnLS(
       variables.LSPastilleroPorDefecto,
-      JSON.stringify(pastilleroSeleccionado)
+      JSON.stringify(pastilleroSeleccionado.id)
     );
     // reinicia la seleccción del combo
-    event.target.value = 0;
+    // event.target.value = 0;
     // Procesa el state para actualizar el nombre del usuario y el combo
-    this.procesarPastilleros(pastilleroSeleccionado);
+    this.procesarPastilleros();
   };
 
   procesarPastilleros = () => {
@@ -54,11 +54,22 @@ class Footer extends React.Component {
         JSON.stringify(pastilleroActual)
       );
     }
+
+    // Si el Componente padre le pide que espeficique el pastillero,
+    // Va a buscar los detalles
+    if (this.props.establecerPastillero) {
+      this.props.establecerPastillero(pastilleroActual);
+    }
+
     var pastilleroSeleccionado = {};
     var otrosPastilleros = [];
     // Recorre los pastilleros buscando al seleccionado
     // Necesita eliminarlo de la lista de opciones y obtener el nombre del dueño
     this.props.pastilleros.forEach((pastillero) => {
+      // Procesa cada pastillero para el select
+      pastillero.label =
+        pastillero.paciente_nombre + " " + pastillero.paciente_apellido;
+      pastillero.value = pastillero.id;
       if (pastillero.id == pastilleroActual) {
         pastilleroSeleccionado.nombreCompleto =
           pastillero.paciente_nombre + " " + pastillero.paciente_apellido;
@@ -83,7 +94,7 @@ class Footer extends React.Component {
   componentDidMount() {
     // Procesa los pastilleros recibidos para mostrar el seleccionado
     // y la lista de otros posibles para cambiar
-    this.procesarPastilleros(this.props.pastilleroActual);
+    this.procesarPastilleros();
   }
 
   render() {
@@ -109,26 +120,12 @@ class Footer extends React.Component {
             this.state.pastilleros &&
             this.state.pastilleros.length > 0 && (
               <div>
-                <p>Selecciona otro pastillero:</p>
-                <select
-                  defaultValue="0"
-                  className="seleccion-pastillero"
+                <Select
+                  className="pretty-input"
                   onChange={this.seleccionPastillero}
-                >
-                  <option disabled value="0">
-                    {" "}
-                    -- Tus pastilleros --{" "}
-                  </option>
-                  {this.state.pastilleros.map((pastillero) => {
-                    return (
-                      <option value={pastillero.id} key={pastillero.id}>
-                        {pastillero.paciente_nombre +
-                          " " +
-                          pastillero.paciente_apellido}
-                      </option>
-                    );
-                  })}
-                </select>
+                  options={this.state.pastilleros}
+                  placeholder="Selecciona otro pastillero"
+                />
               </div>
             )}
           {this.props.cambioPastilleroHabilitado &&
@@ -150,7 +147,7 @@ class Footer extends React.Component {
           {!this.props.cambioPastilleroHabilitado && (
             <div className="texto-sin-pastilleros-footer">
               <p>
-                No puedes cambiar de pastillero desde sección. Para hacerlo
+                No puedes cambiar de pastillero desde esta sección. Para hacerlo
                 debes volver a la{" "}
                 <span className="negrita" onClick={this.navegarAHome()}>
                   pantalla principal

@@ -166,19 +166,16 @@ class NuevoPastillero extends React.Component {
           {this.state && !this.state.loader.encendido && (
             <>
               <Header
-                nombreCompleto={
-                  this.state.userInfo.nombre +
-                  " " +
-                  this.state.userInfo.apellido
-                }
                 mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
-                volverAHome={this.volverAHome}
+                volver={this.volverAHome}
+                logoChico={true}
               />
 
               <div className="content">
                 <p>
                   Especifica en qué momentos del día harás las tomas de
-                  medicamentos, hasta 6 Puedes ponerles el nombre que quieras.
+                  medicamentos de tu nuevo pastillero. Tienes hasta 6. Puedes
+                  ponerles el nombre que quieras.
                 </p>
                 <p>Tomas de medicamentos:</p>
 

@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 import Select from "react-select";
 import {
   verifyLogin,
@@ -7,7 +8,12 @@ import {
   fetchDroga,
   addDroga,
   addDrogaxdosis,
+  borrarDesdeLS,
+  leerDesdeLS,
+  getData,
+  postData,
 } from "../fetchFunctions";
+import variables from "../var/variables.js";
 
 class AgregarDroga extends React.Component {
   state: {
@@ -31,6 +37,24 @@ class AgregarDroga extends React.Component {
     this.props.history.push({
       pathname: section,
     });
+  };
+
+  volverAHome = () => {
+    this.props.history.push({
+      pathname: "home",
+    });
+  };
+
+  signOut = (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    borrarDesdeLS(variables.LSLoginToken);
+    this.props.history.push({ pathname: "/login" });
+  };
+
+  volverAVerDosis = () => {
+    this.props.history.push({ pathname: "/verdosis" });
   };
 
   procesarDrogas = (drogas, pastillero) => {
@@ -78,7 +102,9 @@ class AgregarDroga extends React.Component {
     }
 
     // Si todos los datos están correctos, se enciende el loader
-    this.setState({ loader: true, mensajeLoader: "Cargando tus datos..." });
+    this.setState({
+      loader: { encendido: true, texto: "Cargando el medicamento" },
+    });
 
     // Genera un objeto vacío con los datos para enviar
     const dataEnviar = {};
@@ -105,24 +131,26 @@ class AgregarDroga extends React.Component {
           pastillero: this.state.pastillero.id,
         };
         // Se agrega la droga a través del endpoint
-        addDroga(nuevaDroga).then(
-          function () {
-            fetchDroga(this.state.pastillero.id)
-              .then((results) => {
-                return results.json();
-              })
-              .then((response) => {
-                // Si la carga fue correcta, se hace una consulta de las drogas,
-                // se selecciona la nueva y se carga en el objeto a enviar
-                response.drogas.forEach((droga) => {
-                  if (droga.nombre == nuevaDroga.nombre) {
-                    // Resuelve la promesa pasando el id de la droga creada
-                    resolve(droga.id);
-                  }
+        postData("droga", nuevaDroga)
+          .then(() => {
+            getData("droga?pastillero=" + this.state.pastillero.id).then(
+              (results) => {
+                results.json().then((resultsDetalles) => {
+                  // Si la carga fue correcta, se hace una consulta de las drogas,
+                  // se selecciona la nueva y se carga en el objeto a enviar
+                  resultsDetalles.drogas.forEach((droga) => {
+                    if (droga.nombre == nuevaDroga.nombre) {
+                      // Resuelve la promesa pasando el id de la droga creada
+                      resolve(droga.id);
+                    }
+                  });
                 });
-              });
-          }.bind(this)
-        );
+              }
+            );
+          })
+          .catch((e) => {
+            console.log(e);
+          });
       } else {
         // Resuelve la promesa pasando el id de la droga seleccionada
         resolve(this.state.drogaSeleccionada.value);
@@ -131,77 +159,150 @@ class AgregarDroga extends React.Component {
 
     // Función llamada luego de resolver la promesa de creación de droga
     // recibe el id de la droga creada o seleccionada
-    promesaCrearDroga.then(
-      function (droga_id) {
-        dataEnviar.droga_id = droga_id;
-        // Se agrega la dosis a través del endpoint
-        addDrogaxdosis(dataEnviar)
-          .then((results) => {
-            return results.json();
-          })
-          .then((response) => {
-            alert(response.detail);
-            fetchDroga(this.state.pastillero.id)
-              .then((results) => {
-                return results.json();
-              })
-              .then((response) => {
-                this.procesarDrogas(response.drogas, this.state.pastillero);
-                this.setState({
-                  loader: false,
-                  drogaSeleccionada: null,
-                  horarioSeleccionado: null,
-                });
-              });
+    promesaCrearDroga.then((droga_id) => {
+      dataEnviar.droga_id = droga_id;
+      // Se agrega la dosis a través del endpoint
+      postData("drogaxdosis", dataEnviar)
+        .then((response) => {
+          if (response.status == 201) {
+            response.json().then((responseDetalles) => {
+              alert(responseDetalles.detail);
+              getData("droga?pastillero=" + this.state.pastillero.id).then(
+                (responseDrogas) => {
+                  responseDrogas.json().then((responseDrogasDetalles) => {
+                    this.procesarDrogas(
+                      responseDrogasDetalles.drogas,
+                      this.state.pastillero
+                    );
+                    this.setState({
+                      loader: { encendido: false },
+                      drogaSeleccionada: null,
+                      horarioSeleccionado: null,
+                    });
+                  });
+                }
+              );
+            });
+          } else {
+            // Si el request da un error de login, sale
+            response.json().then((responseDetalles) => {
+              alert(responseDetalles.detail);
+              this.signOut();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    });
+  };
+
+  // Función que apaga el loader cuando verifica que
+  // todos los componentes terminaron de cargar su parte
+  // Cada uno debería invocarlo al terminar
+  apagarLoader = () => {
+    // Verifica que tenga los datos del pastillero
+    // Y del usuario para apagar el loader
+    if (this.state.userInfo && this.state.pastillero && this.state.drogas) {
+      this.procesarDrogas(this.state.drogas, this.state.pastillero);
+      this.setState({
+        loader: { encendido: false },
+      });
+    }
+  };
+
+  // Recibe el pastillero seleccionado del Footer y lo guarda en state
+  establecerPastillero = (pastilleroId) => {
+    // Una vez que define cuál es el pastillero seleccionado
+    // busca los detalles en la API
+    getData("pastillero/" + pastilleroId)
+      .then((respuesta) => {
+        respuesta.json().then((pastillero) => {
+          this.setState({ pastillero }, () => {
+            this.apagarLoader();
           });
-      }.bind(this)
-    );
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+
+    // Una vez que define cuál es el pastillero seleccionado
+    // busca las drogas correspondientes en la API
+    getData("droga?pastillero=" + pastilleroId)
+      .then((respuesta) => {
+        respuesta.json().then((drogas) => {
+          this.setState({ drogas: drogas.drogas }, () => {
+            this.apagarLoader();
+          });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   componentDidMount() {
-    this.setState({ loader: true });
-    // Verifica si el usuario ya seleccionó el pastillero
-    const user_info = verifyLogin();
-    if (user_info && user_info.pastillero) {
-      // Si la tiene, la guarda en el estado
-      this.setState({ user_info }, function () {
-        fetchDosis(user_info.pastillero)
-          .then((results) => {
-            return results.json();
-          })
-          .then((response) => {
-            this.setState({ pastillero: response });
-            fetchDroga(user_info.pastillero)
-              .then((results) => {
-                return results.json();
-              })
-              .then((response) => {
-                this.procesarDrogas(response.drogas, this.state.pastillero);
-                this.setState({ loader: false });
-              });
-          });
-      });
+    var userInfo = null;
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (this.props.location.state && this.props.location.state.userInfo) {
+      // Si se los pasó, los gaurda en state
+      this.setState({ userInfo: this.props.location.state.userInfo });
     } else {
-      // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-      this.props.history.push({
-        pathname: "/seleccionarPastillero",
-      });
+      // Sino, los va a buscar al servidor
+      // Va a buscar los datos del usuario
+      getData("usuario")
+        .then((response_usuario) => {
+          if (response_usuario.status == 200) {
+            response_usuario.json().then((respuesta_usuario) => {
+              // Guarda la información del usuario
+              this.setState({ userInfo: respuesta_usuario });
+            });
+          } else {
+            // Si el request da un error de login, sale
+            response_usuario.json().then((respuesta_usuario) => {
+              this.signOut();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
+  }
+
+  // prende el loader antes de cargar el componente
+  constructor(props) {
+    super(props);
+    this.state = {
+      loader: {
+        encendido: true,
+        texto: "Cargando datos del pastillero.",
+      },
+    };
   }
 
   render() {
     return (
       <div className="app-view cover">
         <div className="scrollable">
-          {this.state && this.state.user_info && <Header />}
-          <div className="content">
-            {this.state && this.state.loader && (
+          {this.state && this.state.loader.encendido && (
+            <div className="loader-container">
               <p>
                 <img className="loader" src="/images/loader.svg" />
-                <span className="single-line">{this.state.mensajeLoader}</span>
               </p>
-            )}
-            {this.state && !this.state.loader && (
+              <p className={"negrita"}>{this.state.loader.texto}</p>
+            </div>
+          )}
+          {this.state && this.state.userInfo && (
+            <Header
+              mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
+              volver={this.volverAVerDosis}
+              logoChico={true}
+            />
+          )}
+          <div className="content">
+            {this.state && !this.state.loader.encendido && (
               <>
                 <h1>Agrega droga a tus dosis</h1>
                 <p>
@@ -241,7 +342,10 @@ class AgregarDroga extends React.Component {
                   ref={this.concentracionRef}
                   className="pretty-input pretty-text"
                 />
-                <p> Si quieres puedes escribir notas para la aplicación.</p>
+                <p>
+                  {" "}
+                  Si quieres puedes escribir notas para la toma del medicamento.
+                </p>
                 <input
                   name="notas"
                   type="text"
@@ -259,6 +363,13 @@ class AgregarDroga extends React.Component {
               </>
             )}
           </div>
+          {this.state && this.state.userInfo && (
+            <Footer
+              pastilleros={this.state.userInfo.pastilleros}
+              navegarAHome={this.volverAHome}
+              establecerPastillero={this.establecerPastillero}
+            />
+          )}
         </div>
       </div>
     );

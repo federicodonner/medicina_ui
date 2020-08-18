@@ -1,12 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import {
-  verifyLogin,
-  leerDesdeLS,
-  fetchDosis,
-  getData,
-} from "../fetchFunctions";
+import { borrarDesdeLS, getData } from "../fetchFunctions";
 import variables from "../var/variables.js";
 
 class VerDosis extends React.Component {
@@ -16,11 +11,14 @@ class VerDosis extends React.Component {
     pastillero: {},
   };
 
-  navigateToSection = (section) => (event) => {
+  navigateToSection = (section, data) => (event) => {
     event.preventDefault();
-    this.props.history.push({
-      pathname: section,
-    });
+    this.props.history.push(
+      {
+        pathname: section,
+      },
+      data
+    );
   };
 
   volverAHome = () => {
@@ -29,12 +27,52 @@ class VerDosis extends React.Component {
     });
   };
 
+  signOut = (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    borrarDesdeLS(variables.LSLoginToken);
+    this.props.history.push({ pathname: "login" });
+  };
+
+  // Función que apaga el loader cuando verifica que
+  // todos los componentes terminaron de cargar su parte
+  // Cada uno debería invocarlo al terminar
+  apagarLoader = () => {
+    // Verifica que tenga los datos del pastillero
+    // Y del usuario para apagar el loader
+    if (this.state.userInfo && this.state.pastillero) {
+      this.setState({
+        loader: { encendido: false },
+      });
+    }
+  };
+
+  // Recibe el pastillero seleccionado del Footer y lo guarda en state
+  establecerPastillero = (pastilleroId) => {
+    // Una vez que define cuál es el pastillero seleccionado
+    // busca los detalles en la API
+    getData("pastillero/" + pastilleroId)
+      .then((respuesta) => {
+        respuesta.json().then((pastillero) => {
+          this.setState({ pastillero }, () => {
+            this.apagarLoader();
+          });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   componentDidMount() {
     var userInfo = null;
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (this.props.location.state && this.props.location.state.userInfo) {
       // Si se los pasó, los gaurda en state
-      userInfo = this.props.location.state.userInfo;
+      this.setState({ userInfo: this.props.location.state.userInfo }, () => {
+        this.apagarLoader();
+      });
     } else {
       // Sino, los va a buscar al servidor
       // Va a buscar los datos del usuario
@@ -43,7 +81,9 @@ class VerDosis extends React.Component {
           if (response_usuario.status == 200) {
             response_usuario.json().then((respuesta_usuario) => {
               // Guarda la información del usuario
-              userInfo = respuesta_usuario;
+              this.setState({ userInfo: respuesta_usuario }, () => {
+                this.apagarLoader();
+              });
             });
           } else {
             // Si el request da un error de login, sale
@@ -55,23 +95,6 @@ class VerDosis extends React.Component {
         .catch((e) => {
           console.log(e);
         });
-    }
-
-    // Verifica que haya un pastillero seleccionado en LS
-    var pastilleroSeleccionado = JSON.parse(
-      leerDesdeLS(variables.LSPastilleroPorDefecto)
-    );
-    if (pastilleroSeleccionado) {
-      // Si hay un pastillero seleccionado, carga los datos del mismo
-      getData("pastillero/" + pastilleroSeleccionado).then((respuesta) => {
-        respuesta.json().then((pastillero) => {
-          this.setState({
-            pastillero: pastillero,
-            loader: false,
-            userInfo: userInfo,
-          });
-        });
-      });
     }
   }
 
@@ -101,12 +124,12 @@ class VerDosis extends React.Component {
           {this.state && this.state.userInfo && (
             <Header
               mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
-              volverAHome={this.volverAHome}
+              volver={this.volverAHome}
               logoChico={true}
             />
           )}
           <div className="content">
-            {this.state && !this.state.loader && (
+            {this.state && !this.state.loader.encendido && (
               <>
                 {this.state && this.state.pastillero && (
                   <ul className="dosis-horario">
@@ -136,7 +159,7 @@ class VerDosis extends React.Component {
                 <div className="nav-buttons">
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("descontarStock")}
+                    onClick={this.navigateToSection("descontarStock", null)}
                   >
                     <div className="nav-icon nav-icon-ver-dosis"></div>
                     <span className="single-line">pastillero</span>
@@ -144,14 +167,16 @@ class VerDosis extends React.Component {
                   </div>
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("imprimirPastillero")}
+                    onClick={this.navigateToSection("imprimirPastillero", null)}
                   >
                     <div className="nav-icon nav-icon-imprimir"></div>
                     <span className="single-line">imprimir</span>
                   </div>
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("agregarDroga")}
+                    onClick={this.navigateToSection("agregarDroga", {
+                      userInfo: this.state.userInfo,
+                    })}
                   >
                     <div className="nav-icon nav-icon-agregar-dosis"></div>
                     <span className="single-line">agregar</span>
@@ -159,7 +184,7 @@ class VerDosis extends React.Component {
                   </div>
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("editarDroga")}
+                    onClick={this.navigateToSection("editarDroga", null)}
                   >
                     <div className="nav-icon nav-icon-editar-dosis-in"></div>
                     <span className="single-line">editar</span>
@@ -171,9 +196,9 @@ class VerDosis extends React.Component {
           </div>
           {this.state && this.state.userInfo && (
             <Footer
-              navegarANuevoPastillero={this.navegarANuevoPastillero}
               pastilleros={this.state.userInfo.pastilleros}
               navegarAHome={this.volverAHome}
+              establecerPastillero={this.establecerPastillero}
             />
           )}
         </div>

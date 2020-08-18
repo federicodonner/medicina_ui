@@ -3,7 +3,7 @@ import variables from "./var/variables.js";
 // Devuelve el token de local storage para los requests
 // No se exporta porque es utilizada sólo desde este archivo
 function getTokenDesdeLS() {
-  return localStorage.getItem("midosis_logintoken");
+  return localStorage.getItem(variables.LSLoginToken);
 }
 
 // Guarda datos en LS

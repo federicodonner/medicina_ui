@@ -2,17 +2,7 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Select from "react-select";
-import {
-  verifyLogin,
-  fetchDosis,
-  fetchDroga,
-  addDroga,
-  addDrogaxdosis,
-  borrarDesdeLS,
-  leerDesdeLS,
-  getData,
-  postData,
-} from "../fetchFunctions";
+import { borrarDesdeLS, getData, postData } from "../fetchFunctions";
 import variables from "../var/variables.js";
 
 class AgregarDroga extends React.Component {
@@ -355,7 +345,7 @@ class AgregarDroga extends React.Component {
 
                 <div className="nav-buttons" onClick={this.ingresarDroga}>
                   <div className="nav-button">
-                    <div className="nav-icon nav-icon-check"></div>
+                    <div className="nav-icon chico nav-icon-check"></div>
                     <span className="single-line">agregar</span>
                     <span>droga</span>
                   </div>

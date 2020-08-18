@@ -17,26 +17,26 @@ class EditarDosis extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({ loader: true });
-    // Verifica si el usuario ya seleccionó el pastillero
-    const user_info = verifyLogin();
-    if (user_info && user_info.pastillero) {
-      // Si la tiene, la guarda en el estado
-      this.setState({ user_info }, function() {
-        fetchDosis(user_info.pastillero)
-          .then(results => {
-            return results.json();
-          })
-          .then(response => {
-            this.setState({ pastillero: response, loader:false });
-          });
-      });
-    } else {
-      // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-      this.props.history.push({
-        pathname: "/seleccionarPastillero"
-      });
-    }
+    // this.setState({ loader: true });
+    // // Verifica si el usuario ya seleccionó el pastillero
+    // const user_info = verifyLogin();
+    // if (user_info && user_info.pastillero) {
+    //   // Si la tiene, la guarda en el estado
+    //   this.setState({ user_info }, function() {
+    //     fetchDosis(user_info.pastillero)
+    //       .then(results => {
+    //         return results.json();
+    //       })
+    //       .then(response => {
+            this.setState({ loader:false });
+          // });
+      // });
+    // } else {
+    //   // Si no hay data en localstorage, va a la pantalla de selección de pastillero
+    //   this.props.history.push({
+    //     pathname: "/seleccionarPastillero"
+    //   });
+    // }
   }
 
   render() {

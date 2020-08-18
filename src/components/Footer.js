@@ -121,7 +121,7 @@ class Footer extends React.Component {
             this.state.pastilleros.length > 0 && (
               <div>
                 <Select
-                  className="pretty-input"
+                  className="pretty-input select-pastillero"
                   onChange={this.seleccionPastillero}
                   options={this.state.pastilleros}
                   placeholder="Selecciona otro pastillero"

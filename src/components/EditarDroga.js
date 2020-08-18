@@ -1,11 +1,18 @@
 import React from "react";
 import Header from "./Header";
+import Footer from "./Footer";
 import Select from "react-select";
+import variables from "../var/variables.js";
 import {
   verifyLogin,
   fetchDosis,
   editDrogaxdosis,
   deleteDrogaxdosis,
+  getData,
+  postData,
+  putData,
+  deleteData,
+  borrarDesdeLS,
 } from "../fetchFunctions";
 
 class EditarDroga extends React.Component {
@@ -28,44 +35,24 @@ class EditarDroga extends React.Component {
   cantidadRef = React.createRef();
   notasRef = React.createRef();
 
-  cargarHorariosIniciales = () => {
-    var user_info = this.state.user_info;
-    fetchDosis(user_info.pastillero)
-      .then((results) => {
-        return results.json();
-      })
-      .then((response) => {
-        this.setState({
-          pastillero: response,
-        });
-        this.setState({
-          mostrarModal: false,
-        });
-        this.setState({
-          loader: false,
-        });
-        this.setState({
-          datosModal: {
-            horarios: [],
-          },
-        });
-        this.procesarHorarios();
-      });
+  volverAHome = () => {
+    this.props.history.push({
+      pathname: "home",
+    });
   };
 
-  // Función necesaria para mostrar el combobox de horarios del modal
-  procesarHorarios = () => {
-    var horarios = [];
-    var horario = {};
-    // Por cada horario del pastillero se carga en el array en state
-    this.state.pastillero.dosis.forEach(function (dosis, index) {
-      horario.label = dosis.horario;
-      horario.value = dosis.id;
-      horarios.push(Object.assign({}, horario));
+  volverAVerDosis = () => {
+    this.props.history.push({
+      pathname: "verDosis",
     });
-    var datosModal = this.state.datosModal;
-    datosModal.horarios = horarios;
-    this.setState({ datosModal });
+  };
+
+  signOut = (event) => {
+    if (event) {
+      event.preventDefault();
+    }
+    borrarDesdeLS(variables.LSLoginToken);
+    this.props.history.push({ pathname: "login" });
   };
 
   // Muestra o esconde el modal
@@ -100,15 +87,26 @@ class EditarDroga extends React.Component {
     dataEditDrogaxdosis.cantidad_mg = this.cantidadRef.current.value;
     dataEditDrogaxdosis.notas = this.notasRef.current.value;
 
-    // Apaga el modal y enciende el loader
-    this.toggleModal();
-    this.setState({ loader: true });
-
-    // Envía le request a la API con el callback para recargar la página
-    editDrogaxdosis(
-      dataEditDrogaxdosis,
-      this.state.datosModal.drogaxdosis_id,
-      this.cargarHorariosIniciales
+    // Enciende el loader
+    this.setState(
+      { loader: { encendido: true, texto: "Editando la dosis" } },
+      () => {
+        // Envía la request a la API con el callback para recargar la página
+        putData(
+          "drogaxdosis/" + this.state.datosModal.drogaxdosis_id,
+          dataEditDrogaxdosis
+        ).then((response) => {
+          if (response.status == 200) {
+            response.json().then((responseDetails) => {
+              alert(responseDetails.detail);
+              this.volverAVerDosis();
+            });
+          } else {
+            alert("Ocurrió un error, inténtalo denuevo más tarde.");
+            this.signOut();
+          }
+        });
+      }
     );
   };
 
@@ -120,121 +118,207 @@ class EditarDroga extends React.Component {
           "?"
       )
     ) {
-      // Apaga el modal y enciende el loader
-      this.toggleModal();
-      this.setState({ loader: true });
-
-      // Envía la request a la API con el callback para recargar la página
-      deleteDrogaxdosis(
-        this.state.datosModal.drogaxdosis_id,
-        this.cargarHorariosIniciales
+      // Enciende el loader
+      this.setState(
+        { loader: { encendido: true, texto: "Eliminando la dosis" } },
+        () => {
+          // Envía la request a la API con el callback para recargar la página
+          deleteData(
+            "drogaxdosis/" + this.state.datosModal.drogaxdosis_id
+          ).then((response) => {
+            if (response.status == 200) {
+              response.json().then((responseDetails) => {
+                alert(responseDetails.detail);
+                this.volverAVerDosis();
+              });
+            } else {
+              alert("Ocurrió un error, inténtalo denuevo más tarde.");
+              this.signOut();
+            }
+          });
+        }
       );
     }
   };
 
-  componentDidMount() {
-    this.setState({
-      loader: true,
-    });
-    // Verifica si el usuario ya seleccionó el pastillero
-    const user_info = verifyLogin();
-    if (user_info && user_info.pastillero) {
-      // Si la tiene, la guarda en el estado
-      this.setState(
-        {
-          user_info,
-        },
-        function () {
-          this.cargarHorariosIniciales();
-        }
-      );
-    } else {
-      // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-      this.props.history.push({
-        pathname: "/seleccionarPastillero",
+  // Función que apaga el loader cuando verifica que
+  // todos los componentes terminaron de cargar su parte
+  // Cada uno debería invocarlo al terminar
+  apagarLoader = () => {
+    // Verifica que tenga los datos del pastillero
+    // Y del usuario para apagar el loader
+    if (this.state.userInfo && this.state.pastillero) {
+      var horarios = [];
+      var horario = {};
+      // Por cada horario del pastillero se carga en el array en state
+      this.state.pastillero.dosis.forEach(function (dosis, index) {
+        horario.label = dosis.horario;
+        horario.value = dosis.id;
+        horarios.push(Object.assign({}, horario));
+      });
+      var datosModal = {};
+      datosModal.horarios = horarios;
+      // Carga todos los datos procesados en state
+      this.setState({
+        loader: { encendido: false },
+        mostrarModal: false,
+        datosModal: datosModal,
       });
     }
+  };
+
+  // Recibe el pastillero seleccionado del Footer y lo guarda en state
+  establecerPastillero = (pastilleroId) => {
+    // Una vez que define cuál es el pastillero seleccionado
+    // busca los detalles en la API
+    getData("pastillero/" + pastilleroId)
+      .then((respuesta) => {
+        respuesta.json().then((pastillero) => {
+          this.setState({ pastillero }, () => {
+            this.apagarLoader();
+          });
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  componentDidMount() {
+    var userInfo = null;
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (this.props.location.state && this.props.location.state.userInfo) {
+      // Si se los pasó, los gaurda en state
+      this.setState({ userInfo: this.props.location.state.userInfo }, () => {
+        this.apagarLoader();
+      });
+    } else {
+      // Sino, los va a buscar al servidor
+      // Va a buscar los datos del usuario
+      getData("usuario")
+        .then((response_usuario) => {
+          if (response_usuario.status == 200) {
+            response_usuario.json().then((respuesta_usuario) => {
+              // Guarda la información del usuario
+              this.setState({ userInfo: respuesta_usuario }, () => {
+                this.apagarLoader();
+              });
+            });
+          } else {
+            // Si el request da un error de login, sale
+            response_usuario.json().then((respuesta_usuario) => {
+              this.signOut();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }
+
+  // prende el loader antes de cargar el componente
+  constructor(props) {
+    super(props);
+    this.state = {
+      loader: {
+        encendido: true,
+        texto: "Cargando datos del pastillero.",
+      },
+    };
   }
 
   render() {
     return (
       <div className="app-view cover">
         <div className="scrollable">
-          {this.state && this.state.user_info && <Header />}
-          <div className="content">
-            {this.state && this.state.datosModal && (
-              <>
-                <div
-                  className={
-                    "modal-cover " +
-                    (this.state.mostrarModal ? "show" : "hidden")
-                  }
-                />
-                <div
-                  className={
-                    "editar-droga-modal " +
-                    (this.state.mostrarModal ? "show" : "hidden")
-                  }
-                >
-                  <div
-                    className="modal-boton-cerrar"
-                    onClick={this.toggleModal}
-                  >
-                    X
-                  </div>
-                  <h1>{this.state.datosModal.droga}</h1>
-                  <span className="single-line"> Horario: </span>
-                  <Select
-                    className="pretty-input"
-                    value={this.state.datosModal.horario}
-                    onChange={this.seleccionHorario}
-                    options={this.state.datosModal.horarios}
-                    placeholder="Horario..."
-                  />
-                  <span className="single-line"> Cantidad (mg): </span>
-                  <input
-                    name="cantidad"
-                    type="number"
-                    ref={this.cantidadRef}
-                    className="pretty-input pretty-text"
-                    defaultValue={this.state.datosModal.cantidad_mg}
-                  />
-                  <span className="single-line"> Notas: </span>
-                  <input
-                    name="notas"
-                    type="textr"
-                    ref={this.notasRef}
-                    className="pretty-input pretty-text"
-                    defaultValue={this.state.datosModal.notas}
-                  />
-
-                  <div className="nav-buttons">
-                    <div
-                      className="nav-button"
-                      onClick={this.submitEditarDroga}
-                    >
-                      <div className="nav-icon nav-icon-check"></div>
-                      <span className="single-line">aceptar</span>
-                    </div>
-                    <div
-                      className="nav-button"
-                      onClick={this.submitEliminarDroga}
-                    >
-                      <div className="nav-icon nav-icon-cross"></div>
-                      <span className="single-line">eliminar</span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-            {this.state && this.state.loader && (
+          {this.state && this.state.loader.encendido && (
+            <div className="loader-container">
               <p>
                 <img className="loader" src="/images/loader.svg" />
               </p>
-            )}
-            {this.state && !this.state.loader && (
+              <p className={"negrita"}>{this.state.loader.texto}</p>
+            </div>
+          )}
+          {this.state && this.state.userInfo && (
+            <Header
+              mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
+              volver={this.volverAVerDosis}
+              logoChico={true}
+            />
+          )}
+          <div className="content">
+            {this.state &&
+              this.state.datosModal &&
+              !this.state.loader.encendido && (
+                <>
+                  <div
+                    className={
+                      "modal-cover " +
+                      (this.state.mostrarModal ? "show" : "hidden")
+                    }
+                  />
+                  <div
+                    className={
+                      "editar-droga-modal " +
+                      (this.state.mostrarModal ? "show" : "")
+                    }
+                  >
+                    <h1>{this.state.datosModal.droga}</h1>
+                    <span className="single-line"> Horario: </span>
+                    <Select
+                      className="pretty-input"
+                      value={this.state.datosModal.horario}
+                      onChange={this.seleccionHorario}
+                      options={this.state.datosModal.horarios}
+                      placeholder="Horario..."
+                    />
+                    <span className="single-line"> Cantidad (mg): </span>
+                    <input
+                      name="cantidad"
+                      type="number"
+                      ref={this.cantidadRef}
+                      className="pretty-input pretty-text"
+                      defaultValue={this.state.datosModal.cantidad_mg}
+                    />
+                    <span className="single-line"> Notas: </span>
+                    <input
+                      name="notas"
+                      type="textr"
+                      ref={this.notasRef}
+                      className="pretty-input pretty-text"
+                      defaultValue={this.state.datosModal.notas}
+                    />
+
+                    <div className="nav-buttons">
+                      <div
+                        className="nav-button"
+                        onClick={this.submitEditarDroga}
+                      >
+                        <div className="nav-icon chico nav-icon-check"></div>
+                        <span className="single-line">guardar</span> cambios
+                      </div>
+                      <div
+                        className="nav-button"
+                        onClick={this.submitEliminarDroga}
+                      >
+                        <div className="nav-icon chico nav-icon-cross"></div>
+                        <span className="single-line">eliminar</span> dosis
+                      </div>
+                    </div>
+                    <div
+                      className="modal-boton-cerrar"
+                      onClick={this.toggleModal}
+                    >
+                      Cancelar
+                    </div>
+                  </div>
+                </>
+              )}
+
+            {this.state && !this.state.loader.encendido && (
               <>
-                <h1>Seleccione una dosis para editarla</h1>
+                <p>Seleccione una dosis para editarla</p>
                 {this.state && this.state.pastillero && (
                   <ul className="dosis-horario">
                     {this.state.pastillero.dosis.map((dosis) => {
@@ -279,6 +363,13 @@ class EditarDroga extends React.Component {
               </>
             )}
           </div>
+          {this.state && this.state.userInfo && (
+            <Footer
+              pastilleros={this.state.userInfo.pastilleros}
+              navegarAHome={this.volverAHome}
+              establecerPastillero={this.establecerPastillero}
+            />
+          )}
         </div>
       </div>
     );

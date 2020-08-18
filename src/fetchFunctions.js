@@ -62,6 +62,51 @@ export function postData(endpoint, data) {
   return promise;
 }
 
+// Función genérica parea put datos en la API
+export function putData(endpoint, data) {
+  var accessToken = getTokenDesdeLS();
+  const url = variables.api_url + "/" + endpoint;
+  var promise = Promise.race([
+    // Genera dos promesas, una con el fetch y otra con el timeout de 5 segundos
+    // la que termine primero resuelve
+    fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "accept-encoding": "gzip, deflate",
+        Authorization: "Bearer " + accessToken,
+      },
+      body: JSON.stringify(data),
+    }),
+    new Promise(function (resolve, reject) {
+      setTimeout(() => reject(new Error("request timeout")), 10000);
+    }),
+  ]);
+  return promise;
+}
+
+// Función genérica parea postear datos en la API
+export function deleteData(endpoint) {
+  var accessToken = getTokenDesdeLS();
+  const url = variables.api_url + "/" + endpoint;
+  var promise = Promise.race([
+    // Genera dos promesas, una con el fetch y otra con el timeout de 5 segundos
+    // la que termine primero resuelve
+    fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "accept-encoding": "gzip, deflate",
+        Authorization: "Bearer " + accessToken,
+      },
+    }),
+    new Promise(function (resolve, reject) {
+      setTimeout(() => reject(new Error("request timeout")), 10000);
+    }),
+  ]);
+  return promise;
+}
+
 export function fetchPastilleros() {
   return fetch(variables.api_url + "/pastillero");
 }

@@ -184,7 +184,9 @@ class VerDosis extends React.Component {
                   </div>
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("editarDroga", null)}
+                    onClick={this.navigateToSection("editarDroga", {
+                      userInfo: this.state.userInfo,
+                    })}
                   >
                     <div className="nav-icon nav-icon-editar-dosis-in"></div>
                     <span className="single-line">editar</span>

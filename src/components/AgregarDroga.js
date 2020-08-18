@@ -164,11 +164,13 @@ class AgregarDroga extends React.Component {
                       responseDrogasDetalles.drogas,
                       this.state.pastillero
                     );
-                    this.setState({
-                      loader: { encendido: false },
-                      drogaSeleccionada: null,
-                      horarioSeleccionado: null,
-                    });
+                    // Vuelve al pastillero
+                    this.props.history.push(
+                      {
+                        pathname: "verDosis",
+                      },
+                      { userInfo: this.state.userInfo }
+                    );
                   });
                 }
               );

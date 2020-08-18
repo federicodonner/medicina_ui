@@ -159,21 +159,6 @@ class VerDosis extends React.Component {
                 <div className="nav-buttons">
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("descontarStock", null)}
-                  >
-                    <div className="nav-icon nav-icon-ver-dosis"></div>
-                    <span className="single-line">pastillero</span>
-                    <span>armado</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("imprimirPastillero", null)}
-                  >
-                    <div className="nav-icon nav-icon-imprimir"></div>
-                    <span className="single-line">imprimir</span>
-                  </div>
-                  <div
-                    className="nav-button"
                     onClick={this.navigateToSection("agregarDroga", {
                       userInfo: this.state.userInfo,
                     })}
@@ -191,6 +176,23 @@ class VerDosis extends React.Component {
                     <div className="nav-icon nav-icon-editar-dosis-in"></div>
                     <span className="single-line">editar</span>
                     <span>dosis droga</span>
+                  </div>
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("descontarStock", {
+                      userInfo: this.state.userInfo,
+                    })}
+                  >
+                    <div className="nav-icon nav-icon-ver-dosis"></div>
+                    <span className="single-line">pastillero</span>
+                    <span>armado</span>
+                  </div>
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("imprimirPastillero", null)}
+                  >
+                    <div className="nav-icon nav-icon-imprimir"></div>
+                    <span className="single-line">imprimir</span>
                   </div>
                 </div>
               </>

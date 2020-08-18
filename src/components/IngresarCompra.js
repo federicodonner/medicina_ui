@@ -80,16 +80,19 @@ class IngresarCompra extends React.Component {
     dataEnviar.droga = this.state.drogaSeleccionada.value;
 
     // Se agrega la compra a través del endpoint
-    postData('compra',dataEnviar)
+    postData("compra", dataEnviar)
       .then((results) => {
         return results.json();
       })
       .then((response) => {
         alert(response.detail);
-        this.setState({
-          loader: false,
-          drogaSeleccionada: null,
-        });
+        // Vuelve a ver stock
+        this.props.history.push(
+          {
+            pathname: "verStock",
+          },
+          { userInfo: this.state.userInfo }
+        );
       });
   };
 

@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "./Home";
 import NotFound from "./NotFound";
-import SeleccionarPastillero from "./SeleccionarPastillero";
 import VerDosis from "./VerDosis";
 import ImprimirPastillero from "./ImprimirPastillero";
 import AgregarDroga from "./AgregarDroga";
@@ -21,12 +20,8 @@ class Router extends React.Component {
           <Route exact path="/" component={Home} />
           <Route exact path="/home" component={Home} />
           <Route exact path="/nuevopastillero" component={NuevoPastillero} />
-          <Route
-            path="/seleccionarPastillero"
-            component={SeleccionarPastillero}
-          />
           <Route path="/verDosis" component={VerDosis} />
-          <Route path="/imprimirPastillero" component={ImprimirPastillero} />
+          <Route path="/imprimirPastillero" component={NotFound} />
           <Route path="/agregarDroga" component={AgregarDroga} />
           <Route path="/editarDroga" component={EditarDroga} />
           <Route path="/ingresarCompra" component={IngresarCompra} />

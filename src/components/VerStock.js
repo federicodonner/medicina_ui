@@ -18,6 +18,16 @@ class VerStock extends React.Component {
     });
   };
 
+  navigateToSection = (section, data) => (event) => {
+    event.preventDefault();
+    this.props.history.push(
+      {
+        pathname: section,
+      },
+      data
+    );
+  };
+
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
   // Cada uno debería invocarlo al terminar
@@ -139,9 +149,7 @@ class VerStock extends React.Component {
                           )}
 
                           {droga.dias_disponible < 0 && (
-                            <span className="dias-stock gris">
-                              - sin dosis
-                            </span>
+                            <span className="dias-stock gris">- sin dosis</span>
                           )}
 
                           <ul className="dosis-droga">
@@ -161,9 +169,19 @@ class VerStock extends React.Component {
                 )}
                 <div className="nav-buttons">
                   <div className="nav-button">
-                    <div className="nav-icon chico nav-icon-edit"></div>
+                    <div className="nav-icon nav-icon-edit"></div>
                     <span className="single-line">ajustar</span>
                     <span>stock</span>
+                  </div>
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("ingresarCompra", {
+                      userInfo: this.state.userInfo,
+                    })}
+                  >
+                    <div className="nav-icon  nav-icon-ingresar-compra"></div>
+                    <span className="single-line">ingresar</span>
+                    <span>compra</span>
                   </div>
                 </div>
               </>

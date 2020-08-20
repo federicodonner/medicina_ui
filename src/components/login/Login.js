@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../header/Header";
 import { getData, postData, guardarEnLS } from "../../utils/fetchFunctions";
 import "./login.css";
+import variables from "../../var/variables.js";
 
 class Login extends React.Component {
   state: {
@@ -11,6 +12,16 @@ class Login extends React.Component {
 
   loginRef = React.createRef();
   passwordRef = React.createRef();
+
+  navigateToSection = (section, data) => (event) => {
+    event.preventDefault();
+    this.props.history.push(
+      {
+        pathname: section,
+      },
+      data
+    );
+  };
 
   // Función utilizada para actualizar el state y esconder
   // el cartel de falta de input cuando el usuario ingresa algo
@@ -97,7 +108,7 @@ class Login extends React.Component {
           if (results.status == 200) {
             // Si el login es correcto, guarda el token y navega
             return results.json().then((respuesta) => {
-              guardarEnLS("midosis_logintoken", respuesta.token);
+              guardarEnLS(variables.LSLoginToken, respuesta.token);
               this.props.history.push({
                 pathname: "home",
               });
@@ -195,7 +206,12 @@ class Login extends React.Component {
                   </button>
                 </form>
                 <div className={"pretty-olvido"}>Olvidé mi contraseña</div>
-                <div className={"pretty-olvido"}>Crear una cuenta</div>
+                <div
+                  className={"pretty-olvido"}
+                  onClick={this.navigateToSection("crearCuenta", null)}
+                >
+                  Crear una cuenta
+                </div>
               </div>
             </>
           )}

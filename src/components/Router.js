@@ -11,6 +11,7 @@ import VerStock from "./verStock/VerStock";
 import DescontarStock from "./descontarStock/DescontarStock";
 import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
 import Login from "./login/Login";
+import CrearCuenta from "./crearCuenta/CrearCuenta";
 
 class Router extends React.Component {
   render() {
@@ -28,6 +29,7 @@ class Router extends React.Component {
           <Route path="/verStock" component={VerStock} />
           <Route path="/descontarStock" component={DescontarStock} />
           <Route path="/login" component={Login} />
+          <Route path="/crearCuenta" component={CrearCuenta} />
           <Route component={Home} />
         </Switch>
       </BrowserRouter>

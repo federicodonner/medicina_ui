@@ -1,6 +1,7 @@
 import React from "react";
-import Header from "./Header";
-import { guardarEnLS, getData, postData } from "../fetchFunctions";
+import Header from "../header/Header";
+import { getData, postData, guardarEnLS } from "../../utils/fetchFunctions";
+import "./login.css";
 
 class Login extends React.Component {
   state: {
@@ -133,22 +134,18 @@ class Login extends React.Component {
     return (
       <div className="app-view cover">
         <div className="scrollable">
-          <div className="content">
-            {this.state && this.state.loader.encendido && (
-              <>
-                <p>
-                  <img className="loader" src="/images/loader.svg" />
-                </p>
-                <p className={"centrado negrita"}>{this.state.loader.texto}</p>
-              </>
-            )}
-            {this.state && !this.state.loader.encendido && (
-              <>
-                <Header
-                  nombreUsuario="Nombre Usuario"
-                  seccionActual="login"
-                  mostrarMenu={false}
-                />
+          {this.state && this.state.loader.encendido && (
+            <div className="loader-container">
+              <p>
+                <img className="loader" src="/images/loader.svg" />
+              </p>
+              <p className={"negrita"}>{this.state.loader.texto}</p>
+            </div>
+          )}
+          {this.state && !this.state.loader.encendido && (
+            <>
+              <Header />
+              <div className="content">
                 <p>
                   Bienvenido a MiDosis la plataforma online de gestión de
                   medicamentos.
@@ -199,9 +196,9 @@ class Login extends React.Component {
                 </form>
                 <div className={"pretty-olvido"}>Olvidé mi contraseña</div>
                 <div className={"pretty-olvido"}>Crear una cuenta</div>
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     );

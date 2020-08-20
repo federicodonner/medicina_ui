@@ -1,0 +1,12 @@
+.notas-dosis {
+  display: block;
+  margin-left: 20px;
+  font-size: 10pt;
+  font-style: bold;
+  color: #ebba16;
+  font-weight: 600;
+}
+
+.notas-dosis.rojo {
+  color: red;
+}

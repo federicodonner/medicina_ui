@@ -1,13 +1,14 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
 import {
   getData,
   borrarDesdeLS,
   guardarEnLS,
   leerDesdeLS,
-} from "../fetchFunctions";
-import variables from "../var/variables.js";
+} from "../../utils/fetchFunctions";
+import variables from "../../var/variables.js";
+import "./home.css";
 
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 

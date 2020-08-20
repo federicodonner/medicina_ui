@@ -1,0 +1,45 @@
+.logo {
+  background-image: url("/images/logo.png");
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.header.chico {
+  margin-bottom: 10px;
+}
+
+.header-boton-volver {
+  position: absolute;
+  top: -17px;
+  left: 22px;
+  font-size: 14pt;
+}
+
+/* RESPONSIVE */
+@media only screen and (max-width: 800px) {
+  .logo {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    margin-top: 8%;
+    max-height: 13.1vh;
+    width: 30.5vw;
+    margin-left: auto;
+    margin-right: auto;
+    height: 16vh;
+    margin-bottom: 1vh;
+  }
+
+  .logo.chico {
+    max-height: 8vh;
+  }
+
+  .logo:after {
+    content: "";
+    display: block;
+  }
+}

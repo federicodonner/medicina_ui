@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import { getData, postData, borrarDesdeLS } from "../fetchFunctions";
-import variables from "../var/variables.js";
+import Header from "../header/Header";
+import { getData, postData, borrarDesdeLS } from "../../utils/fetchFunctions";
+import variables from "../../var/variables.js";
+import "./nuevoPastillero.css";
 
 class NuevoPastillero extends React.Component {
   state: {};
@@ -172,6 +172,7 @@ class NuevoPastillero extends React.Component {
               />
 
               <div className="content">
+                <p>Crea un nuevo pastillero</p>
                 <p>
                   Especifica en qué momentos del día harás las tomas de
                   medicamentos de tu nuevo pastillero. Tienes hasta 6. Puedes
@@ -179,13 +180,13 @@ class NuevoPastillero extends React.Component {
                 </p>
                 <p>Tomas de medicamentos:</p>
 
-                <div className={"login-form"}>
+                <div className={"dosis-form"}>
                   <input
                     rows="8"
                     name="toma1"
                     type="text"
                     ref={this.dosis1Ref}
-                    className="login-input"
+                    className="dosis-input"
                     onChange={this.refrescarState()}
                   />
                   {((this.dosis1Ref.current && this.dosis1Ref.current.value) ||
@@ -208,7 +209,7 @@ class NuevoPastillero extends React.Component {
                       name="toma2"
                       type="text"
                       ref={this.dosis3Ref}
-                      className="login-input"
+                      className="dosis-input"
                       onChange={this.refrescarState()}
                     />
                   )}
@@ -220,7 +221,7 @@ class NuevoPastillero extends React.Component {
                       name="toma2"
                       type="text"
                       ref={this.dosis4Ref}
-                      className="login-input"
+                      className="dosis-input"
                       onChange={this.refrescarState()}
                     />
                   )}
@@ -232,7 +233,7 @@ class NuevoPastillero extends React.Component {
                       name="toma2"
                       type="text"
                       ref={this.dosis5Ref}
-                      className="login-input"
+                      className="dosis-input"
                       onChange={this.refrescarState()}
                     />
                   )}
@@ -244,7 +245,7 @@ class NuevoPastillero extends React.Component {
                       name="toma2"
                       type="text"
                       ref={this.dosis6Ref}
-                      className="login-input"
+                      className="dosis-input"
                       onChange={this.refrescarState()}
                     />
                   )}
@@ -252,8 +253,9 @@ class NuevoPastillero extends React.Component {
 
                 <div className="nav-buttons">
                   <div className="nav-button" onClick={this.crearPastillero()}>
-                    <div className="nav-icon nav-icon-check"></div>
-                    <span>Crear pastillero</span>
+                    <div className="nav-icon chico nav-icon-check"></div>
+                    <span className="newLine">Crear</span>
+                    <span>pastillero</span>
                   </div>
                 </div>
               </div>

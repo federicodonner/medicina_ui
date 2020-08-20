@@ -1,16 +1,16 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Home from "./Home";
+import Home from "./home/Home";
 import NotFound from "./NotFound";
-import VerDosis from "./VerDosis";
+import VerDosis from "./verDosis/VerDosis";
 import ImprimirPastillero from "./ImprimirPastillero";
-import AgregarDroga from "./AgregarDroga";
-import EditarDroga from "./EditarDroga";
-import IngresarCompra from "./IngresarCompra";
-import VerStock from "./VerStock";
-import DescontarStock from "./DescontarStock";
-import NuevoPastillero from "./Nuevopastillero";
-import Login from "./Login";
+import AgregarDroga from "./agregarDroga/AgregarDroga";
+import EditarDroga from "./editarDroga/EditarDroga";
+import IngresarCompra from "./ingresarCompra/IngresarCompra";
+import VerStock from "./verStock/VerStock";
+import DescontarStock from "./descontarStock/DescontarStock";
+import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
+import Login from "./login/Login";
 
 class Router extends React.Component {
   render() {

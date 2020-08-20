@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "./Header";
 import Select from "react-select";
-import { leerDesdeLS, guardarEnLS, getData } from "../fetchFunctions";
-import variables from "../var/variables.js";
+import { leerDesdeLS, guardarEnLS, getData } from "../../utils/fetchFunctions";
+import variables from "../../var/variables.js";
+import "./footer.css";
 
 import * as Fitty from "fitty/dist/fitty.min";
 

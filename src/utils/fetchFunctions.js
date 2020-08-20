@@ -1,4 +1,4 @@
-import variables from "./var/variables.js";
+import variables from "../var/variables.js";
 
 // Devuelve el token de local storage para los requests
 // No se exporta porque es utilizada sólo desde este archivo

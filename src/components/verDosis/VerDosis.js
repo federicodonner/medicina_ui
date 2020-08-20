@@ -1,8 +1,9 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import { borrarDesdeLS, getData } from "../fetchFunctions";
-import variables from "../var/variables.js";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
+import { borrarDesdeLS, getData } from "../../utils/fetchFunctions";
+import variables from "../../var/variables.js";
+import "./verDosis.css";
 
 class VerDosis extends React.Component {
   state: {

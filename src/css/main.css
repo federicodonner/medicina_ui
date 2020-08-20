@@ -16,31 +16,6 @@ body {
   overflow-y: auto;
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-  position: relative;
-}
-
-.header.chico {
-  margin-bottom: 10px;
-}
-
-.header-boton-volver {
-  position: absolute;
-  top: -17px;
-  left: 22px;
-  font-size: 14pt;
-}
-
-.withGradient {
-  background-image: url("/images/bggradient.jpg");
-}
-
-.logo {
-  background-image: url("/images/logo.png");
-}
-
 .nav-buttons {
   display: grid;
   grid-template-columns: repeat(4, auto);
@@ -50,10 +25,6 @@ body {
   justify-content: space-evenly;
   grid-row-gap: 5vh;
   text-align: center;
-}
-
-.nav-buttons.home {
-  margin-top: 7vh;
 }
 
 .nav-button {
@@ -172,24 +143,6 @@ li.dosis-armado-pastillero {
   padding-bottom: 1vh;
 }
 
-.dias-stock {
-  font-size: 12pt;
-  color: black;
-  margin-left: 2%;
-}
-
-.verde {
-  color: green;
-}
-
-.amarillo {
-  color: #ebba16;
-}
-
-.rojo {
-  color: red;
-}
-
 .gris {
   color: #aab1b7;
 }
@@ -220,50 +173,8 @@ h1 {
   border-radius: 5px;
 }
 
-.notas-dosis {
-  display: block;
-  margin-left: 20px;
-  font-size: 10pt;
-  font-style: bold;
-  color: #ebba16;
-  font-weight: 600;
-}
-
-.notas-dosis.rojo {
-  color: red;
-}
-
 .blue {
   color: #3a506b;
-}
-
-.editar-droga-modal {
-  position: absolute;
-  width: 100%;
-  bottom: -550px;
-  padding-bottom: 80px;
-  background-color: #3a506b;
-  transition: bottom 0.8s;
-  box-shadow: 5px -1px 20px #aaa;
-}
-
-.modal-cover {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0px;
-}
-
-.modal-boton-cerrar {
-  font-size: 14pt;
-  font-weight: 600;
-  margin-top: 20px;
-  width: 100%;
-  height: 30px;
-}
-
-.show {
-  bottom: 0px;
 }
 
 .boton-guardar {
@@ -355,20 +266,6 @@ ul.usuarios li {
   max-width: 70px;
   margin-left: 58px;
   display: block;
-}
-
-.dv-star-rating {
-  font-size: 18pt;
-  left: 16px;
-  top: 10px;
-}
-
-.dv-star-rating-star {
-  margin-right: 10px;
-}
-
-.dv-star-rating-empty-star i {
-  color: white;
 }
 
 html,
@@ -530,28 +427,6 @@ body {
 
 /* RESPONSIVE */
 @media only screen and (max-width: 800px) {
-  .logo {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    margin-top: 8%;
-    max-height: 13.1vh;
-    width: 30.5vw;
-    margin-left: auto;
-    margin-right: auto;
-    height: 16vh;
-    margin-bottom: 1vh;
-  }
-
-  .logo.chico {
-    max-height: 8vh;
-  }
-
-  .logo:after {
-    content: "";
-    display: block;
-  }
-
   .scrollable {
     /* background-image: url(/images/bgpattern.jpg);
     background-repeat-y: repeat;
@@ -615,91 +490,4 @@ body {
     /* margin-top: 50%; */
     margin-left: 0%;
   }
-}
-
-.login-form {
-  margin-bottom: 28px;
-}
-
-.login-input {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 5px;
-  width: 60vw;
-  padding: 6px;
-  font-size: 12pt;
-  border: 1px #aaa solid;
-  border-radius: 8px;
-}
-
-.login-submit {
-  padding: 10px 20px;
-  font-size: 13pt;
-  border-radius: 7px;
-  border: 1px #aaa solid;
-  margin-bottom: 28px;
-}
-
-.login-error {
-  display: block;
-  text-align: center;
-  color: red;
-  font-size: 11pt;
-}
-
-.footer {
-  width: 100%;
-  background-color: #ebba16;
-  position: absolute;
-  bottom: 0px;
-  text-align: center;
-  padding: 2vh 0;
-  color: white;
-  font-size: 14pt;
-  transition: height 0.65s, box-shadow 0.65s;
-  height: 30px;
-  box-shadow: 0px 0px 0px;
-  box-shadow: 5px -1px 20px rgba(0, 0, 0, 0.2);
-}
-
-.footer.agrandado {
-  height: 200px;
-  box-shadow: 5px -1px 20px rgba(0, 0, 0, 0.4);
-}
-
-.titulo-footer {
-  width: 90%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 20px;
-}
-
-.texto-sin-pastilleros-footer {
-  margin-bottom: 36px;
-  width: 85%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.select-pastillero {
-  margin-bottom: 72px;
-}
-
-.negrita {
-  font-weight: 600;
-}
-
-.fit {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.seleccion-pastillero {
-  margin: 10px 0px 38px 0px;
-  padding: 4px;
-  font-size: 14pt;
-  width: 65%;
-  border-radius: 8px;
 }

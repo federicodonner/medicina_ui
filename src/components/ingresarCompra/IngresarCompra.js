@@ -1,16 +1,9 @@
 import React from "react";
-import Header from "./Header";
+import Header from "../header/Header";
 import Select from "react-select";
-import Footer from "./Footer";
-import {
-  getData,
-  postData,
-  borrarDesdeLS,
-  verifyLogin,
-  fetchDroga,
-  addCompra,
-} from "../fetchFunctions";
-import variables from "../var/variables.js";
+import Footer from "../footer/Footer";
+import { getData, postData, borrarDesdeLS } from "../../utils/fetchFunctions";
+import variables from "../../var/variables.js";
 
 class IngresarCompra extends React.Component {
   state: {

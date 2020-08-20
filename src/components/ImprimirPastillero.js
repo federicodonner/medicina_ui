@@ -1,7 +1,7 @@
 import React from "react";
-import Header from "./Header";
-import {  } from "../fetchFunctions";
-import { convertDate } from "../dataFunctions";
+import Header from "./header/Header";
+import {  } from "../utils/fetchFunctions";
+import { convertDate } from "../utils/dataFunctions";
 
 class ImprimirPastillero extends React.Component {
   state: {

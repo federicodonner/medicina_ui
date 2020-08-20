@@ -1,0 +1,38 @@
+.pretty-olvido {
+  font-size: 14pt;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+.login-form {
+  margin-bottom: 28px;
+  height:62px;
+}
+
+.login-input {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  width: 60vw;
+  padding: 6px;
+  font-size: 12pt;
+  border: 1px #aaa solid;
+  border-radius: 8px;
+}
+
+.login-submit {
+  padding: 10px 20px;
+  font-size: 13pt;
+  border-radius: 7px;
+  border: 1px #aaa solid;
+  margin-bottom: 28px;
+}
+
+.login-error {
+  display: block;
+  text-align: center;
+  color: red;
+  font-size: 11pt;
+}

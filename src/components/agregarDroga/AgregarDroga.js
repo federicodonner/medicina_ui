@@ -1,9 +1,9 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
 import Select from "react-select";
-import { borrarDesdeLS, getData, postData } from "../fetchFunctions";
-import variables from "../var/variables.js";
+import { borrarDesdeLS, getData, postData } from "../../utils/fetchFunctions";
+import variables from "../../var/variables.js";
 
 class AgregarDroga extends React.Component {
   state: {

@@ -1,15 +1,16 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
-import { getData, borrarDesdeLS } from "../fetchFunctions";
-import { translateStock } from "../dataFunctions";
-import variables from "../var/variables.js";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
+import { getData, postData } from "../../utils/fetchFunctions";
+import { getCurrentDatePlus } from "../../utils/dataFunctions";
+import variables from "../../var/variables.js";
 
-class VerStock extends React.Component {
+class DescontarStock extends React.Component {
   state: {
     user_info: {},
     loader: true,
     stock: [],
+    mensajeLoader: "",
   };
 
   volverAHome = () => {
@@ -18,14 +19,54 @@ class VerStock extends React.Component {
     });
   };
 
-  navigateToSection = (section, data) => (event) => {
+  // Función que llama al endpoint para descontar el stock
+  armarPastillero = () => (event) => {
     event.preventDefault();
-    this.props.history.push(
-      {
-        pathname: section,
-      },
-      data
-    );
+    // Genera el array para guardar las drogas para las que no tiene suficiente stock
+    var drogasFaltaStock = [];
+    var mensajeConfirmacion = "";
+
+    // Recorre todas las drogas buscando las que no tiene suficiente stock
+    // si encuentra alguna la guarda en el array
+    this.state.stock.forEach((droga) => {
+      if (droga.dosis_semanal > 0 && droga.dias_disponible < 7) {
+        drogasFaltaStock.push(droga.nombre);
+      }
+    });
+
+    // Si hay drogas cargadas en el array, le pregunto al usuario si quiere continuar
+    if (drogasFaltaStock.length) {
+      mensajeConfirmacion =
+        "No tiene suficiente stock de los siguientes medicamentos: " +
+        drogasFaltaStock.join(", ") +
+        ". Presione OK para continuar con el armado del pastillero de cualquier manera.";
+    } else {
+      mensajeConfirmacion =
+        "Presione OK para descontar el stock correspondiente a esta semana.";
+    }
+    if (window.confirm(mensajeConfirmacion)) {
+      // Estoy aquí si el cliente presionó OK a la alerta
+      // Si todos los datos están correctos, se enciende el loader
+      this.setState({
+        loader: { encendido: true, texto: "Procesando pastillero." },
+      });
+
+      // Procesa el pastillero a través del endpoint
+      postData("armarpastillero", {
+        pastillero: this.state.pastilleroSeleccionado,
+      })
+        .then((response) => {
+          if (response.status == 200) {
+            response.json().then((responseDetalles) => {
+              alert(responseDetalles.detail);
+              this.volverAHome();
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   };
 
   // Función que apaga el loader cuando verifica que
@@ -48,9 +89,12 @@ class VerStock extends React.Component {
     getData("stock/" + pastilleroId)
       .then((respuesta) => {
         respuesta.json().then((stock) => {
-          this.setState({ stock: stock.drogas }, () => {
-            this.apagarLoader();
-          });
+          this.setState(
+            { stock: stock.drogas, pastilleroSeleccionado: pastilleroId },
+            () => {
+              this.apagarLoader();
+            }
+          );
         });
       })
       .catch((e) => {
@@ -124,64 +168,44 @@ class VerStock extends React.Component {
           <div className="content">
             {this.state && !this.state.loader.encendido && (
               <>
-                <p>Stock actual de pastillas</p>
-                {this.state && this.state.stock && (
-                  <ul className="dosis-horario">
-                    {this.state.stock.map((droga) => {
-                      return (
-                        <li key={"dosis" + droga.id} className="dosis-horario">
-                          {droga.nombre}
+                <p>
+                  Armado del pastillero de la semana del {getCurrentDatePlus(0)}{" "}
+                  al {getCurrentDatePlus(7)}.
+                </p>
 
-                          {droga.dias_disponible > 6 && (
-                            <span className="dias-stock verde">
-                              - {droga.dias_disponible} días
-                            </span>
-                          )}
-                          {droga.dias_disponible < 7 &&
-                            droga.dias_disponible > 0 && (
-                              <span className="dias-stock amarillo">
-                                - {droga.dias_disponible} días
+                <p>Se descontarán:</p>
+                {this.state && this.state.stock && (
+                  <ul className="dosis-armado-pastillero">
+                    {this.state.stock.map((droga) => {
+                      if (droga.dosis_semanal > 0) {
+                        return (
+                          <li
+                            key={"dosis" + droga.id}
+                            className="dosis-armado-pastillero"
+                          >
+                            {droga.nombre} - {droga.dosis_semanal} mg
+                            {droga.dias_disponible < 7 &&
+                              droga.dias_disponible != 0 && (
+                                <span className="notas-dosis">
+                                  Atención: Stock para {droga.dias_disponible}{" "}
+                                  días
+                                </span>
+                              )}
+                            {droga.dias_disponible == 0 && (
+                              <span className="notas-dosis rojo">
+                                Atención: Sin stock
                               </span>
                             )}
-
-                          {droga.dias_disponible == 0 && (
-                            <span className="dias-stock rojo">- sin stock</span>
-                          )}
-
-                          {droga.dias_disponible < 0 && (
-                            <span className="dias-stock gris">- sin dosis</span>
-                          )}
-
-                          <ul className="dosis-droga">
-                            {droga.stocks.map((stock) => {
-                              return (
-                                <li key={stock.id} className="dosis-droga">
-                                  {stock.comprimido}mg -{" "}
-                                  {translateStock(stock.cantidad_doceavos)}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </li>
-                      );
+                          </li>
+                        );
+                      }
                     })}
                   </ul>
                 )}
                 <div className="nav-buttons">
-                  <div className="nav-button">
-                    <div className="nav-icon nav-icon-edit"></div>
-                    <span className="single-line">ajustar</span>
-                    <span>stock</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("ingresarCompra", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon  nav-icon-ingresar-compra"></div>
-                    <span className="single-line">ingresar</span>
-                    <span>compra</span>
+                  <div className="nav-button" onClick={this.armarPastillero()}>
+                    <div className="nav-icon chico nav-icon-check"></div>
+                    <span className="single-line">aceptar</span>
                   </div>
                 </div>
               </>
@@ -200,4 +224,4 @@ class VerStock extends React.Component {
   }
 }
 
-export default VerStock;
+export default DescontarStock;

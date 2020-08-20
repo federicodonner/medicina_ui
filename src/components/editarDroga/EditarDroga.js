@@ -1,15 +1,16 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
 import Select from "react-select";
-import variables from "../var/variables.js";
+import variables from "../../var/variables.js";
 import {
   getData,
   postData,
   putData,
   deleteData,
   borrarDesdeLS,
-} from "../fetchFunctions";
+} from "../../utils/fetchFunctions";
+import "./editarDroga.css";
 
 class EditarDroga extends React.Component {
   state: {

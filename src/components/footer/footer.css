@@ -1,0 +1,55 @@
+.footer {
+  width: 100%;
+  background-color: #ebba16;
+  position: absolute;
+  bottom: 0px;
+  text-align: center;
+  padding: 2vh 0;
+  color: white;
+  font-size: 14pt;
+  transition: height 0.65s, box-shadow 0.65s;
+  height: 30px;
+  box-shadow: 0px 0px 0px;
+  box-shadow: 5px -1px 20px rgba(0, 0, 0, 0.2);
+}
+
+.footer.agrandado {
+  height: 200px;
+  box-shadow: 5px -1px 20px rgba(0, 0, 0, 0.4);
+}
+
+.titulo-footer {
+  width: 90%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+
+.texto-sin-pastilleros-footer {
+  margin-bottom: 36px;
+  width: 85%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.select-pastillero {
+  margin-bottom: 72px;
+}
+
+.seleccion-pastillero {
+  margin: 10px 0px 38px 0px;
+  padding: 4px;
+  font-size: 14pt;
+  width: 65%;
+  border-radius: 8px;
+}
+
+.fit {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.negrita {
+  font-weight: 600;
+}

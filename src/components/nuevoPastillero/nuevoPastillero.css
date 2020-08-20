@@ -1,0 +1,15 @@
+.dosis-form {
+  margin-bottom: 28px;
+}
+
+.dosis-input {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  width: 60vw;
+  padding: 6px;
+  font-size: 12pt;
+  border: 1px #aaa solid;
+  border-radius: 8px;
+}

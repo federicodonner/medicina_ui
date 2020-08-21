@@ -19,6 +19,28 @@
   font-size: 14pt;
 }
 
+.header-boton-notificaciones {
+  position: absolute;
+  top: -35px;
+  right: 26px;
+  background-image: url(/images/icono_notificaciones.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 10vw;
+  height: 11vh;
+  background-position: center;
+}
+
+.header-boton-notificaciones .con-notificacion {
+  position: absolute;
+  top: 17px;
+  right: -1px;
+  padding: 9px 9px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}
+
 /* RESPONSIVE */
 @media only screen and (max-width: 800px) {
   .logo {

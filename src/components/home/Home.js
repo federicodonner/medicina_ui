@@ -154,6 +154,7 @@ class Home extends React.Component {
                   " " +
                   this.state.userInfo.apellido
                 }
+                mostrarBotonNotificaciones={true}
               />
               <div className="content">
                 <div className="nav-buttons home">
@@ -197,6 +198,11 @@ class Home extends React.Component {
                     <div className="nav-icon nav-icon-nuevo-pastillero"></div>
                     <span className="single-line">nuevo</span>
                     <span>pastillero</span>
+                  </div>
+                  <div className="nav-button">
+                    <div className="nav-icon nav-icon-editar-usuario"></div>
+                    <span className="single-line">editar</span>
+                    <span>tus datos</span>
                   </div>
                 </div>
               </div>

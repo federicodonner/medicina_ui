@@ -13,6 +13,11 @@ const Header = (props) => {
           &larr; Volver
         </div>
       )}
+      {props.mostrarBotonNotificaciones && (
+        <div className="header-boton-notificaciones">
+          <span className="con-notificacion" />
+        </div>
+      )}
     </div>
   );
 };

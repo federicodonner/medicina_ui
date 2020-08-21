@@ -1,3 +1,12 @@
 .nav-buttons.home {
+  display: grid;
   margin-top: 7vh;
+  grid-template-columns: repeat(6, auto);
+}
+
+.nav-buttons.home .nav-button {
+  grid-column: span 2 !important;
+}
+
+.nav-buttons.home:nth-last-child(1):nth-child(odd) {
 }

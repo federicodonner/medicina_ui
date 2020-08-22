@@ -124,7 +124,6 @@ class VerDosis extends React.Component {
           )}
           {this.state && this.state.userInfo && (
             <Header
-              mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
               volver={this.volverAHome}
               logoChico={true}
             />

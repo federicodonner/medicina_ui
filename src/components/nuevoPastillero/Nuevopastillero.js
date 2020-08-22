@@ -166,8 +166,11 @@ class NuevoPastillero extends React.Component {
           {this.state && !this.state.loader.encendido && (
             <>
               <Header
-                mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
-                volver={this.volverAHome}
+                volver={
+                  this.state.userInfo.pastilleros.length > 0
+                    ? this.volverAHome
+                    : null
+                }
                 logoChico={true}
               />
 
@@ -250,7 +253,6 @@ class NuevoPastillero extends React.Component {
                     />
                   )}
                 </div>
-
                 <div className="nav-buttons">
                   <div className="nav-button" onClick={this.crearPastillero()}>
                     <div className="nav-icon chico nav-icon-check"></div>

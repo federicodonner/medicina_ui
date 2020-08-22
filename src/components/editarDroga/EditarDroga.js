@@ -239,7 +239,6 @@ class EditarDroga extends React.Component {
           )}
           {this.state && this.state.userInfo && (
             <Header
-              mostrarBotonVolver={this.state.userInfo.pastilleros.length > 0}
               volver={this.volverAVerDosis}
               logoChico={true}
             />

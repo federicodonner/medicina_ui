@@ -8,7 +8,7 @@ const Header = (props) => {
       {props.nombreCompleto && (
         <div className={"saludo"}>Hola {props.nombreCompleto}</div>
       )}
-      {props.mostrarBotonVolver && (
+      {props.volver && (
         <div className="header-boton-volver" onClick={props.volver}>
           &larr; Volver
         </div>

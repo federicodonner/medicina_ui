@@ -119,13 +119,23 @@ class Footer extends React.Component {
           {this.props.cambioPastilleroHabilitado &&
             this.state.pastilleros &&
             this.state.pastilleros.length > 0 && (
-              <div>
+              <div className="texto-con-pastilleros-footer">
                 <Select
-                  className="pretty-input select-pastillero"
+                  className="select-pastillero"
                   onChange={this.seleccionPastillero}
                   options={this.state.pastilleros}
                   placeholder="Selecciona otro pastillero"
                 />
+                <p>
+                  Presiona{" "}
+                  <span
+                    className="negrita"
+                    onClick={this.navegarANuevoPastillero()}
+                  >
+                    aquí
+                  </span>{" "}
+                  para crear uno nuevo.
+                </p>
               </div>
             )}
           {this.props.cambioPastilleroHabilitado &&
@@ -133,7 +143,7 @@ class Footer extends React.Component {
             this.state.pastilleros.length < 1 && (
               <div className="texto-sin-pastilleros-footer">
                 <p>
-                  No tiene otros pastilleros, presiona{" "}
+                  No tienes otros pastilleros, presiona{" "}
                   <span
                     className="negrita"
                     onClick={this.navegarANuevoPastillero()}

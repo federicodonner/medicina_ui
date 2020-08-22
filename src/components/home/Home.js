@@ -188,18 +188,12 @@ class Home extends React.Component {
                     <span className="single-line">ingresar</span>
                     <span>compra</span>
                   </div>
-
                   <div
                     className="nav-button"
-                    onClick={this.navigateToSection("nuevopastillero", {
+                    onClick={this.navigateToSection("editarUSuario", {
                       userInfo: this.state.userInfo,
                     })}
                   >
-                    <div className="nav-icon nav-icon-nuevo-pastillero"></div>
-                    <span className="single-line">nuevo</span>
-                    <span>pastillero</span>
-                  </div>
-                  <div className="nav-button">
                     <div className="nav-icon nav-icon-editar-usuario"></div>
                     <span className="single-line">editar</span>
                     <span>tus datos</span>

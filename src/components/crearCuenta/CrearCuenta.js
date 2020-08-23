@@ -4,7 +4,7 @@ import { postData, guardarEnLS } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 import "./crearCuenta.css";
 
-class VerDosis extends React.Component {
+class CrearCuenta extends React.Component {
   state: {
     loader: true,
   };
@@ -13,6 +13,7 @@ class VerDosis extends React.Component {
   apellidoRef = React.createRef();
   emailRef = React.createRef();
   passwordRef = React.createRef();
+  passwordConfirmRef = React.createRef();
 
   navigateToSection = (section, data) => (event) => {
     event.preventDefault();
@@ -22,6 +23,10 @@ class VerDosis extends React.Component {
       },
       data
     );
+  };
+
+  volverALogin = () => {
+    this.props.history.push("login");
   };
 
   // Función utilizada para actualizar el state y esconder
@@ -46,60 +51,70 @@ class VerDosis extends React.Component {
       this.nombreRef.current.value &&
       this.apellidoRef.current.value &&
       this.emailRef.current.value &&
-      this.passwordRef.current.value
+      this.passwordRef.current.value &&
+      this.passwordConfirmRef.current.value
     ) {
-      // Prende el loader
-      this.setState({
-        loader: {
-          encendido: true,
-          texto: "Enviando información de registro.",
-        },
-      });
-
-      // Genera el objeto de datos para el login
-      var data = {
-        nombre: this.nombreRef.current.value,
-        apellido: this.apellidoRef.current.value,
-        email: this.emailRef.current.value,
-        password: this.passwordRef.current.value,
-      };
-
-      postData("usuario", data)
-        .then((results) => {
-          // Verifica que el login haya sido correcto
-          if (results.status == 201) {
-            // Si el login es correcto, guarda el token y navega
-            return results.json().then((respuesta) => {
-              guardarEnLS(variables.LSLoginToken, respuesta.token);
-              this.props.history.push({
-                pathname: "home",
-              });
-            });
-          } else {
-            // Si el login no es correcto, despliega el error
-            return results.json().then((respuesta) => {
-              alert(respuesta.detail);
-              this.setState({
-                loader: {
-                  encendido: false,
-                },
-                formIngresada: false,
-              });
-            });
-          }
-        })
-        .catch((e) => {
-          console.log("catch");
-          alert(
-            "Hubo un error al procesar tu solicitud, por favor inténtalo denuevo más tarde."
-          );
-          // Apaga el loader
-          this.setState({
-            loader: {
-              encendido: false,
-            },
-          });
+      // Verifica que las contraseñas sean iguales
+      if (
+        this.passwordRef.current.value == this.passwordConfirmRef.current.value
+      ) {
+        // Prende el loader
+        this.setState({
+          loader: {
+            encendido: true,
+            texto: "Enviando información de registro.",
+          },
         });
+
+        // Genera el objeto de datos para el login
+        var data = {
+          nombre: this.nombreRef.current.value,
+          apellido: this.apellidoRef.current.value,
+          email: this.emailRef.current.value,
+          password: this.passwordRef.current.value,
+        };
+
+        postData("usuario", data)
+          .then((results) => {
+            // Verifica que el login haya sido correcto
+            if (results.status == 201) {
+              // Si el login es correcto, guarda el token y navega
+              return results.json().then((respuesta) => {
+                guardarEnLS(variables.LSLoginToken, respuesta.token);
+                this.props.history.push({
+                  pathname: "home",
+                });
+              });
+            } else {
+              // Si el login no es correcto, despliega el error
+              return results.json().then((respuesta) => {
+                alert(respuesta.detail);
+                this.setState({
+                  loader: {
+                    encendido: false,
+                  },
+                  formIngresada: false,
+                });
+              });
+            }
+          })
+          .catch((e) => {
+            console.log("catch");
+            alert(
+              "Hubo un error al procesar tu solicitud, por favor inténtalo denuevo más tarde."
+            );
+            // Apaga el loader
+            this.setState({
+              loader: {
+                encendido: false,
+              },
+            });
+          });
+      } else {
+        // Si las contraseñas no coinciden las borra
+        this.passwordRef.current.value = "";
+        this.passwordConfirmRef.current.value = "";
+      }
     }
   };
 
@@ -131,7 +146,7 @@ class VerDosis extends React.Component {
             </div>
           )}
 
-          <Header logoChico={true} />
+          <Header logoChico={true} volver={this.volverALogin} />
 
           <div
             className={
@@ -203,7 +218,7 @@ class VerDosis extends React.Component {
                     </span>
                   )}
               </div>
-              <div className={"login-form ultimo-campo"}>
+              <div className={"login-form"}>
                 <span className="label">Contraseña:</span>
                 <input
                   rows="8"
@@ -222,9 +237,42 @@ class VerDosis extends React.Component {
                     </span>
                   )}
               </div>
-              <button className="login-submit" type="submit">
-                Crear usuario
-              </button>
+              <div className={"login-form ultimo-campo"}>
+                <span className="label">Confirmar contraseña:</span>
+                <input
+                  rows="8"
+                  name="password"
+                  type="password"
+                  ref={this.passwordConfirmRef}
+                  className="login-input"
+                  onChange={this.actualizarState()}
+                />
+                {this.state &&
+                  this.state.formIngresada &&
+                  this.passwordRef.current &&
+                  !this.passwordConfirmRef.current.value && (
+                    <span className="login-error">
+                      Debes confirmar tu contraseña.
+                    </span>
+                  )}
+                {this.state &&
+                  this.state.formIngresada &&
+                  this.passwordRef.current &&
+                  this.passwordConfirmRef.current.value &&
+                  this.passwordRef.current.value !=
+                    this.passwordConfirmRef.current.value && (
+                    <span className="login-error">
+                      Las contraseñas no coinciden.
+                    </span>
+                  )}
+              </div>
+              <div className="nav-buttons">
+                <div className="nav-button" onClick={this.submitLogin}>
+                  <div className="nav-icon chico nav-icon-check"></div>
+                  <span className="newLine">Crear</span>
+                  <span>cuenta</span>
+                </div>
+              </div>
             </form>
           </div>
         </div>
@@ -233,4 +281,4 @@ class VerDosis extends React.Component {
   }
 }
 
-export default VerDosis;
+export default CrearCuenta;

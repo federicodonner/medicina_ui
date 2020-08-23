@@ -56,7 +56,7 @@ class EditarDroga extends React.Component {
   toggleModal = () => {
     var mostrarModal = this.state.mostrarModal;
     mostrarModal = !mostrarModal;
-    this.setState({ mostrarModal });
+    this.setState({ mostrarModal, datosModal: null });
   };
 
   // Carga los datos en el modal y lo muestra
@@ -238,10 +238,7 @@ class EditarDroga extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header
-              volver={this.volverAVerDosis}
-              logoChico={true}
-            />
+            <Header volver={this.volverAVerDosis} logoChico={true} />
           )}
           <div className="content">
             {this.state &&
@@ -287,6 +284,10 @@ class EditarDroga extends React.Component {
                     />
 
                     <div className="nav-buttons">
+                      <div className="nav-button" onClick={this.toggleModal}>
+                        <div className="nav-icon chico nav-icon-cross"></div>
+                        <span className="single-line">cancelar</span>
+                      </div>
                       <div
                         className="nav-button"
                         onClick={this.submitEditarDroga}
@@ -294,19 +295,12 @@ class EditarDroga extends React.Component {
                         <div className="nav-icon chico nav-icon-check"></div>
                         <span className="single-line">guardar</span> cambios
                       </div>
-                      <div
-                        className="nav-button"
-                        onClick={this.submitEliminarDroga}
-                      >
-                        <div className="nav-icon chico nav-icon-cross"></div>
-                        <span className="single-line">eliminar</span> dosis
-                      </div>
                     </div>
                     <div
                       className="modal-boton-cerrar"
-                      onClick={this.toggleModal}
+                      onClick={this.submitEliminarDroga}
                     >
-                      Cancelar
+                      Borrar dosis
                     </div>
                   </div>
                 </>

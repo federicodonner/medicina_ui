@@ -12,6 +12,8 @@ import DescontarStock from "./descontarStock/DescontarStock";
 import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
 import Login from "./login/Login";
 import CrearCuenta from "./crearCuenta/CrearCuenta";
+import EditarUsuario from "./editarUsuario/EditarUsuario";
+import Error from "./error/Error";
 
 class Router extends React.Component {
   render() {
@@ -22,7 +24,7 @@ class Router extends React.Component {
           <Route exact path="/home" component={Home} />
           <Route exact path="/nuevopastillero" component={NuevoPastillero} />
           <Route path="/verDosis" component={VerDosis} />
-          <Route path="/imprimirPastillero" component={NotFound} />
+          <Route path="/imprimirPastillero" component={Error} />
           <Route path="/agregarDroga" component={AgregarDroga} />
           <Route path="/editarDroga" component={EditarDroga} />
           <Route path="/ingresarCompra" component={IngresarCompra} />
@@ -30,7 +32,8 @@ class Router extends React.Component {
           <Route path="/descontarStock" component={DescontarStock} />
           <Route path="/login" component={Login} />
           <Route path="/crearCuenta" component={CrearCuenta} />
-          <Route component={Home} />
+          <Route path="/editarUsuario" component={EditarUsuario} />
+          <Route component={Error} />
         </Switch>
       </BrowserRouter>
     );

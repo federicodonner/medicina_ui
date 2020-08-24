@@ -1,0 +1,13 @@
+.imagen-error {
+  background-image: url(/images/imagen_error.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  margin-top: 38%;
+  max-height: 113.1vh;
+  width: 60.5vw;
+  margin-left: auto;
+  margin-right: auto;
+  height: 23vh;
+  margin-bottom: 8vh;
+}

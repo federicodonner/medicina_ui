@@ -21,88 +21,58 @@ export function borrarDesdeLS(key) {
   return localStorage.removeItem(key);
 }
 
-export function getData(endpoint) {
-  var accessToken = getTokenDesdeLS();
-  var promise = Promise.race([
-    // Genera dos promesas, una con el fetch y otra con el timeout de 5 segundos
-    // la que termine primero resuelve
-    fetch(variables.api_url + "/" + endpoint, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + accessToken,
-      },
-    }),
-    new Promise(function (resolve, reject) {
-      setTimeout(() => reject(new Error("request timeout")), 10000);
-    }),
-  ]);
-  return promise;
-}
-
-// Función genérica parea postear datos en la API
-export function postData(endpoint, data) {
+// Función genérica para acceder a la API
+export function accederAPI(
+  verbo,
+  endpoint,
+  data,
+  callbackExito,
+  callbackFallo
+) {
   var accessToken = getTokenDesdeLS();
   const url = variables.api_url + "/" + endpoint;
+  var fetchConfig = {
+    method: verbo,
+    headers: {
+      "Content-Type": "application/json",
+      "accept-encoding": "gzip, deflate",
+      Authorization: "Bearer " + accessToken,
+    },
+  };
+  if (data) {
+    fetchConfig.body = JSON.stringify(data);
+  }
   var promise = Promise.race([
-    // Genera dos promesas, una con el fetch y otra con el timeout de 5 segundos
+    // Genera dos promesas, una con el fetch y otra con el timeout
     // la que termine primero resuelve
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "accept-encoding": "gzip, deflate",
-        Authorization: "Bearer " + accessToken,
-      },
-      body: JSON.stringify(data),
-    }),
+    fetch(url, fetchConfig),
     new Promise(function (resolve, reject) {
-      setTimeout(() => reject(new Error("request timeout")), 10000);
+      setTimeout(
+        () => reject(new Error("request timeout")),
+        variables.APITimeout
+      );
     }),
-  ]);
-  return promise;
-}
-
-// Función genérica parea put datos en la API
-export function putData(endpoint, data) {
-  var accessToken = getTokenDesdeLS();
-  const url = variables.api_url + "/" + endpoint;
-  var promise = Promise.race([
-    // Genera dos promesas, una con el fetch y otra con el timeout de 5 segundos
-    // la que termine primero resuelve
-    fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "accept-encoding": "gzip, deflate",
-        Authorization: "Bearer " + accessToken,
-      },
-      body: JSON.stringify(data),
-    }),
-    new Promise(function (resolve, reject) {
-      setTimeout(() => reject(new Error("request timeout")), 10000);
-    }),
-  ]);
-  return promise;
-}
-
-// Función genérica parea postear datos en la API
-export function deleteData(endpoint) {
-  var accessToken = getTokenDesdeLS();
-  const url = variables.api_url + "/" + endpoint;
-  var promise = Promise.race([
-    // Genera dos promesas, una con el fetch y otra con el timeout de 5 segundos
-    // la que termine primero resuelve
-    fetch(url, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "accept-encoding": "gzip, deflate",
-        Authorization: "Bearer " + accessToken,
-      },
-    }),
-    new Promise(function (resolve, reject) {
-      setTimeout(() => reject(new Error("request timeout")), 10000);
-    }),
-  ]);
-  return promise;
+  ])
+    .then((respuesta) => {
+      // Cuando se resuelve el race, verifica el status de la respuesta de la API
+      // Si es 200 o 201, fue exitoso, entonces ejecuta el callback de éxito
+      if (respuesta.status >= 200 && respuesta.status < 300) {
+        respuesta.json().then((datos) => {
+          callbackExito(datos);
+        });
+      } else {
+        respuesta.json().then((datos) => {
+          datos.status = respuesta.status;
+          callbackFallo(datos);
+        });
+      }
+    })
+    .catch((e) => {
+      var respuesta = {
+        status: 500,
+        detail:
+          "Ocurrió un error inesperado, por favor inéntalo denuevo más tarde.",
+      };
+      callbackFallo(respuesta);
+    });
 }

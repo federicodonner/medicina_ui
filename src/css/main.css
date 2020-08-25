@@ -35,7 +35,6 @@ body {
   grid-column: 2 / span 2;
 }
 
-
 .nav-icon {
   margin: auto;
   background-size: contain;
@@ -97,8 +96,8 @@ body {
   background-image: url("/images/icono_editar.png");
 }
 
-.nav-icon-nuevo-pastillero {
-  background-image: url("/images/icono_nuevo_pastillero.png");
+.nav-icon-pastillero {
+  background-image: url("/images/icono_pastillero.png");
 }
 
 .nav-icon-plus {

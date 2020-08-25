@@ -1,7 +1,7 @@
 .nav-buttons.home {
   display: grid;
   margin-top: 7vh;
-  grid-template-columns: repeat(6, auto);
+  grid-template-columns: repeat(4, auto);
 }
 
 .nav-buttons.home .nav-button {

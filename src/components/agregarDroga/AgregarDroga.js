@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Select from "react-select";
-import { borrarDesdeLS, getData, postData } from "../../utils/fetchFunctions";
+import { borrarDesdeLS, accederAPI } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 
 class AgregarDroga extends React.Component {
@@ -22,11 +22,13 @@ class AgregarDroga extends React.Component {
   concentracionRef = React.createRef();
   notasRef = React.createRef();
 
-  navigateToSection = (section) => (event) => {
-    event.preventDefault();
-    this.props.history.push({
-      pathname: section,
-    });
+  navegarAVerDosis = () => {
+    this.props.history.push(
+      {
+        pathname: "verDosis",
+      },
+      { userInfo: this.state.userInfo }
+    );
   };
 
   volverAHome = () => {
@@ -91,11 +93,6 @@ class AgregarDroga extends React.Component {
       return false;
     }
 
-    // Si todos los datos están correctos, se enciende el loader
-    this.setState({
-      loader: { encendido: true, texto: "Cargando el medicamento" },
-    });
-
     // Genera un objeto vacío con los datos para enviar
     const dataEnviar = {};
     dataEnviar.dosis_id = this.state.horarioSeleccionado.value;
@@ -106,87 +103,57 @@ class AgregarDroga extends React.Component {
       dataEnviar.notas = this.notasRef.current.value;
     }
 
-    // Esta promesa resuelve la creación de la nueva droga si es necesario antes
-    // de actualizar la dosis
-    let promesaCrearDroga = new Promise((resolve, reject) => {
-      // Si el usuario ingresó el nombre de una droga en lugar de seleccionarla
-      // de la lista se debe ingresar a la db
-      if (
-        this.drogaRef &&
-        this.drogaRef.current &&
-        this.drogaRef.current.value
-      ) {
-        const nuevaDroga = {
-          nombre: this.drogaRef.current.value,
-          pastillero: this.state.pastillero.id,
-        };
-        // Se agrega la droga a través del endpoint
-        postData("droga", nuevaDroga)
-          .then(() => {
-            getData("droga?pastillero=" + this.state.pastillero.id).then(
-              (results) => {
-                results.json().then((resultsDetalles) => {
-                  // Si la carga fue correcta, se hace una consulta de las drogas,
-                  // se selecciona la nueva y se carga en el objeto a enviar
-                  resultsDetalles.drogas.forEach((droga) => {
-                    if (droga.nombre == nuevaDroga.nombre) {
-                      // Resuelve la promesa pasando el id de la droga creada
-                      resolve(droga.id);
-                    }
-                  });
-                });
-              }
-            );
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      } else {
-        // Resuelve la promesa pasando el id de la droga seleccionada
-        resolve(this.state.drogaSeleccionada.value);
-      }
-    });
+    // Si el usuario ingresó el nombre de una droga en lugar de seleccionarla
+    // de la lista se debe ingresar a la db
+    if (this.drogaRef && this.drogaRef.current && this.drogaRef.current.value) {
+      const nuevaDroga = {
+        nombre: this.drogaRef.current.value,
+        pastillero: this.state.pastillero.id,
+      };
+      this.setState(
+        {
+          dataEnviar,
+          loader: { encendido: true, texto: "Cargando el medicamento." },
+        },
+        () => {
+          // Se agrega la droga a través del endpoint
+          accederAPI(
+            "POST",
+            "droga",
+            nuevaDroga,
+            this.agregarDroga,
+            this.errorApi
+          );
+        }
+      );
+    } else {
+      this.setState(
+        {
+          dataEnviar,
+          loader: { encendido: true, texto: "Cargando el medicamento." },
+        },
+        () => {
+          // Resuelve la promesa pasando el id de la droga seleccionada
+          this.agregarDroga({ id: this.state.drogaSeleccionada.value });
+        }
+      );
+    }
+  };
 
-    // Función llamada luego de resolver la promesa de creación de droga
-    // recibe el id de la droga creada o seleccionada
-    promesaCrearDroga.then((droga_id) => {
-      dataEnviar.droga_id = droga_id;
-      // Se agrega la dosis a través del endpoint
-      postData("drogaxdosis", dataEnviar)
-        .then((response) => {
-          if (response.status == 201) {
-            response.json().then((responseDetalles) => {
-              alert(responseDetalles.detail);
-              getData("droga?pastillero=" + this.state.pastillero.id).then(
-                (responseDrogas) => {
-                  responseDrogas.json().then((responseDrogasDetalles) => {
-                    this.procesarDrogas(
-                      responseDrogasDetalles.drogas,
-                      this.state.pastillero
-                    );
-                    // Vuelve al pastillero
-                    this.props.history.push(
-                      {
-                        pathname: "verDosis",
-                      },
-                      { userInfo: this.state.userInfo }
-                    );
-                  });
-                }
-              );
-            });
-          } else {
-            // Si el request da un error de login, sale
-            response.json().then((responseDetalles) => {
-              alert(responseDetalles.detail);
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    });
+  // Callback del POST de crear droga
+  agregarDroga = (droga) => {
+    // Carga los datos listos para enviar y le agrega los datos de la droga
+    const dataEnviar = this.state.dataEnviar;
+    dataEnviar.droga_id = droga.id;
+
+    // Se agrega la dosis a través del endpoint
+    accederAPI(
+      "POST",
+      "drogaxdosis",
+      dataEnviar,
+      this.navegarAVerDosis,
+      this.errorApi
+    );
   };
 
   // Función que apaga el loader cuando verifica que
@@ -203,35 +170,48 @@ class AgregarDroga extends React.Component {
     }
   };
 
-  // Recibe el pastillero seleccionado del Footer y lo guarda en state
-  establecerPastillero = (pastilleroId) => {
-    // Una vez que define cuál es el pastillero seleccionado
-    // busca los detalles en la API
-    getData("pastillero/" + pastilleroId)
-      .then((respuesta) => {
-        respuesta.json().then((pastillero) => {
-          this.setState({ pastillero }, () => {
-            this.apagarLoader();
-          });
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  // Recibe las drogas del pastillero y las guarda en state
+  establecerDrogas = (drogas) => {
+    this.setState({ drogas: drogas.drogas }, () => {
+      this.apagarLoader();
+    });
+  };
 
+  // Recibe el pastillero seleccionado del Footer y lo guarda en state
+  establecerPastillero = (pastillero) => {
     // Una vez que define cuál es el pastillero seleccionado
     // busca las drogas correspondientes en la API
-    getData("droga?pastillero=" + pastilleroId)
-      .then((respuesta) => {
-        respuesta.json().then((drogas) => {
-          this.setState({ drogas: drogas.drogas }, () => {
-            this.apagarLoader();
-          });
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    this.setState({ pastillero }, () => {
+      accederAPI(
+        "GET",
+        "droga?pastillero=" + pastillero.id,
+        null,
+        this.establecerDrogas,
+        this.errorApi
+      );
+    });
+  };
+
+  // Callback de la llamada a la API cuando el estado es 200
+  recibirDatos = (userInfo) => {
+    this.setState({ userInfo }, () => {
+      this.apagarLoader();
+    });
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  errorApi = (datos) => {
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
+    } else {
+      this.props.history.push("home");
+    }
   };
 
   componentDidMount() {
@@ -239,27 +219,13 @@ class AgregarDroga extends React.Component {
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (this.props.location.state && this.props.location.state.userInfo) {
       // Si se los pasó, los gaurda en state
-      this.setState({ userInfo: this.props.location.state.userInfo });
+      this.setState({ userInfo: this.props.location.state.userInfo }, () => {
+        this.apagarLoader();
+      });
     } else {
       // Sino, los va a buscar al servidor
       // Va a buscar los datos del usuario
-      getData("usuario")
-        .then((response_usuario) => {
-          if (response_usuario.status == 200) {
-            response_usuario.json().then((respuesta_usuario) => {
-              // Guarda la información del usuario
-              this.setState({ userInfo: respuesta_usuario });
-            });
-          } else {
-            // Si el request da un error de login, sale
-            response_usuario.json().then((respuesta_usuario) => {
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
     }
   }
 
@@ -287,10 +253,7 @@ class AgregarDroga extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header
-              volver={this.volverAVerDosis}
-              logoChico={true}
-            />
+            <Header volver={this.volverAVerDosis} logoChico={true} />
           )}
           <div className="content">
             {this.state && !this.state.loader.encendido && (

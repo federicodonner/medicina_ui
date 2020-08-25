@@ -60,3 +60,7 @@
 .negrita {
   font-weight: 600;
 }
+
+.loader-footer {
+  width: 8vw;
+}

@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import {
-  getData,
+  accederAPI,
   borrarDesdeLS,
   guardarEnLS,
   leerDesdeLS,
@@ -44,6 +44,53 @@ class Home extends React.Component {
     this.props.history.push({ pathname: "/login" });
   };
 
+  // Callback de la llamada a la API cuando el estado es 200
+  recibirDatos = (userInfo) => {
+    if (userInfo.pastilleros.length == 0) {
+      this.props.history.push(
+        { pathname: "/nuevopastillero" },
+        { userInfo: userInfo }
+      );
+    } else {
+      // ------------------------------------
+      // Registrar push notifications
+      // const beamsClient = new PusherPushNotifications.Client({
+      //   instanceId: "f1746db2-2f5b-47ab-9398-750bc69edb88",
+      // });
+      //
+      // beamsClient
+      //   .start()
+      //   .then(() => beamsClient.addDeviceInterest("hello"))
+      //   .then(() =>
+      //     console.log("Successfully registered and subscribed!")
+      //   )
+      //   .catch(console.error);
+
+      // -------------------------
+
+      // Guarda los datos en state y apaga el loader
+      this.setState({
+        userInfo: userInfo,
+        loader: { encendido: false },
+      });
+    }
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  errorApi = (datos) => {
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y apaga el loader
+    } else {
+      this.setState({ loader: { encendido: false } });
+    }
+  };
+
   componentDidMount() {
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (this.props.location.state && this.props.location.state.userInfo) {
@@ -64,63 +111,8 @@ class Home extends React.Component {
       }
     } else {
       // Va a buscar los datos del usuario
-      getData("usuario")
-        .then((response_usuario) => {
-          if (response_usuario.status == 200) {
-            response_usuario.json().then((respuesta_usuario) => {
-              // Si no tiene pastilleros a su nombre,
-              // Navega a la sección de nuevo pastillero
-              if (respuesta_usuario.pastilleros.length == 0) {
-                this.props.history.push(
-                  { pathname: "/nuevopastillero" },
-                  { userInfo: respuesta_usuario }
-                );
-              } else {
-                // ------------------------------------
-                // Registrar push notifications
-                // const beamsClient = new PusherPushNotifications.Client({
-                //   instanceId: "f1746db2-2f5b-47ab-9398-750bc69edb88",
-                // });
-                //
-                // beamsClient
-                //   .start()
-                //   .then(() => beamsClient.addDeviceInterest("hello"))
-                //   .then(() =>
-                //     console.log("Successfully registered and subscribed!")
-                //   )
-                //   .catch(console.error);
-
-                // -------------------------
-
-                // Guarda los datos en state y apaga el loadr
-                this.setState({
-                  userInfo: respuesta_usuario,
-                  loader: { encendido: false },
-                });
-              }
-            });
-          } else {
-            response_usuario.json().then((respuesta_usuario) => {
-              alert(respuesta_usuario.details);
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
     }
-    // // Verifica si el usuario ya seleccionó el pastillero
-    // const user_info = verifyLogin();
-    // if (user_info && user_info.pastillero) {
-    //   // Si la tiene, la guarda en el estado
-    //   this.setState({ user_info }, function () {});
-    // } else {
-    //   // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-    //   this.props.history.push({
-    //     pathname: "/seleccionarPastillero",
-    //   });
-    // }
   }
 
   // prende el loader antes de cargar el componente

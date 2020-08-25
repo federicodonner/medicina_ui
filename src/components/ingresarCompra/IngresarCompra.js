@@ -2,7 +2,7 @@ import React from "react";
 import Header from "../header/Header";
 import Select from "react-select";
 import Footer from "../footer/Footer";
-import { getData, postData, borrarDesdeLS } from "../../utils/fetchFunctions";
+import { accederAPI, borrarDesdeLS } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 
 class IngresarCompra extends React.Component {
@@ -29,7 +29,7 @@ class IngresarCompra extends React.Component {
     const nombreDrogas = [];
     const drogaParaGuardar = {};
     // Crea un array con los detalles de las drogas ingresadas para el pastillero
-    drogas.forEach(function (droga, index) {
+    drogas.drogas.forEach(function (droga, index) {
       drogaParaGuardar.label = droga.nombre;
       drogaParaGuardar.value = droga.id;
       nombreDrogas.push(Object.assign({}, drogaParaGuardar));
@@ -73,20 +73,19 @@ class IngresarCompra extends React.Component {
     dataEnviar.droga = this.state.drogaSeleccionada.value;
 
     // Se agrega la compra a través del endpoint
-    postData("compra", dataEnviar)
-      .then((results) => {
-        return results.json();
-      })
-      .then((response) => {
-        alert(response.detail);
-        // Vuelve a ver stock
-        this.props.history.push(
-          {
-            pathname: "verStock",
-          },
-          { userInfo: this.state.userInfo }
-        );
-      });
+    accederAPI(
+      "POST",
+      "compra",
+      dataEnviar,
+      this.compraConfirmada,
+      this.errorApi
+    );
+  };
+
+  // callback de ingresar compra
+  compraConfirmada = (respuesta) => {
+    alert(respuesta.detail);
+    this.props.history.push("verStock");
   };
 
   // Función que apaga el loader cuando verifica que
@@ -103,18 +102,38 @@ class IngresarCompra extends React.Component {
   };
 
   // Recibe el pastillero seleccionado del Footer y lo guarda en state
-  establecerPastillero = (pastilleroId) => {
+  establecerPastillero = (pastillero) => {
     // Una vez que define cuál es el pastillero seleccionado
     // busca los detalles en la API
-    getData("droga?pastillero=" + pastilleroId)
-      .then((respuesta) => {
-        respuesta.json().then((drogas) => {
-          this.procesarDrogas(drogas.drogas);
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    accederAPI(
+      "GET",
+      "droga?pastillero=" + pastillero.id,
+      null,
+      this.procesarDrogas,
+      this.errorApi
+    );
+  };
+
+  // Callback de la llamada a la API de userInfo
+  recibirDatos = (userInfo) => {
+    this.setState({ userInfo }, () => {
+      this.apagarLoader();
+    });
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  errorApi = (datos) => {
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
+    } else {
+      this.props.history.push("home");
+    }
   };
 
   componentDidMount() {
@@ -128,25 +147,7 @@ class IngresarCompra extends React.Component {
     } else {
       // Sino, los va a buscar al servidor
       // Va a buscar los datos del usuario
-      getData("usuario")
-        .then((response_usuario) => {
-          if (response_usuario.status == 200) {
-            response_usuario.json().then((respuesta_usuario) => {
-              // Guarda la información del usuario
-              this.setState({ userInfo: respuesta_usuario }, () => {
-                this.apagarLoader();
-              });
-            });
-          } else {
-            // Si el request da un error de login, sale
-            response_usuario.json().then((respuesta_usuario) => {
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
     }
   }
 
@@ -174,10 +175,7 @@ class IngresarCompra extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header
-              volver={this.volverAHome}
-              logoChico={true}
-            />
+            <Header volver={this.volverAHome} logoChico={true} />
           )}
           <div className="content">
             {this.state && !this.state.loader.encendido && (

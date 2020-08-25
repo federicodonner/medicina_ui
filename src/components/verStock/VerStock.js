@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
-import { getData, borrarDesdeLS } from "../../utils/fetchFunctions";
+import { accederAPI, borrarDesdeLS } from "../../utils/fetchFunctions";
 import { translateStock } from "../../utils/dataFunctions";
 import variables from "../../var/variables.js";
 import "./verStock.css";
@@ -42,21 +42,47 @@ class VerStock extends React.Component {
     }
   };
 
-  // Recibe el pastillero seleccionado del Footer y lo guarda en state
-  establecerPastillero = (pastilleroId) => {
-    // Una vez que define cuál es el pastillero seleccionado
-    // busca los detalles en la API
-    getData("stock/" + pastilleroId)
-      .then((respuesta) => {
-        respuesta.json().then((stock) => {
-          this.setState({ stock: stock.drogas }, () => {
-            this.apagarLoader();
-          });
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  // Callback del footer con la información del pastillero
+  establecerPastillero = (pastillero) => {
+    // Guarda el pastillero en state y apaga el loader
+    this.setState({ pastillero }, () => {
+      // Va a buscar los datos del stock a la API
+      accederAPI(
+        "GET",
+        "stock/" + pastillero.id,
+        null,
+        this.guardarStock,
+        this.errorAPI
+      );
+    });
+  };
+
+  // Callback de la llamada a la API de userInfo
+  recibirDatos = (userInfo) => {
+    this.setState({ userInfo }, () => {
+      this.apagarLoader();
+    });
+  };
+
+  // Callback de la llamada a la API de stock
+  guardarStock = (stock) => {
+    this.setState({ stock: stock.drogas });
+    this.apagarLoader();
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  errorApi = (datos) => {
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
+    } else {
+      this.props.history.push("home");
+    }
   };
 
   componentDidMount() {
@@ -70,25 +96,7 @@ class VerStock extends React.Component {
     } else {
       // Sino, los va a buscar al servidor
       // Va a buscar los datos del usuario
-      getData("usuario")
-        .then((response_usuario) => {
-          if (response_usuario.status == 200) {
-            response_usuario.json().then((respuesta_usuario) => {
-              // Guarda la información del usuario
-              this.setState({ userInfo: respuesta_usuario }, () => {
-                this.apagarLoader();
-              });
-            });
-          } else {
-            // Si el request da un error de login, sale
-            response_usuario.json().then((respuesta_usuario) => {
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorAPI);
     }
   }
 
@@ -116,10 +124,7 @@ class VerStock extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header
-              volver={this.volverAHome}
-              logoChico={true}
-            />
+            <Header volver={this.volverAHome} logoChico={true} />
           )}
           <div className="content">
             {this.state && !this.state.loader.encendido && (
@@ -145,7 +150,9 @@ class VerStock extends React.Component {
                             )}
 
                           {droga.dias_disponible == 0 && (
-                            <span className="dias-stock rojo">- sin stock</span>
+                            <span className="dias-stock rojo single-line">
+                              sin stock
+                            </span>
                           )}
 
                           {droga.dias_disponible < 0 && (

@@ -3,13 +3,7 @@ import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Select from "react-select";
 import variables from "../../var/variables.js";
-import {
-  getData,
-  postData,
-  putData,
-  deleteData,
-  borrarDesdeLS,
-} from "../../utils/fetchFunctions";
+import { accederAPI, borrarDesdeLS } from "../../utils/fetchFunctions";
 import "./editarDroga.css";
 
 class EditarDroga extends React.Component {
@@ -56,7 +50,7 @@ class EditarDroga extends React.Component {
   toggleModal = () => {
     var mostrarModal = this.state.mostrarModal;
     mostrarModal = !mostrarModal;
-    this.setState({ mostrarModal, datosModal: null });
+    this.setState({ mostrarModal });
   };
 
   // Carga los datos en el modal y lo muestra
@@ -89,20 +83,13 @@ class EditarDroga extends React.Component {
       { loader: { encendido: true, texto: "Editando la dosis" } },
       () => {
         // Envía la request a la API con el callback para recargar la página
-        putData(
+        accederAPI(
+          "PUT",
           "drogaxdosis/" + this.state.datosModal.drogaxdosis_id,
-          dataEditDrogaxdosis
-        ).then((response) => {
-          if (response.status == 200) {
-            response.json().then((responseDetails) => {
-              alert(responseDetails.detail);
-              this.volverAVerDosis();
-            });
-          } else {
-            alert("Ocurrió un error, inténtalo denuevo más tarde.");
-            this.signOut();
-          }
-        });
+          dataEditDrogaxdosis,
+          this.editarDrogaEnState,
+          this.errorApi
+        );
       }
     );
   };
@@ -120,22 +107,57 @@ class EditarDroga extends React.Component {
         { loader: { encendido: true, texto: "Eliminando la dosis" } },
         () => {
           // Envía la request a la API con el callback para recargar la página
-          deleteData(
-            "drogaxdosis/" + this.state.datosModal.drogaxdosis_id
-          ).then((response) => {
-            if (response.status == 200) {
-              response.json().then((responseDetails) => {
-                alert(responseDetails.detail);
-                this.volverAVerDosis();
-              });
-            } else {
-              alert("Ocurrió un error, inténtalo denuevo más tarde.");
-              this.signOut();
-            }
-          });
+          accederAPI(
+            "DELETE",
+            "drogaxdosis/" + this.state.datosModal.drogaxdosis_id,
+            null,
+            this.editarDrogaEnState,
+            this.errorApi
+          );
         }
       );
     }
+  };
+
+  // Si se editó una dosis, la edita en state para matchear con la db
+  editarDrogaEnState = (drogaxdosisEditado) => {
+    var pastillero = this.state.pastillero;
+    var horarioSeleccionado = this.state.datosModal.horario.value;
+    var drogaxdosisId = this.state.datosModal.drogaxdosis_id;
+
+    // Va a armar los horarios de los datos para el modal
+    // Aprovecha que va a recorrer el array de dosis del pastillero
+    var datosModal = { horarios: [] };
+
+    // Va a buscar la drogaxdosis eliminada para borrarla
+    pastillero.dosis.forEach((dosis) => {
+      var horario = {};
+      horario.label = dosis.horario;
+      horario.value = dosis.id;
+      datosModal.horarios.push(Object.assign({}, horario));
+
+      if (dosis.drogas.length >= 0) {
+        dosis.drogas.forEach((drogaxdosis, index) => {
+          if (drogaxdosis.id == drogaxdosisId) {
+            // Cuando encuentra el editado, lo elimina
+            dosis.drogas.splice(index, 1);
+          }
+        });
+      }
+      // Después de eliminar el encontrado, si fue una edición
+      // lo agrega en el horario seleccionado
+      // (si fue elmiinada una droga, el objeto de respuesta de la API no tiene id)
+      if (dosis.id == horarioSeleccionado && drogaxdosisEditado.id) {
+        dosis.drogas.push(drogaxdosisEditado);
+      }
+    });
+    // Guarda el state actualizado
+    this.setState({
+      pastillero,
+      datosModal,
+      mostrarModal: false,
+      loader: { encendido: false },
+    });
   };
 
   // Función que apaga el loader cuando verifica que
@@ -164,21 +186,34 @@ class EditarDroga extends React.Component {
     }
   };
 
-  // Recibe el pastillero seleccionado del Footer y lo guarda en state
-  establecerPastillero = (pastilleroId) => {
-    // Una vez que define cuál es el pastillero seleccionado
-    // busca los detalles en la API
-    getData("pastillero/" + pastilleroId)
-      .then((respuesta) => {
-        respuesta.json().then((pastillero) => {
-          this.setState({ pastillero }, () => {
-            this.apagarLoader();
-          });
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  // Callback del footer con la información del pastillero
+  establecerPastillero = (pastillero) => {
+    // Guarda el pastillero en state y apaga el loader
+    this.setState({ pastillero }, () => {
+      this.apagarLoader();
+    });
+  };
+
+  // Callback de la llamada a la API cuando el estado es 200
+  recibirDatos = (userInfo) => {
+    this.setState({ userInfo }, () => {
+      this.apagarLoader();
+    });
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  errorApi = (datos) => {
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
+    } else {
+      this.props.history.push("home");
+    }
   };
 
   componentDidMount() {
@@ -192,25 +227,7 @@ class EditarDroga extends React.Component {
     } else {
       // Sino, los va a buscar al servidor
       // Va a buscar los datos del usuario
-      getData("usuario")
-        .then((response_usuario) => {
-          if (response_usuario.status == 200) {
-            response_usuario.json().then((respuesta_usuario) => {
-              // Guarda la información del usuario
-              this.setState({ userInfo: respuesta_usuario }, () => {
-                this.apagarLoader();
-              });
-            });
-          } else {
-            // Si el request da un error de login, sale
-            response_usuario.json().then((respuesta_usuario) => {
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
     }
   }
 
@@ -300,7 +317,7 @@ class EditarDroga extends React.Component {
                       className="modal-boton-cerrar"
                       onClick={this.submitEliminarDroga}
                     >
-                      Borrar dosis
+                      Eliminar dosis
                     </div>
                   </div>
                 </>

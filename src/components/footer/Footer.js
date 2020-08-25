@@ -1,6 +1,10 @@
 import React from "react";
 import Select from "react-select";
-import { leerDesdeLS, guardarEnLS, getData } from "../../utils/fetchFunctions";
+import {
+  leerDesdeLS,
+  guardarEnLS,
+  accederAPI,
+} from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 import "./footer.css";
 
@@ -39,6 +43,11 @@ class Footer extends React.Component {
     this.procesarPastilleros();
   };
 
+  // callback de error de GET de pastillero
+  errorGetPastillero = () => {
+    console.log("Error GET pastilleros");
+  };
+
   procesarPastilleros = () => {
     // Verifica que ya haya un pastillero por defecto ya guardado
     var pastilleroActual = JSON.parse(
@@ -56,9 +65,15 @@ class Footer extends React.Component {
     }
 
     // Si el Componente padre le pide que espeficique el pastillero,
-    // Va a buscar los detalles
+    // Va a buscar los detalles y ejecuta el callback del componente padre
     if (this.props.establecerPastillero) {
-      this.props.establecerPastillero(pastilleroActual);
+      accederAPI(
+        "GET",
+        "pastillero/" + pastilleroActual,
+        null,
+        this.props.establecerPastillero,
+        this.errorGetPastillero
+      );
     }
 
     var pastilleroSeleccionado = {};
@@ -84,6 +99,7 @@ class Footer extends React.Component {
         pastilleroSeleccionado: pastilleroSeleccionado,
         pastilleros: otrosPastilleros,
         agrandado: false,
+        loader: { encendido: false },
       },
       () => {
         Fitty(".fit", { maxSize: 22 });
@@ -97,79 +113,97 @@ class Footer extends React.Component {
     this.procesarPastilleros();
   }
 
+  // prende el loader antes de cargar el componente
+  constructor(props) {
+    super(props);
+    this.state = {
+      loader: {
+        encendido: true,
+      },
+    };
+  }
+
   render() {
     return (
       <div className={this.state.agrandado ? "footer agrandado" : "footer"}>
-        <div className="titulo-footer">
-          {this.state.pastilleroSeleccionado && (
-            <span className="fit" onClick={this.toggleTamaño(true)}>
-              Pastillero de{" "}
-              <span className="negrita">
-                {this.state.pastilleroSeleccionado.nombreCompleto}
-              </span>
-            </span>
-          )}
-          {!this.state.pastilleroSeleccionado && (
-            <span className="fit" onClick={this.toggleTamaño(true)}>
-              Sin pastillero. <span className="negrita">Selecciona uno</span>.
-            </span>
-          )}
-        </div>
-        <div className="modal-seleccion-pastillero">
-          {this.props.cambioPastilleroHabilitado &&
-            this.state.pastilleros &&
-            this.state.pastilleros.length > 0 && (
-              <div className="texto-con-pastilleros-footer">
-                <Select
-                  className="select-pastillero"
-                  onChange={this.seleccionPastillero}
-                  options={this.state.pastilleros}
-                  placeholder="Selecciona otro pastillero"
-                />
-                <p>
-                  Presiona{" "}
-                  <span
-                    className="negrita"
-                    onClick={this.navegarANuevoPastillero()}
-                  >
-                    aquí
-                  </span>{" "}
-                  para crear uno nuevo.
-                </p>
-              </div>
-            )}
-          {this.props.cambioPastilleroHabilitado &&
-            this.state.pastilleros &&
-            this.state.pastilleros.length < 1 && (
-              <div className="texto-sin-pastilleros-footer">
-                <p>
-                  No tienes otros pastilleros, presiona{" "}
-                  <span
-                    className="negrita"
-                    onClick={this.navegarANuevoPastillero()}
-                  >
-                    aquí
-                  </span>{" "}
-                  para crear uno nuevo.
-                </p>
-              </div>
-            )}
-          {!this.props.cambioPastilleroHabilitado && (
-            <div className="texto-sin-pastilleros-footer">
-              <p>
-                No puedes cambiar de pastillero desde esta sección. Para hacerlo
-                debes volver a la{" "}
-                <span className="negrita" onClick={this.navegarAHome()}>
-                  pantalla principal
+        {this.state && this.state.loader.encendido && (
+          <img className="loader-footer" src="/images/loader.svg" />
+        )}
+        {this.state && !this.state.loader.encendido && (
+          <>
+            <div className="titulo-footer">
+              {this.state.pastilleroSeleccionado && (
+                <span className="fit" onClick={this.toggleTamaño(true)}>
+                  Pastillero de{" "}
+                  <span className="negrita">
+                    {this.state.pastilleroSeleccionado.nombreCompleto}
+                  </span>
                 </span>
-                .
-              </p>
+              )}
+              {!this.state.pastilleroSeleccionado && (
+                <span className="fit" onClick={this.toggleTamaño(true)}>
+                  Sin pastillero.{" "}
+                  <span className="negrita">Selecciona uno</span>.
+                </span>
+              )}
             </div>
-          )}
-          <span className="negrita" onClick={this.toggleTamaño(false)}>
-            Cerrar
-          </span>
-        </div>
+            <div className="modal-seleccion-pastillero">
+              {this.props.cambioPastilleroHabilitado &&
+                this.state.pastilleros &&
+                this.state.pastilleros.length > 0 && (
+                  <div className="texto-con-pastilleros-footer">
+                    <Select
+                      className="select-pastillero"
+                      onChange={this.seleccionPastillero}
+                      options={this.state.pastilleros}
+                      placeholder="Selecciona otro pastillero"
+                    />
+                    <p>
+                      Presiona{" "}
+                      <span
+                        className="negrita"
+                        onClick={this.navegarANuevoPastillero()}
+                      >
+                        aquí
+                      </span>{" "}
+                      para crear uno nuevo.
+                    </p>
+                  </div>
+                )}
+              {this.props.cambioPastilleroHabilitado &&
+                this.state.pastilleros &&
+                this.state.pastilleros.length < 1 && (
+                  <div className="texto-sin-pastilleros-footer">
+                    <p>
+                      No tienes otros pastilleros, presiona{" "}
+                      <span
+                        className="negrita"
+                        onClick={this.navegarANuevoPastillero()}
+                      >
+                        aquí
+                      </span>{" "}
+                      para crear uno nuevo.
+                    </p>
+                  </div>
+                )}
+              {!this.props.cambioPastilleroHabilitado && (
+                <div className="texto-sin-pastilleros-footer">
+                  <p>
+                    No puedes cambiar de pastillero desde esta sección. Para
+                    hacerlo debes volver a la{" "}
+                    <span className="negrita" onClick={this.navegarAHome()}>
+                      pantalla principal
+                    </span>
+                    .
+                  </p>
+                </div>
+              )}
+              <span className="negrita" onClick={this.toggleTamaño(false)}>
+                Cerrar
+              </span>
+            </div>
+          </>
+        )}
       </div>
     );
   }

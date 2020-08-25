@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../header/Header";
-import { getData, postData, borrarDesdeLS } from "../../utils/fetchFunctions";
+import { accederAPI, borrarDesdeLS } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 import "./nuevoPastillero.css";
 
@@ -63,25 +63,20 @@ class NuevoPastillero extends React.Component {
       });
       // Arma los datos para enviar
       var data = { dia_actualizacion: 1, dosis: dosisEnviar };
-      postData("pastillero", data)
-        .then((response) => {
-          if (response.status == 201) {
-            this.props.history.push("home");
-          } else {
-            alert("Ocurrió un error, por favor vuelve a ingresar.");
-            this.signOut();
-          }
-        })
-        .catch((e) => {
-          alert("Ocurrió un error, por favor inténtalo denuevo más tarde.");
-          this.setState({
-            loader: { encendido: false, texto: "Generando tu pastillero." },
-          });
-          console.log(e);
-        });
+      accederAPI(
+        "POST",
+        "pastillero",
+        data,
+        this.pastilleroCreado,
+        this.errorApi
+      );
     }
   };
 
+  // callback de creación del pastillero
+  pastilleroCreado = (respuesta) => {
+    this.props.history.push("home");
+  };
   // Necesario para que se actualice el componente y
   // aparezcan o desaparezcan los campos
   refrescarState = () => () => {
@@ -109,6 +104,26 @@ class NuevoPastillero extends React.Component {
     });
   };
 
+  // Callback de la llamada a la API de userInfo
+  recibirDatos = (userInfo) => {
+    this.setState({ userInfo, loader: { encendido: false } });
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  errorApi = (datos) => {
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
+    } else {
+      this.props.history.push("home");
+    }
+  };
+
   componentDidMount() {
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (this.props.location.state && this.props.location.state.userInfo) {
@@ -120,26 +135,7 @@ class NuevoPastillero extends React.Component {
     } else {
       // Sino, los va a buscar al servidor
       // Va a buscar los datos del usuario
-      getData("usuario")
-        .then((response_usuario) => {
-          if (response_usuario.status == 200) {
-            response_usuario.json().then((respuesta_usuario) => {
-              // Guarda la información del usuario en el state
-              // y apaga el loader
-              this.setState({
-                userInfo: respuesta_usuario,
-                loader: { encendido: false },
-              });
-            });
-          } else {
-            response_usuario.json().then((respuesta_usuario) => {
-              this.signOut();
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorAPI);
     }
   }
 

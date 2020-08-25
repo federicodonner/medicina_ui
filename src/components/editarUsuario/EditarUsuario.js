@@ -1,10 +1,18 @@
+/* ---------
+------
+
+COMPONENTE NO TERMINADO
+
+------
+--------- */
+
 import React from "react";
 import Header from "../header/Header";
 import { accederAPI, guardarEnLS } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
-import "./crearCuenta.css";
+import "./editarUsuario.css";
 
-class CrearCuenta extends React.Component {
+class EditarUsuario extends React.Component {
   state: {
     loader: true,
   };
@@ -13,7 +21,6 @@ class CrearCuenta extends React.Component {
   apellidoRef = React.createRef();
   emailRef = React.createRef();
   passwordRef = React.createRef();
-  passwordConfirmRef = React.createRef();
 
   navigateToSection = (section, data) => (event) => {
     event.preventDefault();
@@ -25,8 +32,10 @@ class CrearCuenta extends React.Component {
     );
   };
 
-  volverALogin = () => {
-    this.props.history.push("login");
+  volverAHome = () => {
+    this.props.history.push({
+      pathname: "home",
+    });
   };
 
   // Función utilizada para actualizar el state y esconder
@@ -51,54 +60,46 @@ class CrearCuenta extends React.Component {
       this.nombreRef.current.value &&
       this.apellidoRef.current.value &&
       this.emailRef.current.value &&
-      this.passwordRef.current.value &&
-      this.passwordConfirmRef.current.value
+      this.passwordRef.current.value
     ) {
-      // Verifica que las contraseñas sean iguales
-      if (
-        this.passwordRef.current.value == this.passwordConfirmRef.current.value
-      ) {
-        // Prende el loader
-        this.setState({
-          loader: {
-            encendido: true,
-            texto: "Enviando información de registro.",
-          },
-        });
+      // Prende el loader
+      this.setState({
+        loader: {
+          encendido: true,
+          texto: "Enviando información de registro.",
+        },
+      });
 
-        // Genera el objeto de datos para el login
-        var data = {
-          nombre: this.nombreRef.current.value,
-          apellido: this.apellidoRef.current.value,
-          email: this.emailRef.current.value,
-          password: this.passwordRef.current.value,
-        };
+      // Genera el objeto de datos para el login
+      var data = {
+        nombre: this.nombreRef.current.value,
+        apellido: this.apellidoRef.current.value,
+        email: this.emailRef.current.value,
+        password: this.passwordRef.current.value,
+      };
 
-        accederAPI("POST", "usuario", data, this.cuentaCreada, this.errorApi);
-      } else {
-        // Si las contraseñas no coinciden las borra
-        this.passwordRef.current.value = "";
-        this.passwordConfirmRef.current.value = "";
-      }
+      accederAPI("POST", "usuario", data, this.usuarioEditado, this.errorApi);
     }
   };
 
-  // Callback de creación de cuenta
-  cuentaCreada = (respuesta) => {
-    guardarEnLS(variables.LSLoginToken, respuesta.token);
-    this.props.history.push({
-      pathname: "home",
-    });
+  // callback de usuario editado
+  editarUsuario = () => {
+    console.log("usuario editado");
   };
 
   // callback de la llamada a la API cuando el estado no es 200
   errorApi = (datos) => {
-    if (datos.status >= 500) {
-      alert("Ocurrió un error, por favor inténtalo denuevo más tarde.");
+    alert(datos.detail);
+    // Error 401 significa sin permisos, desloguea al usuario
+    if (datos.status == 401) {
+      this.signOut();
+      // Error 500+ es un error de la API, lo manda a la pantalla del error
+    } else if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
     } else {
-      alert(datos.detail);
+      this.props.history.push("home");
     }
-    this.props.history.push("login");
   };
 
   componentDidMount() {
@@ -129,7 +130,7 @@ class CrearCuenta extends React.Component {
             </div>
           )}
 
-          <Header logoChico={true} volver={this.volverALogin} />
+          <Header logoChico={true} volver={this.volverAHome} />
 
           <div
             className={
@@ -138,11 +139,7 @@ class CrearCuenta extends React.Component {
                 : "content"
             }
           >
-            <p>
-              Aquí podrás crear una nueva cuenta y empezar a usar MiDosis
-              inmediatamente.
-            </p>
-            <p>Ingresa tus datos</p>
+            <p>Editar tus datos</p>
             <form onSubmit={this.submitLogin}>
               <div className={"login-form"}>
                 <span className="label">Nombre:</span>
@@ -201,6 +198,10 @@ class CrearCuenta extends React.Component {
                     </span>
                   )}
               </div>
+              <p>
+                Si no deseas cambiar tu contraseña puedes dejar los siguientes
+                campos en blanco
+              </p>
               <div className={"login-form"}>
                 <span className="label">Contraseña:</span>
                 <input
@@ -250,10 +251,10 @@ class CrearCuenta extends React.Component {
                   )}
               </div>
               <div className="nav-buttons">
-                <div className="nav-button" onClick={this.submitLogin}>
+                <div className="nav-button" onClick={this.actialzarDatos}>
                   <div className="nav-icon chico nav-icon-check"></div>
-                  <span className="newLine">crear</span>
-                  <span>cuenta</span>
+                  <span className="newLine">actualizar</span>
+                  <span>datos</span>
                 </div>
               </div>
             </form>
@@ -264,4 +265,4 @@ class CrearCuenta extends React.Component {
   }
 }
 
-export default CrearCuenta;
+export default EditarUsuario;

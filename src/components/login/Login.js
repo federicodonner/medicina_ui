@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../header/Header";
-import { getData, postData, guardarEnLS } from "../../utils/fetchFunctions";
+import { guardarEnLS, accederAPI } from "../../utils/fetchFunctions";
 import "./login.css";
 import variables from "../../var/variables.js";
 
@@ -45,37 +45,53 @@ class Login extends React.Component {
     };
   }
 
+  // Callback de la llamada a la API cuando el estado es 200
+  usuarioLogueado = (userInfo) => {
+    // Si entra en esta función es porque el usuario ya estaba logueado
+    // lo manda a home
+    this.props.history.push({ pathname: "/home" }, { userInfo: userInfo });
+  };
+
+  // callback de la llamada a la API cuando el estado no es 200
+  usuarioNoLogueado = (datos) => {
+    // Error 500+ es un error de la API, lo manda a la pantalla del error
+    if (datos.status >= 500) {
+      this.props.history.push("error");
+      // Si el error es de otros tipos, muestra el mensaje de error y apaga el loader
+    } else {
+      this.setState({ loader: { encendido: false } });
+    }
+  };
+
+  // Callback de post a oauth correcto
+  loginCorrecto = (data) => {
+    guardarEnLS(variables.LSLoginToken, data.token);
+    this.props.history.push({
+      pathname: "home",
+    });
+  };
+
+  // Callback de error de post a oauth
+  errorDeLogin = (data) => {
+    // Verifica si es un error de la API o un problema de oauth
+    if (data.status >= 500) {
+      alert("Ocurrió un error, por favor inténtalo denuevo más tarde.");
+    } else {
+      alert(data.detail);
+      this.setState({ loader: { encendido: false }, formIngresada: false });
+    }
+  };
+
   componentDidMount() {
     // Va a buscar los datos del usuario
     // Si los encuentra, entra a la app y le pasa los datos al componente
-    getData("usuario")
-      .then((response_usuario) => {
-        if (response_usuario.status == 200) {
-          response_usuario.json().then((respuesta_usuario) => {
-            this.props.history.push(
-              {
-                pathname: "home",
-              },
-              { userInfo: respuesta_usuario }
-            );
-          });
-        } else {
-          // Si no los encuentra o hay un error en el request
-          // apaga el loader y permite el login
-          this.setState({
-            loader: {
-              encendido: false,
-            },
-          });
-        }
-      })
-      .catch((e) => {
-        this.setState({
-          loader: {
-            encendido: false,
-          },
-        });
-      });
+    accederAPI(
+      "GET",
+      "usuario",
+      null,
+      this.usuarioLogueado,
+      this.usuarioNoLogueado
+    );
   }
 
   submitLogin = (event) => {
@@ -102,42 +118,7 @@ class Login extends React.Component {
         grant_type: "password",
       };
 
-      postData("oauth", data)
-        .then((results) => {
-          // Verifica que el login haya sido correcto
-          if (results.status == 200) {
-            // Si el login es correcto, guarda el token y navega
-            return results.json().then((respuesta) => {
-              guardarEnLS(variables.LSLoginToken, respuesta.token);
-              this.props.history.push({
-                pathname: "home",
-              });
-            });
-          } else {
-            // Si el login no es correcto, despliega el error
-            return results.json().then((respuesta) => {
-              alert(respuesta.detail);
-              this.setState({
-                loader: {
-                  encendido: false,
-                },
-                formIngresada: false,
-              });
-            });
-          }
-        })
-        .catch((e) => {
-          console.log("catch");
-          alert(
-            "Hubo un error al procesar tu solicitud, por favor inténtalo denuevo más tarde."
-          );
-          // Apaga el loader
-          this.setState({
-            loader: {
-              encendido: false,
-            },
-          });
-        });
+      accederAPI("POST", "oauth", data, this.loginCorrecto, this.errorDeLogin);
     }
   };
 

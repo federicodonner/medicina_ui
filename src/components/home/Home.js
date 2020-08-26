@@ -36,6 +36,15 @@ class Home extends React.Component {
     );
   };
 
+  navegarAUsuario = () => {
+    this.props.history.push(
+      {
+        pathname: "usuario",
+      },
+      { userInfo: this.state.userInfo }
+    );
+  };
+
   signOut = (event) => {
     if (event) {
       event.preventDefault();
@@ -147,6 +156,7 @@ class Home extends React.Component {
                   this.state.userInfo.apellido
                 }
                 mostrarBotonNotificaciones={true}
+                navegarAUsuario={this.navegarAUsuario}
               />
               <div className="content">
                 <div className="nav-buttons home">
@@ -179,16 +189,6 @@ class Home extends React.Component {
                     <div className="nav-icon nav-icon-ingresar-compra"></div>
                     <span className="single-line">ingresar</span>
                     <span>compra</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("editarUSuario", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-editar-usuario"></div>
-                    <span className="single-line">editar</span>
-                    <span>tus datos</span>
                   </div>
                 </div>
               </div>

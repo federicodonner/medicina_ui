@@ -13,6 +13,7 @@ import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
 import Login from "./login/Login";
 import CrearCuenta from "./crearCuenta/CrearCuenta";
 import EditarUsuario from "./editarUsuario/EditarUsuario";
+import Usuario from "./usuario/Usuario";
 import Error from "./error/Error";
 
 class Router extends React.Component {
@@ -33,6 +34,7 @@ class Router extends React.Component {
           <Route path="/login" component={Login} />
           <Route path="/crearCuenta" component={CrearCuenta} />
           <Route path="/editarUsuario" component={EditarUsuario} />
+          <Route path="/usuario" component={Usuario} />
           <Route component={Error} />
         </Switch>
       </BrowserRouter>

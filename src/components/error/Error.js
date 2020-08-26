@@ -25,7 +25,7 @@ class Error extends React.Component {
               <span className="negrita" onClick={this.navegarAHome()}>
                 aquí
               </span>{" "}
-              para volver a la sección principal.
+              para volver.
             </p>
           </div>
         </div>

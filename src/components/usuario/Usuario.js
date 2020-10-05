@@ -12,6 +12,10 @@ class Usuario extends React.Component {
     pastillero: {},
   };
 
+  nombreRef = React.createRef();
+  apellidoRef = React.createRef();
+  emailRef = React.createRef();
+
   navigateToSection = (section, data) => (event) => {
     event.preventDefault();
     this.props.history.push(
@@ -36,25 +40,24 @@ class Usuario extends React.Component {
     this.props.history.push({ pathname: "login" });
   };
 
+  // Muestra o esconde el modal de usuario
+  toggleModalUsuario = () => {
+    var mostrarModalUsuario = this.state.mostrarModalUsuario;
+    mostrarModalUsuario = !mostrarModalUsuario;
+    this.setState({ mostrarModalUsuario });
+  };
+
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
   // Cada uno debería invocarlo al terminar
   apagarLoader = () => {
-    // Verifica que tenga los datos del pastillero
-    // Y del usuario para apagar el loader
-    if (this.state.userInfo && this.state.pastillero) {
+    // Verifica que tenga los datos del usuario
+    // para apagar el loader
+    if (this.state.userInfo) {
       this.setState({
         loader: { encendido: false },
       });
     }
-  };
-
-  // Callback del footer con la información del pastillero
-  establecerPastillero = (pastillero) => {
-    // Guarda el pastillero en state y apaga el loader
-    this.setState({ pastillero }, () => {
-      this.apagarLoader();
-    });
   };
 
   // Callback de la llamada a la API cuando el estado es 200
@@ -100,8 +103,9 @@ class Usuario extends React.Component {
     this.state = {
       loader: {
         encendido: true,
-        texto: "Cargando datos del pastillero.",
+        texto: "Cargando tus datos.",
       },
+      mostrarModalUsuario: false,
     };
   }
 
@@ -123,84 +127,88 @@ class Usuario extends React.Component {
           <div className="content">
             {this.state && !this.state.loader.encendido && (
               <>
+                <div
+                  className={
+                    "modal-cover " +
+                    (this.state.mostrarModalUsuario ? "show" : "hidden")
+                  }
+                />
+                <div
+                  className={
+                    "editar-usuario-modal " +
+                    (this.state.mostrarModalUsuario ? "show" : "")
+                  }
+                >
+                  <h1>Editar datos</h1>
+                  <span className="single-line"> Nombre: </span>
+                  <input
+                    name="nombre"
+                    type="text"
+                    ref={this.nombreRef}
+                    className="pretty-input pretty-text"
+                    defaultValue={this.state.userInfo.nombre}
+                  />
+                  <span className="single-line"> Apellido: </span>
+                  <input
+                    name="apellido"
+                    type="text"
+                    ref={this.apellidoRef}
+                    className="pretty-input pretty-text"
+                    defaultValue={this.state.userInfo.apellido}
+                  />
+                  <span className="single-line"> Email: </span>
+                  <input
+                    name="apellido"
+                    type="text"
+                    ref={this.emailRef}
+                    className="pretty-input pretty-text"
+                    defaultValue={this.state.userInfo.email}
+                  />
+
+                  <div className="nav-buttons">
+                    <div
+                      className="nav-button"
+                      onClick={this.toggleModalUsuario}
+                    >
+                      <div className="nav-icon chico nav-icon-cross"></div>
+                      <span className="single-line">cancelar</span>
+                    </div>
+                    <div
+                      className="nav-button"
+                      onClick={this.submitEditarDroga}
+                    >
+                      <div className="nav-icon chico nav-icon-check"></div>
+                      <span className="single-line">guardar</span> cambios
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            {this.state && !this.state.loader.encendido && this.state.userInfo && (
+              <>
+                <p>Datos personales:</p>
                 <p>
-                  Información de dosis de tu pastillero. Puedes editarlo con los
-                  botones debajo.
+                  <span className="newline">
+                    Nombre:{" "}
+                    {this.state.userInfo.nombre +
+                      " " +
+                      this.state.userInfo.apellido}
+                  </span>
+                  <span className="newLine">
+                    Email: {this.state.userInfo.email}
+                  </span>
                 </p>
-                {this.state && this.state.pastillero && (
-                  <ul className="dosis-horario">
-                    {this.state.pastillero.dosis.map((dosis) => {
-                      return (
-                        <li key={"dosis" + dosis.id} className="dosis-horario">
-                          {dosis.horario}
-                          <ul className="dosis-droga">
-                            {dosis.drogas.map((droga) => {
-                              return (
-                                <li key={droga.id} className="dosis-droga">
-                                  {droga.nombre} - {droga.cantidad_mg} mg
-                                  {droga.notas && (
-                                    <span className="notas-dosis">
-                                      {droga.notas}
-                                    </span>
-                                  )}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
+
                 <div className="nav-buttons">
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("agregarDroga", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-agregar-dosis"></div>
-                    <span className="single-line">agregar</span>
-                    <span>droga</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("editarDroga", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-editar-dosis-in"></div>
+                  <div className="nav-button" onClick={this.toggleModalUsuario}>
+                    <div className="nav-icon chico nav-icon-edit"></div>
                     <span className="single-line">editar</span>
-                    <span>dosis droga</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("descontarStock", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-pastillero"></div>
-                    <span className="single-line">pastillero</span>
-                    <span>armado</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("imprimirPastillero", null)}
-                  >
-                    <div className="nav-icon nav-icon-imprimir"></div>
-                    <span className="single-line">imprimir</span>
+                    <span>datos</span>
                   </div>
                 </div>
               </>
             )}
           </div>
-          {this.state && this.state.userInfo && (
-            <Footer
-              pastilleros={this.state.userInfo.pastilleros}
-              navegarAHome={this.volverAHome}
-              establecerPastillero={this.establecerPastillero}
-            />
-          )}
         </div>
       </div>
     );

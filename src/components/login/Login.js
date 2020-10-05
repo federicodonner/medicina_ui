@@ -142,7 +142,6 @@ class Login extends React.Component {
                   Bienvenido a MiDosis la plataforma online de gestión de
                   medicamentos.
                 </p>
-                <p>Para ingresar debes loguearte con tus credenciales.</p>
                 <form onSubmit={this.submitLogin}>
                   <div className={"login-form"}>
                     <span className="label">Nombre de usuario:</span>

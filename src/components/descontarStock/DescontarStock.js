@@ -13,6 +13,15 @@ class DescontarStock extends React.Component {
     mensajeLoader: "",
   };
 
+  volverAEditarDroga = () => {
+    this.props.history.push(
+      {
+        pathname: "editarDroga",
+      },
+      { userInfo: this.state.userInfo }
+    );
+  };
+
   volverAHome = () => {
     this.props.history.push({
       pathname: "home",
@@ -67,7 +76,7 @@ class DescontarStock extends React.Component {
   // Callback del post de pastillero armado
   stockDescontado = (respuesta) => {
     alert(respuesta.detail);
-    this.volverAHome();
+    this.volverAEditarDroga();
   };
 
   // Función que apaga el loader cuando verifica que
@@ -165,7 +174,7 @@ class DescontarStock extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header volver={this.volverAHome} logoChico={true} />
+            <Header volver={this.volverAEditarDroga} logoChico={true} />
           )}
           <div className="content">
             {this.state && !this.state.loader.encendido && (

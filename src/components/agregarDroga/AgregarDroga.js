@@ -22,10 +22,10 @@ class AgregarDroga extends React.Component {
   concentracionRef = React.createRef();
   notasRef = React.createRef();
 
-  navegarAVerDosis = () => {
+  volverAEditarDroga = () => {
     this.props.history.push(
       {
-        pathname: "verDosis",
+        pathname: "editarDroga",
       },
       { userInfo: this.state.userInfo }
     );
@@ -43,10 +43,6 @@ class AgregarDroga extends React.Component {
     }
     borrarDesdeLS(variables.LSLoginToken);
     this.props.history.push({ pathname: "/login" });
-  };
-
-  volverAVerDosis = () => {
-    this.props.history.push({ pathname: "/verdosis" });
   };
 
   procesarDrogas = (drogas, pastillero) => {
@@ -151,7 +147,7 @@ class AgregarDroga extends React.Component {
       "POST",
       "drogaxdosis",
       dataEnviar,
-      this.navegarAVerDosis,
+      this.volverAEditarDroga,
       this.errorApi
     );
   };
@@ -253,7 +249,7 @@ class AgregarDroga extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header volver={this.volverAVerDosis} logoChico={true} />
+            <Header volver={this.volverAEditarDroga} logoChico={true} />
           )}
           <div className="content">
             {this.state && !this.state.loader.encendido && (

@@ -176,7 +176,7 @@ class VerStock extends React.Component {
                 )}
                 <div className="nav-buttons">
                   <div className="nav-button">
-                    <div className="nav-icon nav-icon-edit"></div>
+                    <div className="nav-icon nav-icon-edit chico"></div>
                     <span className="single-line">ajustar</span>
                     <span>stock</span>
                   </div>
@@ -186,7 +186,7 @@ class VerStock extends React.Component {
                       userInfo: this.state.userInfo,
                     })}
                   >
-                    <div className="nav-icon  nav-icon-ingresar-compra"></div>
+                    <div className="nav-icon nav-icon-ingresar-compra chico"></div>
                     <span className="single-line">ingresar</span>
                     <span>compra</span>
                   </div>

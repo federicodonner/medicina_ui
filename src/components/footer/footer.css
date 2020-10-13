@@ -11,6 +11,7 @@
   height: 30px;
   box-shadow: 0px 0px 0px;
   box-shadow: 5px -1px 20px rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
 .footer.agrandado {

@@ -1,0 +1,34 @@
+.modal {
+  position: absolute;
+  width: 100%;
+  bottom: -550px;
+  padding-bottom: 10px;
+  background-color: #3a506b;
+  top: 100vh;
+  box-shadow: 5px -1px 20px #aaa;
+  height: 80vh;
+  overflow-y: scroll;
+  transition: top 0.8s;
+}
+
+.modal.show {
+  top: 20vh;
+  z-index: 1;
+  display: block;
+}
+
+.modal .nav-buttons {
+  margin-bottom: 100px;
+}
+
+.modal-cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  display: none;
+}
+
+.modal-cover.show {
+  display: block;
+}

@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
-import Select from "react-select";
+import Modal from "../modal/Modal";
 import variables from "../../var/variables.js";
 import { accederAPI, borrarDesdeLS } from "../../utils/fetchFunctions";
 import "./editarDroga.css";
@@ -32,10 +32,14 @@ class EditarDroga extends React.Component {
     });
   };
 
-  volverAVerDosis = () => {
-    this.props.history.push({
-      pathname: "verDosis",
-    });
+  navigateToSection = (section, data) => (event) => {
+    event.preventDefault();
+    this.props.history.push(
+      {
+        pathname: section,
+      },
+      data
+    );
   };
 
   signOut = (event) => {
@@ -63,20 +67,12 @@ class EditarDroga extends React.Component {
     });
   };
 
-  // Funcion que corre al cambiar la selección de horario del modal
-  seleccionHorario = (horarioSeleccionado) => {
-    var datosModal = this.state.datosModal;
-    datosModal.horario = horarioSeleccionado;
-    this.setState({ datosModal });
-  };
-
   // Arma el objeto e invoca la API para editar la dosis
-  submitEditarDroga = (event) => {
-    var dataEditDrogaxdosis = {};
-    dataEditDrogaxdosis.droga_id = this.state.datosModal.droga_id;
-    dataEditDrogaxdosis.dosis_id = this.state.datosModal.horario.value;
-    dataEditDrogaxdosis.cantidad_mg = this.cantidadRef.current.value;
-    dataEditDrogaxdosis.notas = this.notasRef.current.value;
+  submitEditarDroga = (datos) => {
+    // Guarda el horario seleccionado en estate para actualizar la lista
+    var datosModal = this.state.datosModal;
+    datosModal.horario.value = datos["dosis_id"];
+    this.setState({ datosModal });
 
     // Enciende el loader
     this.setState(
@@ -86,7 +82,7 @@ class EditarDroga extends React.Component {
         accederAPI(
           "PUT",
           "drogaxdosis/" + this.state.datosModal.drogaxdosis_id,
-          dataEditDrogaxdosis,
+          datos,
           this.editarDrogaEnState,
           this.errorApi
         );
@@ -94,7 +90,7 @@ class EditarDroga extends React.Component {
     );
   };
 
-  submitEliminarDroga = (event) => {
+  submitEliminarDroga = () => {
     if (
       window.confirm(
         "¿Seguro que desea eliminar la dósis de " +
@@ -255,71 +251,65 @@ class EditarDroga extends React.Component {
             </div>
           )}
           {this.state && this.state.userInfo && (
-            <Header volver={this.volverAVerDosis} logoChico={true} />
+            <Header volver={this.volverAHome} logoChico={true} />
           )}
           <div className="content">
             {this.state &&
               this.state.datosModal &&
               !this.state.loader.encendido && (
                 <>
-                  <div
-                    className={
-                      "modal-cover " +
-                      (this.state.mostrarModal ? "show" : "hidden")
-                    }
-                  />
-                  <div
-                    className={
-                      "editar-droga-modal " +
-                      (this.state.mostrarModal ? "show" : "")
-                    }
-                  >
-                    <h1>{this.state.datosModal.droga}</h1>
-                    <span className="single-line"> Horario: </span>
-                    <Select
-                      className="pretty-input"
-                      value={this.state.datosModal.horario}
-                      onChange={this.seleccionHorario}
-                      options={this.state.datosModal.horarios}
-                      placeholder="Horario..."
+                  {this.state.mostrarModal && (
+                    <Modal
+                      defaultNavButtons={false}
+                      mostrarModal={this.state.mostrarModal}
+                      cerrarModal={this.toggleModal}
+                      titulo={this.state.datosModal.droga}
+                      submitModal={this.submitEditarDroga}
+                      campos={[
+                        {
+                          tipo: "select",
+                          etiqueta: "Horario",
+                          nombre: "dosis_id",
+                          obligatorio: true,
+                          opciones: this.state.datosModal.horarios,
+                          seleccionado: this.state.datosModal.horario,
+                        },
+                        {
+                          tipo: "texto",
+                          etiqueta: "Cantidad (mg)",
+                          nombre: "cantidad_mg",
+                          value: this.state.datosModal.cantidad_mg,
+                          obligatorio: true,
+                        },
+                        {
+                          tipo: "texto",
+                          etiqueta: "Notas",
+                          nombre: "notas",
+                          value: this.state.datosModal.notas,
+                          obligatorio: false,
+                        },
+                      ]}
+                      navButtons={[
+                        {
+                          textoArriba: "Cancelar",
+                          tipo: "nav-icon-cross",
+                          esCerrar: true,
+                        },
+                        {
+                          textoArriba: "Eliminar",
+                          textoAbajo: "dosis",
+                          tipo: "nav-icon-alert",
+                          funcion: this.submitEliminarDroga,
+                        },
+                        {
+                          textoArriba: "Guardar",
+                          textoAbajo: "cambios",
+                          tipo: "nav-icon-check",
+                          esAceptar: true,
+                        },
+                      ]}
                     />
-                    <span className="single-line"> Cantidad (mg): </span>
-                    <input
-                      name="cantidad"
-                      type="number"
-                      ref={this.cantidadRef}
-                      className="pretty-input pretty-text"
-                      defaultValue={this.state.datosModal.cantidad_mg}
-                    />
-                    <span className="single-line"> Notas: </span>
-                    <input
-                      name="notas"
-                      type="textr"
-                      ref={this.notasRef}
-                      className="pretty-input pretty-text"
-                      defaultValue={this.state.datosModal.notas}
-                    />
-
-                    <div className="nav-buttons">
-                      <div className="nav-button" onClick={this.toggleModal}>
-                        <div className="nav-icon chico nav-icon-cross"></div>
-                        <span className="single-line">cancelar</span>
-                      </div>
-                      <div
-                        className="nav-button"
-                        onClick={this.submitEditarDroga}
-                      >
-                        <div className="nav-icon chico nav-icon-check"></div>
-                        <span className="single-line">guardar</span> cambios
-                      </div>
-                    </div>
-                    <div
-                      className="modal-boton-cerrar"
-                      onClick={this.submitEliminarDroga}
-                    >
-                      Eliminar dosis
-                    </div>
-                  </div>
+                  )}
                 </>
               )}
 
@@ -351,8 +341,7 @@ class EditarDroga extends React.Component {
                                     horarios: [],
                                   })}
                                 >
-                                  {droga.nombre} - {droga.cantidad_mg}
-                                  mg
+                                  {droga.nombre} - {droga.cantidad_mg} mg
                                   {droga.notas && (
                                     <span className="notas-dosis">
                                       {droga.notas}
@@ -367,6 +356,29 @@ class EditarDroga extends React.Component {
                     })}
                   </ul>
                 )}
+                <div className="nav-buttons">
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("agregarDroga", {
+                      userInfo: this.state.userInfo,
+                    })}
+                  >
+                    <div className="nav-icon nav-icon-agregar-dosis chico"></div>
+                    <span className="single-line">agregar</span>
+                    <span>droga</span>
+                  </div>
+
+                  <div
+                    className="nav-button"
+                    onClick={this.navigateToSection("descontarStock", {
+                      userInfo: this.state.userInfo,
+                    })}
+                  >
+                    <div className="nav-icon nav-icon-pastillero chico"></div>
+                    <span className="single-line">pastillero</span>
+                    <span>armado</span>
+                  </div>
+                </div>
               </>
             )}
           </div>

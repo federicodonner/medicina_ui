@@ -1,3 +1,28 @@
+/*
+Componente modal para usar en cualquier sección. Recibe la siguiente configuración:
+defaultButtons (boolean): en true los botones del modal son cancel y confirm. En false se deben especificar los botones a usar.
+mostrarModal (boolean): muestra o esconde el modal
+cerrarModal (funcion): callback al presionar el botón "cancelar"
+titulo (string): título en el modal
+submitModal (funcion): callback al presionar "aceptar"
+campos (array): campos del modal con los siguientes parámetros:
+  tipo (string): "select" o "texto" soportados por ahora
+  etiqueta (string): nombre del campo para mostrar en la interfaz
+  nombre (string): nombre del campo para enviar en el request
+  obligatorio (boolean): indica si se debe completar el campo
+  opciones (array): sólo para tipo select, las opciones. Los objetos del array deben ser {label:"string", value:int}
+  seleccionado (objeto): sólo para tipo select, la opción por defecto. El objeto debe ser {label:"string, value:int"}
+  value (string): sólo para tipo texto, valor inicial
+  regexValidate (RegExp): expresión regular contra la que validar el campo antes de submit
+navButtons (array): configuración de botones en caso de defaultButtons en false. Array de objetos con la siguiente estructura:
+  textoArriba (string): primera línea del texto del botón
+  textoAbajo (string): segunda línea del texto del botón
+  esCerrar (boolean): indica si el botón es el de cancelar. Invoca a cerrarModal al presionarlo
+  esAceptar (boolean): indica si el botón es el de aceptar. Invoca a submitModal al presionarlo
+  funcion (funcion): función invocada al presionarlo. Debe tener esCerrar y esAceptar en false
+  tipo (string): nombre de la clase correspondiente al ícono
+*/
+
 import React from "react";
 import InputModal from "./InputModal";
 import "./modal.css";

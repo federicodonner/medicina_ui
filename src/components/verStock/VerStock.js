@@ -145,7 +145,8 @@ class VerStock extends React.Component {
                           {droga.dias_disponible < 7 &&
                             droga.dias_disponible > 0 && (
                               <span className="dias-stock amarillo">
-                                - {droga.dias_disponible} días
+                                - {droga.dias_disponible} día
+                                {droga.dias_disponible != 1 ? "s" : ""}
                               </span>
                             )}
 

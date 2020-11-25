@@ -40,7 +40,7 @@ body {
 }
 
 .nav-buttons.tres .nav-button:nth-last-child(1):nth-child(odd) {
-  grid-column: 6 / span 2;
+  grid-column: span 2;
 }
 
 .nav-icon {
@@ -110,6 +110,10 @@ body {
 
 .nav-icon-pastillero {
   background-image: url("/images/icono_pastillero.png");
+}
+
+.nav-icon-password {
+  background-image: url("/images/icono_password.png");
 }
 
 .nav-icon-plus {

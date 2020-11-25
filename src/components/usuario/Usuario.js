@@ -252,11 +252,16 @@ class Usuario extends React.Component {
                   <p>Tienes un pastillero ingresado</p>
                 )}
 
-                <div className="nav-buttons">
+                <div className="nav-buttons tres">
                   <div className="nav-button" onClick={this.toggleModalUsuario}>
                     <div className="nav-icon chico nav-icon-edit"></div>
                     <span className="single-line">editar</span>
                     <span>datos</span>
+                  </div>
+                  <div className="nav-button">
+                    <div className="nav-icon chico nav-icon-password"></div>
+                    <span className="single-line">cambiar</span>
+                    <span>contraseña</span>
                   </div>
                   {this.state && this.state.pastilleroDeUsuario && (
                     <div

@@ -55,9 +55,8 @@ export default function EditarDroga(props) {
 
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
-  // Cada uno debería invocarlo al terminar
   useEffect(() => {
-    if ((userInfo, pastillero)) {
+    if (userInfo && pastillero) {
       var horarios = [];
       var horario = {};
       // Por cada horario del pastillero se carga en el array en state

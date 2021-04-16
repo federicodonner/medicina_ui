@@ -25,7 +25,7 @@ export default function Footer(props) {
     // Procesa los pastilleros recibidos para mostrar el seleccionado
     // y la lista de otros posibles para cambiar
     procesarPastilleros();
-  }, [props]);
+  }, []);
 
   function navegarANuevoPastillero() {
     props.navegarANuevoPastillero();

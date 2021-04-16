@@ -18,7 +18,7 @@ export default function EditarDroga(props) {
   // Controla el loader
   const [loader, setLoader] = useState(true);
   const [loaderTexto, setLoaderTexto] = useState(
-    "Cargando datos del pastillero."
+    "Cargando datos del pastillero"
   );
 
   const [pastillero, setPastillero] = useState(null);

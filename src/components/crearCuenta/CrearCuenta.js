@@ -1,267 +1,214 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import Header from "../header/Header";
-import { accederAPI, guardarEnLS } from "../../utils/fetchFunctions";
+import { accederAPI, guardarEnLS, errorApi } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 import "./crearCuenta.css";
 
-class CrearCuenta extends React.Component {
-  state: {
-    loader: true,
-  };
+export default function CrearCuenta(props) {
+  const [loader, setLoader] = useState(false);
 
-  nombreRef = React.createRef();
-  apellidoRef = React.createRef();
-  emailRef = React.createRef();
-  passwordRef = React.createRef();
-  passwordConfirmRef = React.createRef();
+  const [formIngresada, setFormIngresada] = useState(false);
 
-  navigateToSection = (section, data) => (event) => {
-    event.preventDefault();
-    this.props.history.push(
-      {
-        pathname: section,
-      },
-      data
-    );
-  };
+  const nombreRef = useRef(null);
+  const apellidoRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const passwordConfirmRef = useRef(null);
 
-  volverALogin = () => {
-    this.props.history.push("login");
-  };
+  function volverALogin() {
+    props.history.push("login");
+  }
 
   // Función utilizada para actualizar el state y esconder
   // el cartel de falta de input cuando el usuario ingresa algo
-  actualizarState = () => () => {
-    if (this.state) {
-      var formIngresada = this.state.formIngresada;
-      this.setState({ formIngresada });
-    }
-  };
+  function actualizarState() {
+    setFormIngresada(false);
+  }
 
-  submitLogin = (event) => {
-    event.preventDefault();
+  function submitLogin(e) {
+    e.preventDefault();
 
     // Indica que fue ingresado el formulario
-    this.setState({
-      formIngresada: true,
-    });
+    setFormIngresada(true);
 
     // Verifica que se hayan ingresados ambos campos
     if (
-      this.nombreRef.current.value &&
-      this.apellidoRef.current.value &&
-      this.emailRef.current.value &&
-      this.passwordRef.current.value &&
-      this.passwordConfirmRef.current.value
+      nombreRef.current.value &&
+      apellidoRef.current.value &&
+      emailRef.current.value &&
+      passwordRef.current.value &&
+      passwordConfirmRef.current.value
     ) {
       // Verifica que las contraseñas sean iguales
-      if (
-        this.passwordRef.current.value == this.passwordConfirmRef.current.value
-      ) {
+      if (passwordRef.current.value == passwordConfirmRef.current.value) {
         // Prende el loader
-        this.setState({
-          loader: {
-            encendido: true,
-            texto: "Enviando información de registro.",
-          },
-        });
+        setLoader(true);
 
         // Genera el objeto de datos para el login
         var data = {
-          nombre: this.nombreRef.current.value,
-          apellido: this.apellidoRef.current.value,
-          email: this.emailRef.current.value,
-          password: this.passwordRef.current.value,
+          nombre: nombreRef.current.value,
+          apellido: apellidoRef.current.value,
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
         };
 
-        accederAPI("POST", "usuario", data, this.cuentaCreada, this.errorApi);
+        accederAPI(
+          "POST",
+          "usuario",
+          data,
+          (respuesta) => {
+            guardarEnLS(variables.LSLoginToken, respuesta.token);
+            props.history.push({
+              pathname: "home",
+            });
+          },
+          errorApi
+        );
       } else {
         // Si las contraseñas no coinciden las borra
-        this.passwordRef.current.value = "";
-        this.passwordConfirmRef.current.value = "";
+        passwordRef.current.value = "";
+        passwordConfirmRef.current.value = "";
       }
     }
-  };
-
-  // Callback de creación de cuenta
-  cuentaCreada = (respuesta) => {
-    guardarEnLS(variables.LSLoginToken, respuesta.token);
-    this.props.history.push({
-      pathname: "home",
-    });
-  };
-
-  // callback de la llamada a la API cuando el estado no es 200
-  errorApi = (datos) => {
-    if (datos.status >= 500) {
-      alert("Ocurrió un error, por favor inténtalo denuevo más tarde.");
-    } else {
-      alert(datos.detail);
-    }
-    this.props.history.push("login");
-  };
-
-  componentDidMount() {
-    this.setState({ loader: { encendido: false } });
   }
 
-  // prende el loader antes de cargar el componente
-  constructor(props) {
-    super(props);
-    this.state = {
-      loader: {
-        encendido: true,
-        texto: "Cargando.",
-      },
-    };
-  }
-
-  render() {
-    return (
-      <div className="app-view cover">
-        <div className="scrollable">
-          {this.state && this.state.loader.encendido && (
-            <div className="loader-container">
-              <p>
-                <img className="loader" src="/images/loader.svg" />
-              </p>
-              <p className={"negrita"}>{this.state.loader.texto}</p>
-            </div>
-          )}
-
-          <Header logoChico={true} volver={this.volverALogin} />
-
-          <div
-            className={
-              this.state && this.state.loader.encendido
-                ? "content escondido"
-                : "content"
-            }
-          >
+  return (
+    <div className="app-view cover">
+      <div className="scrollable">
+        {loader && (
+          <div className="loader-container">
             <p>
-              Aquí podrás crear una nueva cuenta y empezar a usar MiDosis
-              inmediatamente.
+              <img className="loader" src="/images/loader.svg" />
             </p>
-            <p>Ingresa tus datos</p>
-            <form onSubmit={this.submitLogin}>
-              <div className={"login-form"}>
-                <span className="label">Nombre:</span>
-                <input
-                  rows="8"
-                  name="nombre"
-                  type="text"
-                  ref={this.nombreRef}
-                  className="login-input"
-                  onChange={this.actualizarState()}
-                />
-                {this.state &&
-                  this.state.formIngresada &&
-                  this.nombreRef.current &&
-                  !this.nombreRef.current.value && (
-                    <span className="login-error">
-                      Debes completar tu nombre.
-                    </span>
-                  )}
-              </div>
-              <div className={"login-form"}>
-                <span className="label">Apellido:</span>
-                <input
-                  rows="8"
-                  name="apellido"
-                  type="text"
-                  ref={this.apellidoRef}
-                  className="login-input"
-                  onChange={this.actualizarState()}
-                />
-                {this.state &&
-                  this.state.formIngresada &&
-                  this.apellidoRef.current &&
-                  !this.apellidoRef.current.value && (
-                    <span className="login-error">
-                      Debes completar tu apellido.
-                    </span>
-                  )}
-              </div>
-              <div className={"login-form"}>
-                <span className="label">Email:</span>
-                <input
-                  rows="8"
-                  name="email"
-                  type="text"
-                  ref={this.emailRef}
-                  className="login-input"
-                  onChange={this.actualizarState()}
-                />
-                {this.state &&
-                  this.state.formIngresada &&
-                  this.emailRef.current &&
-                  !this.emailRef.current.value && (
-                    <span className="login-error">
-                      Debes completar tu email.
-                    </span>
-                  )}
-              </div>
-              <div className={"login-form"}>
-                <span className="label">Contraseña:</span>
-                <input
-                  rows="8"
-                  name="password"
-                  type="password"
-                  ref={this.passwordRef}
-                  className="login-input"
-                  onChange={this.actualizarState()}
-                />
-                {this.state &&
-                  this.state.formIngresada &&
-                  this.passwordRef.current &&
-                  !this.passwordRef.current.value && (
-                    <span className="login-error">
-                      Debes completar tu contraseña.
-                    </span>
-                  )}
-              </div>
-              <div className={"login-form ultimo-campo"}>
-                <span className="label">Confirmar contraseña:</span>
-                <input
-                  rows="8"
-                  name="password"
-                  type="password"
-                  ref={this.passwordConfirmRef}
-                  className="login-input"
-                  onChange={this.actualizarState()}
-                />
-                {this.state &&
-                  this.state.formIngresada &&
-                  this.passwordRef.current &&
-                  !this.passwordConfirmRef.current.value && (
-                    <span className="login-error">
-                      Debes confirmar tu contraseña.
-                    </span>
-                  )}
-                {this.state &&
-                  this.state.formIngresada &&
-                  this.passwordRef.current &&
-                  this.passwordConfirmRef.current.value &&
-                  this.passwordRef.current.value !=
-                    this.passwordConfirmRef.current.value && (
-                    <span className="login-error">
-                      Las contraseñas no coinciden.
-                    </span>
-                  )}
-              </div>
-              <div className="nav-buttons">
-                <div className="nav-button" onClick={this.submitLogin}>
-                  <div className="nav-icon chico nav-icon-check"></div>
-                  <span className="newLine">crear</span>
-                  <span>cuenta</span>
-                </div>
-              </div>
-            </form>
+            <p className={"negrita"}>Enviando información de registro</p>
           </div>
+        )}
+
+        <Header logoChico={true} volver={volverALogin} />
+
+        <div className={loader ? "content escondido" : "content"}>
+          <p>
+            Aquí podrás crear una nueva cuenta y empezar a usar MiDosis
+            inmediatamente.
+          </p>
+          <p>Ingresa tus datos</p>
+          <form onSubmit={submitLogin}>
+            <div className={"login-form"}>
+              <span className="label">Nombre:</span>
+              <input
+                rows="8"
+                name="nombre"
+                type="text"
+                ref={nombreRef}
+                className="login-input"
+                onChange={actualizarState}
+              />
+              {formIngresada &&
+                nombreRef.current &&
+                !nombreRef.current.value && (
+                  <span className="login-error">
+                    Debes completar tu nombre.
+                  </span>
+                )}
+            </div>
+            <div className={"login-form"}>
+              <span className="label">Apellido:</span>
+              <input
+                rows="8"
+                name="apellido"
+                type="text"
+                ref={apellidoRef}
+                className="login-input"
+                onChange={actualizarState}
+              />
+              {formIngresada &&
+                apellidoRef.current &&
+                !apellidoRef.current.value && (
+                  <span className="login-error">
+                    Debes completar tu apellido.
+                  </span>
+                )}
+            </div>
+            <div className={"login-form"}>
+              <span className="label">Email:</span>
+              <input
+                rows="8"
+                name="email"
+                type="text"
+                ref={emailRef}
+                className="login-input"
+                onChange={actualizarState}
+              />
+              {formIngresada && emailRef.current && !emailRef.current.value && (
+                <span className="login-error">Debes completar tu email.</span>
+              )}
+
+              {formIngresada &&
+                emailRef.current &&
+                emailRef.current.value &&
+                !RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/).test(
+                  emailRef.current.value
+                ) && (
+                  <span className="login-error">
+                    El formato del email no es correcto.
+                  </span>
+                )}
+            </div>
+            <div className={"login-form"}>
+              <span className="label">Contraseña:</span>
+              <input
+                rows="8"
+                name="password"
+                type="password"
+                ref={passwordRef}
+                className="login-input"
+                onChange={actualizarState}
+              />
+              {formIngresada &&
+                passwordRef.current &&
+                !passwordRef.current.value && (
+                  <span className="login-error">
+                    Debes completar tu contraseña.
+                  </span>
+                )}
+            </div>
+            <div className={"login-form ultimo-campo"}>
+              <span className="label">Confirmar contraseña:</span>
+              <input
+                rows="8"
+                name="password"
+                type="password"
+                ref={passwordConfirmRef}
+                className="login-input"
+                onChange={actualizarState}
+              />
+              {formIngresada &&
+                passwordRef.current &&
+                !passwordConfirmRef.current.value && (
+                  <span className="login-error">
+                    Debes confirmar tu contraseña.
+                  </span>
+                )}
+              {formIngresada &&
+                passwordRef.current &&
+                passwordConfirmRef.current.value &&
+                passwordRef.current.value !=
+                  passwordConfirmRef.current.value && (
+                  <span className="login-error">
+                    Las contraseñas no coinciden.
+                  </span>
+                )}
+            </div>
+            <div className="nav-buttons">
+              <div className="nav-button" onClick={submitLogin}>
+                <div className="nav-icon chico nav-icon-check"></div>
+                <span className="newLine">crear</span>
+                <span>cuenta</span>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default CrearCuenta;

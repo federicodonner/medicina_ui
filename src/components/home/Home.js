@@ -43,7 +43,7 @@ export default function Home(props) {
   // Callback de la llamada a la API cuando el estado es 200
   function recibirDatos(respuesta) {
     if (respuesta.pastilleros.length == 0) {
-      this.props.history.push(
+      props.history.push(
         { pathname: "/nuevopastillero" },
         { userInfo: respuesta }
       );

@@ -22,7 +22,6 @@ export default function VerStock(props) {
   const [pastillero, setPastillero] = useState(null);
 
   // Función ejecutada en la primera carga del componente
-
   useEffect(() => {
     // Verifica que el componente anterior le haya pasado los datos del usuario
     if (!props.location.state || !props.location.state.userInfo) {

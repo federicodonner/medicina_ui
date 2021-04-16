@@ -1,75 +1,67 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Modal from "../modal/Modal";
-import { borrarDesdeLS, accederAPI } from "../../utils/fetchFunctions";
+import {
+  borrarDesdeLS,
+  accederAPI,
+  errorApi,
+} from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 import "./usuario.css";
 
-class Usuario extends React.Component {
-  state: {
-    user_info: {},
-    loader: true,
-    pastillero: {},
-  };
+export default function Usuario(props) {
+  const [loader, setLoader] = useState(true);
+  const [loaderTexto, setLoaderTexto] = useState("Cargando tus datos");
 
-  nombreRef = React.createRef();
-  apellidoRef = React.createRef();
-  emailRef = React.createRef();
+  const [mostrarModalUsuario, setMostrarModalUsuario] = useState(false);
+  const [mostrarModalPastillero, setMostrarModalPastillero] = useState(false);
 
-  navigateToSection = (section, data) => (event) => {
-    event.preventDefault();
-    this.props.history.push(
-      {
-        pathname: section,
-      },
-      data
-    );
-  };
+  const [pastillero, setPastillero] = useState(null);
 
-  volverAHome = () => {
-    this.props.history.push({
-      pathname: "home",
-    });
-  };
+  const [userInfo, setUserInfo] = useState(
+    props.history.location.state?.userInfo
+  );
 
-  signOut = (event) => {
-    if (event) {
-      event.preventDefault();
+  // Función ejecutada en la primera carga del componente
+  useEffect(() => {
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (!props.location.state || !props.location.state.userInfo) {
+      // Sino, los va a buscar al servidor
+      // Va a buscar los datos del usuario
+      accederAPI(
+        "GET",
+        "usuario",
+        null,
+        (respuesta) => {
+          setUserInfo(respuesta);
+        },
+        errorApi
+      );
+    } else {
+      recibirDatos(userInfo);
     }
-    borrarDesdeLS(variables.LSLoginToken);
-    this.props.history.push({ pathname: "login" });
-  };
-
-  // Muestra o esconde el modal de usuario
-  toggleModalUsuario = () => {
-    var mostrarModalUsuario = this.state.mostrarModalUsuario;
-    mostrarModalUsuario = !mostrarModalUsuario;
-    this.setState({ mostrarModalUsuario });
-  };
-
-  // Muestra o esconde el modal del pastillero
-  toggleModalPastillero = () => {
-    var mostrarModalPastillero = this.state.mostrarModalPastillero;
-    mostrarModalPastillero = !mostrarModalPastillero;
-    this.setState({ mostrarModalPastillero });
-  };
+  }, [props]);
 
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
-  // Cada uno debería invocarlo al terminar
-  apagarLoader = () => {
-    // Verifica que tenga los datos del usuario
-    // para apagar el loader
-    if (this.state.userInfo && this.state.pastilleroDeUsuario) {
-      this.setState({
-        loader: { encendido: false },
-      });
+  useEffect(() => {
+    if (userInfo && pastillero) {
+      setLoader(false);
     }
-  };
+  }, [userInfo, pastillero]);
+
+  function navigateToSection(section) {
+    props.history.push(
+      {
+        pathname: section,
+      },
+      { userInfo }
+    );
+  }
 
   // Callback de la llamada a la API cuando el estado es 200
-  recibirDatos = (userInfo) => {
+  function recibirDatos(userInfo) {
     // Antes de guardar los datos verifico que tenga algún pastillero
     // en el que el usaurio sea el paciente
     var pastilleros = userInfo.pastilleros;
@@ -85,202 +77,152 @@ class Usuario extends React.Component {
               "GET",
               "pastillero/" + pastillero.id,
               null,
-              this.recibirPastillero,
-              this.errorApi
+              recibirPastillero,
+              errorApi
             );
           }
         }
       });
     }
-
-    this.setState({ userInfo }, () => {
-      this.apagarLoader();
-    });
-  };
+    setUserInfo(userInfo);
+    setLoader(false);
+  }
 
   // Función que recibe el pastillero del usuario desde la API
   // lo guarda en state y llama a apagar loader
-  recibirPastillero = (pastilleroDeUsuario) => {
+  function recibirPastillero(pastillero) {
     // Le agrega hasta 6 dósis por si el cliente quiere agregar más
     var nuevaDosis = { horario: null };
-    for (var i = pastilleroDeUsuario.dosis.length; i < 6; i++) {
-      pastilleroDeUsuario.dosis[i] = nuevaDosis;
+    for (var i = pastillero.dosis.length; i < 6; i++) {
+      pastillero.dosis[i] = nuevaDosis;
     }
 
-    this.setState({ pastilleroDeUsuario });
-    this.apagarLoader();
-  };
-
-  // callback de la llamada a la API cuando el estado no es 200
-  errorApi = (datos) => {
-    alert(datos.detail);
-    // Error 401 significa sin permisos, desloguea al usuario
-    if (datos.status == 401) {
-      this.signOut();
-      // Error 500+ es un error de la API, lo manda a la pantalla del error
-    } else if (datos.status >= 500) {
-      this.props.history.push("error");
-      // Si el error es de otros tipos, muestra el mensaje de error
-    } else {
-    }
-  };
+    setPastillero(pastillero);
+  }
 
   // Función ejecutada al actualizar los datos del usuario
-  submitEditarUsuario = (datos) => {
+  function submitEditarUsuario(datos) {
     // Cierro el modal y prendo el loader
-    this.setState({
-      loader: { encendido: true, texto: "Enviado datos." },
-      mostrarModalUsuario: false,
-    });
+    setLoaderTexto("Enviado datos");
+    setLoader(true);
+    setMostrarModalUsuario(false);
 
     accederAPI(
       "PUT",
       "usuario",
       datos,
-      this.datosEditadosExitosamente,
-      this.errorApi
+      () => {
+        alert("Datos editados exitosamente");
+        //Va a buscar los datos
+        accederAPI("GET", "usuario", null, recibirDatos, errorApi);
+      },
+      errorApi
     );
-  };
+  }
 
   // Entra a esta función si editó los datos correctamente
-  datosEditadosExitosamente = () => {
-    alert("Datos editados exitosamente");
-    //Va a buscar los datos
-    accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
-  };
-
-  componentDidMount() {
-    var userInfo = null;
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (this.props.location.state && this.props.location.state.userInfo) {
-      // Si se los pasó, los gaurda en state
-      // this.setState({ userInfo: this.props.location.state.userInfo }, () => {
-      //
-      //   this.apagarLoader();
-      this.recibirDatos(this.props.location.state.userInfo);
-      // });
-    } else {
-      // Sino, los va a buscar al servidor
-      // Va a buscar los datos del usuario
-      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
-    }
+  function datosEditadosExitosamente() {
+    console.log("datos editados exitosamente");
   }
 
-  // prende el loader antes de cargar el componente
-  constructor(props) {
-    super(props);
-    this.state = {
-      loader: {
-        encendido: true,
-        texto: "Cargando tus datos.",
-      },
-      mostrarModalUsuario: false,
-    };
-  }
-
-  render() {
-    return (
-      <div className="app-view cover">
-        <div className="scrollable">
-          {this.state && this.state.loader.encendido && (
-            <div className="loader-container">
-              <p>
-                <img className="loader" src="/images/loader.svg" />
-              </p>
-              <p className={"negrita"}>{this.state.loader.texto}</p>
-            </div>
-          )}
-          {this.state && this.state.userInfo && (
-            <Header volver={this.volverAHome} logoChico={true} />
-          )}
-          <div className="content">
-            {this.state && !this.state.loader.encendido && (
-              <>
-                {this.state.mostrarModalUsuario && (
-                  <Modal
-                    defaultNavButtons={true}
-                    mostrarModal={this.state.mostrarModalUsuario}
-                    cerrarModal={this.toggleModalUsuario}
-                    titulo={"Editar datos"}
-                    submitModal={this.submitEditarUsuario}
-                    campos={[
-                      {
-                        tipo: "texto",
-                        etiqueta: "Nombre",
-                        nombre: "nombre",
-                        value: this.state.userInfo.nombre,
-                        obligatorio: true,
-                      },
-                      {
-                        tipo: "texto",
-                        etiqueta: "Apellido",
-                        nombre: "apellido",
-                        value: this.state.userInfo.apellido,
-                        obligatorio: true,
-                      },
-                      {
-                        tipo: "texto",
-                        etiqueta: "Email",
-                        nombre: "email",
-                        value: this.state.userInfo.email,
-                        obligatorio: true,
-                        regexValidate: RegExp(
-                          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
-                        ),
-                      },
-                    ]}
-                  />
-                )}
-              </>
-            )}
-            {this.state && !this.state.loader.encendido && this.state.userInfo && (
-              <>
-                <p>Datos personales:</p>
-                <p>
-                  <span className="newline">
-                    Nombre:{" "}
-                    {this.state.userInfo.nombre +
-                      " " +
-                      this.state.userInfo.apellido}
-                  </span>
-                  <span className="newLine">
-                    Email: {this.state.userInfo.email}
-                  </span>
-                </p>
-
-                {this.state && this.state.pastilleroDeUsuario && (
-                  <p>Tienes un pastillero ingresado</p>
-                )}
-
-                <div className="nav-buttons tres">
-                  <div className="nav-button" onClick={this.toggleModalUsuario}>
-                    <div className="nav-icon chico nav-icon-edit"></div>
-                    <span className="single-line">editar</span>
-                    <span>datos</span>
-                  </div>
-                  <div className="nav-button">
-                    <div className="nav-icon chico nav-icon-password"></div>
-                    <span className="single-line">cambiar</span>
-                    <span>contraseña</span>
-                  </div>
-                  {this.state && this.state.pastilleroDeUsuario && (
-                    <div
-                      className="nav-button"
-                      onClick={this.toggleModalPastillero}
-                    >
-                      <div className="nav-icon chico nav-icon-pastillero"></div>
-                      <span className="single-line">editar tu</span>
-                      <span>pastillero</span>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
+  return (
+    <div className="app-view cover">
+      <div className="scrollable">
+        {loader && (
+          <div className="loader-container">
+            <p>
+              <img className="loader" src="/images/loader.svg" />
+            </p>
+            <p className={"negrita"}>{loaderTexto}</p>
           </div>
+        )}
+        {userInfo && (
+          <Header
+            volver={() => {
+              navigateToSection("home");
+            }}
+            logoChico={true}
+          />
+        )}
+        <div className="content">
+          {!loader && (
+            <>
+              {mostrarModalUsuario && (
+                <Modal
+                  defaultNavButtons={true}
+                  mostrarModal={mostrarModalUsuario}
+                  cerrarModal={() => setMostrarModalUsuario(false)}
+                  titulo={"Editar datos"}
+                  submitModal={submitEditarUsuario}
+                  campos={[
+                    {
+                      tipo: "texto",
+                      etiqueta: "Nombre",
+                      nombre: "nombre",
+                      value: userInfo.nombre,
+                      obligatorio: true,
+                    },
+                    {
+                      tipo: "texto",
+                      etiqueta: "Apellido",
+                      nombre: "apellido",
+                      value: userInfo.apellido,
+                      obligatorio: true,
+                    },
+                    {
+                      tipo: "texto",
+                      etiqueta: "Email",
+                      nombre: "email",
+                      value: userInfo.email,
+                      obligatorio: true,
+                      regexValidate: RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+                    },
+                  ]}
+                />
+              )}
+            </>
+          )}
+          {!loader && userInfo && (
+            <>
+              <p>Datos personales:</p>
+              <p>
+                <span className="newline">
+                  Nombre: {userInfo.nombre + " " + userInfo.apellido}
+                </span>
+                <span className="newLine">Email: {userInfo.email}</span>
+              </p>
+
+              {pastillero && <p>Tienes un pastillero ingresado</p>}
+
+              <div className="nav-buttons tres">
+                <div
+                  className="nav-button"
+                  onClick={() => setMostrarModalUsuario(true)}
+                >
+                  <div className="nav-icon chico nav-icon-edit"></div>
+                  <span className="single-line">editar</span>
+                  <span>datos</span>
+                </div>
+                <div className="nav-button">
+                  <div className="nav-icon chico nav-icon-password"></div>
+                  <span className="single-line">cambiar</span>
+                  <span>contraseña</span>
+                </div>
+                {pastillero && (
+                  <div
+                    className="nav-button"
+                    onClick={() => setMostrarModalPastillero(true)}
+                  >
+                    <div className="nav-icon chico nav-icon-pastillero"></div>
+                    <span className="single-line">editar tu</span>
+                    <span>pastillero</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default Usuario;

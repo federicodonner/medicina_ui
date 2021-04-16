@@ -82,13 +82,7 @@ export default function EditarDroga(props) {
     }
   }, [datosModal]);
 
-  function volverAHome() {
-    props.history.push({
-      pathname: "home",
-    });
-  }
-
-  function navigateToSection(section) {
+  function navegarASeccion(section) {
     props.history.push(
       {
         pathname: section,
@@ -189,7 +183,14 @@ export default function EditarDroga(props) {
             <p className={"negrita"}>{loaderTexto}</p>
           </div>
         )}
-        {userInfo && <Header volver={volverAHome} logoChico={true} />}
+        {userInfo && (
+          <Header
+            volver={() => {
+              navegarASeccion("home");
+            }}
+            logoChico={true}
+          />
+        )}
         <div className="content">
           {datosModal && !loader && (
             <>
@@ -299,7 +300,7 @@ export default function EditarDroga(props) {
                 <div
                   className="nav-button"
                   onClick={() => {
-                    navigateToSection("agregarDroga");
+                    navegarASeccion("agregarDroga");
                   }}
                 >
                   <div className="nav-icon nav-icon-agregar-dosis chico"></div>
@@ -310,7 +311,7 @@ export default function EditarDroga(props) {
                 <div
                   className="nav-button"
                   onClick={() => {
-                    navigateToSection("descontarStock");
+                    navegarASeccion("descontarStock");
                   }}
                 >
                   <div className="nav-icon nav-icon-pastillero chico"></div>
@@ -324,7 +325,9 @@ export default function EditarDroga(props) {
         {userInfo && (
           <Footer
             pastilleros={userInfo.pastilleros}
-            navegarAHome={volverAHome}
+            navegarAHome={() => {
+              navegarASeccion("home");
+            }}
             establecerPastillero={setPastillero}
           />
         )}

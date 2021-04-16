@@ -83,12 +83,12 @@ export function errorApi(datos) {
   // Error 401 significa sin permisos, desloguea al usuario
   if (datos.status == 401) {
     borrarDesdeLS(variables.LSLoginToken);
-    window.location.href = "login";
+    window.location.href = "/login";
     // Error 500+ es un error de la API, lo manda a la pantalla del error
   } else if (datos.status >= 500) {
     window.location.href = "/error";
     // Si el error es de otros tipos, muestra el mensaje de error y navega al home
   } else {
-    window.location.href = "home";
+    window.location.href = "/home";
   }
 }

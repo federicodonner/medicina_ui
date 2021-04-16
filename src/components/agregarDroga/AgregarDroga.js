@@ -1,329 +1,267 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Select from "react-select";
-import { borrarDesdeLS, accederAPI } from "../../utils/fetchFunctions";
+import {
+  borrarDesdeLS,
+  accederAPI,
+  errorApi,
+} from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 
-class AgregarDroga extends React.Component {
-  state: {
-    user_info: {},
-    loader: true,
-    mensajeLoader: "",
-    pastillero: {},
-    drogas: [],
-    drogaSeleccionada: null,
-    drogasParaMostrar: [],
-    horarioSeleccionado: null,
-    horariosParaMostrar: [],
-  };
+export default function AgregarDroga(props) {
+  const [userInfo, setUserInfo] = useState(
+    props.history.location.state?.userInfo
+  );
+  // Controla el loader
+  const [loader, setLoader] = useState(true);
+  const [loaderTexto, setLoaderTexto] = useState(
+    "Cargando datos del pastillero."
+  );
 
-  drogaRef = React.createRef();
-  concentracionRef = React.createRef();
-  notasRef = React.createRef();
+  const [pastillero, setPastillero] = useState(null);
 
-  volverAEditarDroga = () => {
-    this.props.history.push(
-      {
-        pathname: "editarDroga",
-      },
-      { userInfo: this.state.userInfo }
-    );
-  };
+  const [drogas, setDrogas] = useState(null);
+  const [drogaSeleccionada, setDrogaSeleccionada] = useState(null);
+  const [drogasParaMostrar, setDrogasParaMostrar] = useState(null);
+  const [horarioSeleccionado, setHorarioSeleccionado] = useState(null);
+  const [horariosParaMostrar, setHorariosParaMostrar] = useState(null);
 
-  volverAHome = () => {
-    this.props.history.push({
-      pathname: "home",
-    });
-  };
+  const drogaRef = useRef(null);
+  const concentracionRef = useRef(null);
+  const notasRef = useRef(null);
 
-  signOut = (event) => {
-    if (event) {
-      event.preventDefault();
+  // Función ejecutada en la primera carga del componente
+  useEffect(() => {
+    // Verifica que el componente anterior le haya pasado los datos del usuario
+    if (!props.location.state || !props.location.state.userInfo) {
+      // Sino, los va a buscar al servidor
+      // Va a buscar los datos del usuario
+      accederAPI(
+        "GET",
+        "usuario",
+        null,
+        (respuesta) => {
+          setUserInfo(respuesta);
+        },
+        errorApi
+      );
     }
-    borrarDesdeLS(variables.LSLoginToken);
-    this.props.history.push({ pathname: "/login" });
-  };
+  }, [props]);
 
-  procesarDrogas = (drogas, pastillero) => {
-    const nombreDrogas = [];
-    const drogaParaGuardar = {};
-    drogas.forEach((droga) => {
-      drogaParaGuardar.label = droga.nombre;
-      drogaParaGuardar.value = droga.id;
-      nombreDrogas.push(Object.assign({}, drogaParaGuardar));
-    });
-    this.setState({ drogasParaMostrar: nombreDrogas });
-    const nombreHorarios = [];
-    const horarioParaGuardar = {};
-    pastillero.dosis.forEach((dosis) => {
-      horarioParaGuardar.label = dosis.horario;
-      horarioParaGuardar.value = dosis.id;
-      nombreHorarios.push(Object.assign({}, horarioParaGuardar));
-    });
-    this.setState({ horariosParaMostrar: nombreHorarios });
-  };
+  // Función que apaga el loader cuando verifica que
+  // todos los componentes terminaron de cargar su parte
+  useEffect(() => {
+    if (userInfo && pastillero && drogas) {
+      const nombreDrogas = [];
+      const drogaParaGuardar = {};
+      drogas.forEach((droga) => {
+        drogaParaGuardar.label = droga.nombre;
+        drogaParaGuardar.value = droga.id;
+        nombreDrogas.push(Object.assign({}, drogaParaGuardar));
+      });
 
-  seleccionDroga = (drogaSeleccionada) => {
-    this.setState({ drogaSeleccionada });
-  };
+      const nombreHorarios = [];
+      const horarioParaGuardar = {};
+      pastillero.dosis.forEach((dosis) => {
+        horarioParaGuardar.label = dosis.horario;
+        horarioParaGuardar.value = dosis.id;
+        nombreHorarios.push(Object.assign({}, horarioParaGuardar));
+      });
 
-  seleccionHorario = (horarioSeleccionado) => {
-    this.setState({ horarioSeleccionado });
-  };
+      setDrogasParaMostrar(nombreDrogas);
+      setHorariosParaMostrar(nombreHorarios);
+      setLoader(false);
+    }
+  }, [userInfo, pastillero, drogas]);
+
+  function navegarASeccion(seccion) {
+    props.history.push(
+      {
+        pathname: seccion,
+      },
+      { userInfo }
+    );
+  }
 
   // Este proceso se ejecuta al ingresar el formulario
-  ingresarDroga = (event) => {
-    // Previene la navegación automática del botón
-    event.preventDefault();
-
+  function ingresarDroga() {
     // Verifica que todos los campos se hayan ingresado
-    if (!this.state.drogaSeleccionada && !this.drogaRef.current.value) {
+    if (!drogaSeleccionada && !drogaRef.current.value) {
       alert("Debes ingresar o seleccionar una droga");
       return false;
-    } else if (!this.state.horarioSeleccionado) {
+    } else if (!horarioSeleccionado) {
       alert("Debes seleccionar un horario para la dosis");
       return false;
-    } else if (!this.concentracionRef.current.value) {
+    } else if (!concentracionRef.current.value) {
       alert("Debes ingresar una dosis en miligramos");
       return false;
     }
 
     // Genera un objeto vacío con los datos para enviar
     const dataEnviar = {};
-    dataEnviar.dosis_id = this.state.horarioSeleccionado.value;
-    dataEnviar.cantidad_mg = this.concentracionRef.current.value;
+    dataEnviar.dosis_id = horarioSeleccionado.value;
+    dataEnviar.cantidad_mg = concentracionRef.current.value;
 
     // Si el usuario ingresó notas, se cargan en el objeto a enviar
-    if (this.notasRef && this.notasRef.current) {
-      dataEnviar.notas = this.notasRef.current.value;
-    }
+
+    dataEnviar.notas = notasRef.current?.value;
+
+    // Enciende el loader
+    setLoader(true);
+    setLoaderTexto("Cargando el medicamento.");
 
     // Si el usuario ingresó el nombre de una droga en lugar de seleccionarla
     // de la lista se debe ingresar a la db
-    if (this.drogaRef && this.drogaRef.current && this.drogaRef.current.value) {
+    if (drogaRef.current && drogaRef.current.value) {
       const nuevaDroga = {
-        nombre: this.drogaRef.current.value,
-        pastillero: this.state.pastillero.id,
+        nombre: drogaRef.current.value,
+        pastillero: pastillero.id,
       };
-      this.setState(
-        {
-          dataEnviar,
-          loader: { encendido: true, texto: "Cargando el medicamento." },
-        },
-        () => {
-          // Se agrega la droga a través del endpoint
+
+      // Se agrega la droga a través del endpoint
+      accederAPI(
+        "POST",
+        "droga",
+        nuevaDroga,
+        (respuesta) => {
+          dataEnviar.droga_id = respuesta.id;
+          // Se agrega la dosis a través del endpoint
           accederAPI(
             "POST",
-            "droga",
-            nuevaDroga,
-            this.agregarDroga,
-            this.errorApi
+            "drogaxdosis",
+            dataEnviar,
+            () => {
+              navegarASeccion("editarDroga");
+            },
+            errorApi
           );
-        }
+        },
+        errorApi
       );
     } else {
-      this.setState(
-        {
-          dataEnviar,
-          loader: { encendido: true, texto: "Cargando el medicamento." },
-        },
+      dataEnviar.droga_id = drogaSeleccionada.value;
+      // Se agrega la dosis a través del endpoint
+      accederAPI(
+        "POST",
+        "drogaxdosis",
+        dataEnviar,
         () => {
-          // Resuelve la promesa pasando el id de la droga seleccionada
-          this.agregarDroga({ id: this.state.drogaSeleccionada.value });
-        }
+          navegarASeccion("editarDroga");
+        },
+        errorApi
       );
     }
-  };
-
-  // Callback del POST de crear droga
-  agregarDroga = (droga) => {
-    // Carga los datos listos para enviar y le agrega los datos de la droga
-    const dataEnviar = this.state.dataEnviar;
-    dataEnviar.droga_id = droga.id;
-
-    // Se agrega la dosis a través del endpoint
-    accederAPI(
-      "POST",
-      "drogaxdosis",
-      dataEnviar,
-      this.volverAEditarDroga,
-      this.errorApi
-    );
-  };
-
-  // Función que apaga el loader cuando verifica que
-  // todos los componentes terminaron de cargar su parte
-  // Cada uno debería invocarlo al terminar
-  apagarLoader = () => {
-    // Verifica que tenga los datos del pastillero
-    // Y del usuario para apagar el loader
-    if (this.state.userInfo && this.state.pastillero && this.state.drogas) {
-      this.procesarDrogas(this.state.drogas, this.state.pastillero);
-      this.setState({
-        loader: { encendido: false },
-      });
-    }
-  };
-
-  // Recibe las drogas del pastillero y las guarda en state
-  establecerDrogas = (drogas) => {
-    this.setState({ drogas: drogas.drogas }, () => {
-      this.apagarLoader();
-    });
-  };
+  }
 
   // Recibe el pastillero seleccionado del Footer y lo guarda en state
-  establecerPastillero = (pastillero) => {
+  function establecerPastillero(pastillero) {
     // Una vez que define cuál es el pastillero seleccionado
     // busca las drogas correspondientes en la API
-    this.setState({ pastillero }, () => {
-      accederAPI(
-        "GET",
-        "droga?pastillero=" + pastillero.id,
-        null,
-        this.establecerDrogas,
-        this.errorApi
-      );
-    });
-  };
+    setPastillero(pastillero);
 
-  // Callback de la llamada a la API cuando el estado es 200
-  recibirDatos = (userInfo) => {
-    this.setState({ userInfo }, () => {
-      this.apagarLoader();
-    });
-  };
-
-  // callback de la llamada a la API cuando el estado no es 200
-  errorApi = (datos) => {
-    alert(datos.detail);
-    // Error 401 significa sin permisos, desloguea al usuario
-    if (datos.status == 401) {
-      this.signOut();
-      // Error 500+ es un error de la API, lo manda a la pantalla del error
-    } else if (datos.status >= 500) {
-      this.props.history.push("error");
-      // Si el error es de otros tipos, muestra el mensaje de error y navega al home
-    } else {
-      this.props.history.push("home");
-    }
-  };
-
-  componentDidMount() {
-    var userInfo = null;
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (this.props.location.state && this.props.location.state.userInfo) {
-      // Si se los pasó, los gaurda en state
-      this.setState({ userInfo: this.props.location.state.userInfo }, () => {
-        this.apagarLoader();
-      });
-    } else {
-      // Sino, los va a buscar al servidor
-      // Va a buscar los datos del usuario
-      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
-    }
-  }
-
-  // prende el loader antes de cargar el componente
-  constructor(props) {
-    super(props);
-    this.state = {
-      loader: {
-        encendido: true,
-        texto: "Cargando datos del pastillero.",
+    accederAPI(
+      "GET",
+      "droga?pastillero=" + pastillero.id,
+      null,
+      (respuesta) => {
+        setDrogas(respuesta.drogas);
       },
-    };
-  }
-
-  render() {
-    return (
-      <div className="app-view cover">
-        <div className="scrollable">
-          {this.state && this.state.loader.encendido && (
-            <div className="loader-container">
-              <p>
-                <img className="loader" src="/images/loader.svg" />
-              </p>
-              <p className={"negrita"}>{this.state.loader.texto}</p>
-            </div>
-          )}
-          {this.state && this.state.userInfo && (
-            <Header volver={this.volverAEditarDroga} logoChico={true} />
-          )}
-          <div className="content">
-            {this.state && !this.state.loader.encendido && (
-              <>
-                <p>Agrega droga a tus dosis</p>
-                <p>
-                  Si quieres agregar una dosis de una droga ya ingresada,
-                  selecciónala de la lista.
-                </p>
-                <Select
-                  className="pretty-input"
-                  value={this.state.drogaSeleccionada}
-                  onChange={this.seleccionDroga}
-                  options={this.state.drogasParaMostrar}
-                  placeholder="Droga..."
-                />
-                {this.state && !this.state.drogaSeleccionada && (
-                  <>
-                    <p> Sino, escribe el nombre debajo y será agregada.</p>
-                    <input
-                      name="droga"
-                      type="text"
-                      ref={this.drogaRef}
-                      className="pretty-input pretty-text"
-                    />
-                  </>
-                )}
-                <p>Selecciona en qué momento del día se debe consumir.</p>
-                <Select
-                  className="pretty-input"
-                  value={this.state.horarioSeleccionado}
-                  onChange={this.seleccionHorario}
-                  options={this.state.horariosParaMostrar}
-                  placeholder="Horario..."
-                />
-                <p> Ingresa la concentración en mg.</p>
-                <input
-                  name="concentracion"
-                  type="number"
-                  ref={this.concentracionRef}
-                  className="pretty-input pretty-text"
-                />
-                <p>
-                  {" "}
-                  Si quieres puedes escribir notas para la toma del medicamento.
-                </p>
-                <input
-                  name="notas"
-                  type="text"
-                  ref={this.notasRef}
-                  className="pretty-input pretty-text"
-                />
-
-                <div className="nav-buttons" onClick={this.ingresarDroga}>
-                  <div className="nav-button">
-                    <div className="nav-icon chico nav-icon-check"></div>
-                    <span className="single-line">agregar</span>
-                    <span>droga</span>
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
-          {this.state && this.state.userInfo && (
-            <Footer
-              pastilleros={this.state.userInfo.pastilleros}
-              navegarAHome={this.volverAHome}
-              establecerPastillero={this.establecerPastillero}
-            />
-          )}
-        </div>
-      </div>
+      errorApi
     );
   }
-}
 
-export default AgregarDroga;
+  return (
+    <div className="app-view cover">
+      <div className="scrollable">
+        {loader && (
+          <div className="loader-container">
+            <p>
+              <img className="loader" src="/images/loader.svg" />
+            </p>
+            <p className={"negrita"}>{loaderTexto}</p>
+          </div>
+        )}
+        {userInfo && (
+          <Header
+            volver={() => {
+              navegarASeccion("editarDroga");
+            }}
+            logoChico={true}
+          />
+        )}
+        <div className="content">
+          {!loader && (
+            <>
+              <p>Agrega droga a tus dosis</p>
+              <p>
+                Si quieres agregar una dosis de una droga ya ingresada,
+                selecciónala de la lista.
+              </p>
+              <Select
+                className="pretty-input"
+                value={drogaSeleccionada}
+                onChange={setDrogaSeleccionada}
+                options={drogasParaMostrar}
+                placeholder="Droga..."
+              />
+              {!drogaSeleccionada && (
+                <>
+                  <p> Sino, escribe el nombre debajo y será agregada.</p>
+                  <input
+                    name="droga"
+                    type="text"
+                    ref={drogaRef}
+                    className="pretty-input pretty-text"
+                  />
+                </>
+              )}
+              <p>Selecciona en qué momento del día se debe consumir.</p>
+              <Select
+                className="pretty-input"
+                value={horarioSeleccionado}
+                onChange={setHorarioSeleccionado}
+                options={horariosParaMostrar}
+                placeholder="Horario..."
+              />
+              <p> Ingresa la concentración en mg.</p>
+              <input
+                name="concentracion"
+                type="number"
+                ref={concentracionRef}
+                className="pretty-input pretty-text"
+              />
+              <p>
+                {" "}
+                Si quieres puedes escribir notas para la toma del medicamento.
+              </p>
+              <input
+                name="notas"
+                type="text"
+                ref={notasRef}
+                className="pretty-input pretty-text"
+              />
+
+              <div className="nav-buttons" onClick={ingresarDroga}>
+                <div className="nav-button">
+                  <div className="nav-icon chico nav-icon-check"></div>
+                  <span className="single-line">agregar</span>
+                  <span>droga</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        {userInfo && (
+          <Footer
+            pastilleros={userInfo.pastilleros}
+            navegarAHome={() => {
+              navegarASeccion("home");
+            }}
+            establecerPastillero={establecerPastillero}
+          />
+        )}
+      </div>
+    </div>
+  );
+}

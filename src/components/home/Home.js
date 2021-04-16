@@ -6,6 +6,7 @@ import {
   borrarDesdeLS,
   guardarEnLS,
   leerDesdeLS,
+  errorApi,
 } from "../../utils/fetchFunctions";
 import variables from "../../var/variables.js";
 import "./home.css";
@@ -39,11 +40,6 @@ export default function Home(props) {
     );
   }
 
-  function signOut() {
-    borrarDesdeLS(variables.LSLoginToken);
-    props.history.push({ pathname: "/login" });
-  }
-
   // Callback de la llamada a la API cuando el estado es 200
   function recibirDatos(respuesta) {
     if (respuesta.pastilleros.length == 0) {
@@ -70,21 +66,6 @@ export default function Home(props) {
 
       // Guarda los datos en state y apaga el loader
       setUserInfo(respuesta);
-    }
-  }
-
-  // callback de la llamada a la API cuando el estado no es 200
-  function errorApi(datos) {
-    alert(datos.detail);
-    // Error 401 significa sin permisos, desloguea al usuario
-    if (datos.status == 401) {
-      signOut();
-      // Error 500+ es un error de la API, lo manda a la pantalla del error
-    } else if (datos.status >= 500) {
-      props.history.push("error");
-      // Si el error es de otros tipos, muestra el mensaje de error y apaga el loader
-    } else {
-      setLoader(false);
     }
   }
 

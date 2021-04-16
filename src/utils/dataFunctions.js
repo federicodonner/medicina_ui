@@ -18,48 +18,54 @@ export function getCurrentDatePlus(daysFromToday) {
 // Recibe una cantidad de doceavos de pastillas y lo traduce a cantidades
 export function translateStock(stock) {
   let cantidad_pastillas = (stock - (stock % 12)) / 12;
-  let texto_stock = "";
+  let textoStock = "";
   if (cantidad_pastillas) {
-    texto_stock = cantidad_pastillas + " comprimidos";
+    textoStock = cantidad_pastillas + " comprimidos";
     switch (stock % 12) {
       case 0:
-        return texto_stock;
+        return textoStock;
         break;
       case 3:
-        return (texto_stock = texto_stock + " y un cuarto");
+        return (textoStock = textoStock + " y un cuarto");
         break;
       case 4:
-        return (texto_stock = texto_stock + " y un tercio");
+        return (textoStock = textoStock + " y un tercio");
         break;
       case 6:
-        return (texto_stock = texto_stock + " y medio");
+        return (textoStock = textoStock + " y medio");
         break;
       case 8:
-        return (texto_stock = texto_stock + " y dos tercios");
+        return (textoStock = textoStock + " y dos tercios");
         break;
       case 9:
-        return (texto_stock = texto_stock + " y tres cuartos");
+        return (textoStock = textoStock + " y tres cuartos");
+        break;
+      default:
+        return textoStock;
         break;
     }
   } else {
     switch (stock % 12) {
       case 0:
-        return texto_stock;
+        return textoStock;
         break;
       case 3:
-        return (texto_stock = texto_stock + " Un cuarto de comprimido");
+        return (textoStock = textoStock + " Un cuarto de comprimido");
         break;
       case 4:
-        return (texto_stock = texto_stock + " Un tercio de comprimido");
+        return (textoStock = textoStock + " Un tercio de comprimido");
         break;
       case 6:
-        return (texto_stock = texto_stock + " Medio comprimido");
+        return (textoStock = textoStock + " Medio comprimido");
         break;
       case 8:
-        return (texto_stock = texto_stock + " Dos tercios de comprimido");
+        return (textoStock = textoStock + " Dos tercios de comprimido");
         break;
       case 9:
-        return (texto_stock = texto_stock + " Tres cuartos de comprimido");
+        return (textoStock = textoStock + " Tres cuartos de comprimido");
+        break;
+      default:
+        return textoStock;
         break;
     }
   }

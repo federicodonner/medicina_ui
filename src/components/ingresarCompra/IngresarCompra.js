@@ -84,7 +84,6 @@ export default function IngresarCompra(props) {
       "compra",
       dataEnviar,
       (respuesta) => {
-        alert(respuesta.detail);
         props.history.push("verStock");
       },
       errorApi

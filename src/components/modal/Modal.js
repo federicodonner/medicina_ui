@@ -23,65 +23,19 @@ navButtons (array): configuración de botones en caso de defaultButtons en false
   tipo (string): nombre de la clase correspondiente al ícono
 */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import InputModal from "./InputModal";
 import "./modal.css";
 
-class Modal extends React.Component {
-  state: {};
+export default function Modal(props) {
+  const [mostrarModal, setMostrarModal] = useState(false);
 
-  // callback ejecutado cuando cambia algún campo
-  cambioInput = (data) => {
-    var campos = this.state.campos;
-    // Recorre todos los campos buscando el editado
-    campos.forEach((campo) => {
-      // Cuando lo encuentra, actualiza los datos
-      if (campo.etiqueta == data.etiqueta) {
-        campo.value = data.value;
-      }
-    });
-    this.setState({ campos });
-  };
+  const [campos, setCampos] = useState(null);
+  const [navButtons, setNavButtons] = useState(null);
 
-  // Función ejecutada cuando se acepta el modal
-  submitModal = () => {
-    // Recorre todos los campos verificando que los obligatorios estén completos
-    // Si alguno tiene un regex para verificar, lo hace
-    var camposCompletos = true;
-    var campos = this.state.campos;
-    var datos = {};
-    this.state.campos.forEach((campo) => {
-      if (campo.obligatorio && !campo.value) {
-        camposCompletos = false;
-      }
-      if (campo.regexValidate && !campo.regexValidate.test(campo.value)) {
-        camposCompletos = false;
-      }
-      datos[campo.nombre] = campo.value;
-    });
-
-    if (camposCompletos) {
-      this.props.submitModal(datos);
-    } else {
-      alert(
-        "Verifica los campos. Debes completar todos los obligatorios o el formato de alguno puede ser incorrecto."
-      );
-    }
-  };
-
-  // Función ejecutada al cerrar el modal
-  // Primero cambia el flag en state para mostrar la animación
-  // después llama al callback del padre
-  cerrarModal = () => {
-    this.setState({ mostrarModal: false });
-    setTimeout(() => {
-      this.props.cerrarModal();
-    }, 700);
-  };
-
-  componentDidMount() {
+  useEffect(() => {
     // Recibe la información del componente padre
-    var campos = this.props.campos;
+    var campos = props.campos;
     // Le asigna un número único a cada campo
     var cuenta = 0;
     campos.forEach((campo) => {
@@ -92,8 +46,8 @@ class Modal extends React.Component {
         campo.value = campo.seleccionado.value;
       }
     });
-    if (this.props.navButtons && !this.props.defaultNavButtons) {
-      var navButtons = this.props.navButtons;
+    if (props.navButtons && !props.defaultNavButtons) {
+      var navButtons = props.navButtons;
       navButtons.forEach((boton) => {
         boton.key = cuenta;
         cuenta++;
@@ -105,96 +59,125 @@ class Modal extends React.Component {
     // this.setState({ campos: this.props.campos }, () => {
     //   this.setState({ mostrarModal: true });
     // });
-    this.setState({ campos, navButtons });
+    setCampos(campos);
+    setNavButtons(navButtons);
 
     setTimeout(() => {
-      this.setState({ mostrarModal: true });
+      setMostrarModal(true);
     }, 100);
+  }, []);
+
+  // callback ejecutado cuando cambia algún campo
+  function cambioInput(data) {
+    // Recorre todos los campos buscando el editado
+    campos.forEach((campo) => {
+      // Cuando lo encuentra, actualiza los datos
+      if (campo.etiqueta == data.etiqueta) {
+        campo.value = data.value;
+      }
+    });
+    setCampos(campos);
   }
 
-  // prende el loader antes de cargar el componente
-  constructor(props) {
-    super(props);
-    this.state = {};
+  // Función ejecutada cuando se acepta el modal
+  function submitModal() {
+    // Recorre todos los campos verificando que los obligatorios estén completos
+    // Si alguno tiene un regex para verificar, lo hace
+    var camposCompletos = true;
+    var datos = {};
+    campos.forEach((campo) => {
+      if (campo.obligatorio && !campo.value) {
+        camposCompletos = false;
+      }
+      if (campo.regexValidate && !campo.regexValidate.test(campo.value)) {
+        camposCompletos = false;
+      }
+      datos[campo.nombre] = campo.value;
+    });
+
+    if (camposCompletos) {
+      props.submitModal(datos);
+    } else {
+      alert(
+        "Verifica los campos. Debes completar todos los obligatorios o el formato de alguno puede ser incorrecto."
+      );
+    }
   }
 
-  render() {
-    return (
-      <>
-        <div
-          className={
-            "modal-cover " + (this.state.mostrarModal ? "show" : "hidden")
-          }
-          onClick={this.cerrarModal}
-        />
-        <div className={"modal " + (this.state.mostrarModal ? "show" : "")}>
-          <h1>{this.props.titulo}</h1>
+  // Función ejecutada al cerrar el modal
+  // Primero cambia el flag en state para mostrar la animación
+  // después llama al callback del padre
+  function cerrarModal() {
+    setMostrarModal(false);
+    setTimeout(() => {
+      props.cerrarModal();
+    }, 700);
+  }
 
-          {this.state &&
-            this.state.campos &&
-            this.state.campos.map((campo) => {
+  return (
+    <>
+      <div
+        className={"modal-cover " + (mostrarModal ? "show" : "hidden")}
+        onClick={cerrarModal}
+      />
+      <div className={"modal " + (mostrarModal ? "show" : "")}>
+        <h1>{props.titulo}</h1>
+
+        {campos &&
+          campos.map((campo) => {
+            return (
+              <InputModal
+                key={campo.key}
+                etiqueta={campo.etiqueta}
+                value={campo.value}
+                tipo={campo.tipo}
+                opciones={campo.opciones}
+                seleccionado={campo.seleccionado}
+                cambioInput={cambioInput}
+              />
+            );
+          })}
+
+        {props.defaultNavButtons && (
+          <div className="nav-buttons">
+            <div className="nav-button" onClick={cerrarModal}>
+              <div className="nav-icon chico nav-icon-cross"></div>
+              <span className="single-line">cancelar</span>
+            </div>
+            <div className="nav-button" onClick={submitModal}>
+              <div className="nav-icon chico nav-icon-check"></div>
+              <span className="single-line">guardar</span>
+            </div>
+          </div>
+        )}
+        {navButtons && !props.defaultNavButtons && (
+          <div
+            className={
+              navButtons.length % 3 == 0 ? "nav-buttons tres" : "nav-buttons"
+            }
+          >
+            {navButtons.map((boton) => {
               return (
-                <InputModal
-                  key={campo.key}
-                  etiqueta={campo.etiqueta}
-                  value={campo.value}
-                  tipo={campo.tipo}
-                  opciones={campo.opciones}
-                  seleccionado={campo.seleccionado}
-                  cambioInput={this.cambioInput}
-                />
+                <div
+                  className="nav-button"
+                  onClick={
+                    boton.esCerrar
+                      ? cerrarModal
+                      : boton.esAceptar
+                      ? submitModal
+                      : boton.funcion
+                  }
+                  key={boton.key}
+                >
+                  <div className={"chico nav-icon" + " " + boton.tipo}></div>
+                  <span className="single-line">{boton.textoArriba}</span>
+                  <span>{boton.textoAbajo}</span>
+                </div>
               );
             })}
-
-          {this.props.defaultNavButtons && (
-            <div className="nav-buttons">
-              <div className="nav-button" onClick={this.cerrarModal}>
-                <div className="nav-icon chico nav-icon-cross"></div>
-                <span className="single-line">cancelar</span>
-              </div>
-              <div className="nav-button" onClick={this.submitModal}>
-                <div className="nav-icon chico nav-icon-check"></div>
-                <span className="single-line">guardar</span>
-              </div>
-            </div>
-          )}
-          {this.state &&
-            this.state.navButtons &&
-            !this.props.defaultNavButtons && (
-              <div
-                className={
-                  this.state.navButtons.length % 3 == 0
-                    ? "nav-buttons tres"
-                    : "nav-buttons"
-                }
-              >
-                {this.props.navButtons.map((boton) => {
-                  return (
-                    <div
-                      className="nav-button"
-                      onClick={
-                        boton.esCerrar
-                          ? this.cerrarModal
-                          : boton.esAceptar
-                          ? this.submitModal
-                          : boton.funcion
-                      }
-                      key={boton.key}
-                    >
-                      <div
-                        className={"chico nav-icon" + " " + boton.tipo}
-                      ></div>
-                      <span className="single-line">{boton.textoArriba}</span>
-                      <span>{boton.textoAbajo}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-        </div>
-      </>
-    );
-  }
+          </div>
+        )}
+      </div>
+    </>
+  );
 }
-
-export default Modal;

@@ -11,6 +11,9 @@ export default function Login(props) {
 
   const [userInfo, setUserInfo] = useState(null);
 
+  // Variable en el state utilizada para forzar un re-render del componente
+  const [forzarUpdate, setForzarUpdate] = useState(1);
+
   const loginRef = useRef(null);
   const passwordRef = useRef(null);
 
@@ -88,7 +91,7 @@ export default function Login(props) {
   }
 
   function apagarErrores() {
-    setFormIngresada(false);
+    setForzarUpdate(forzarUpdate + 1);
   }
 
   return (

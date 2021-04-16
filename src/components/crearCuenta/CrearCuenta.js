@@ -9,6 +9,9 @@ export default function CrearCuenta(props) {
 
   const [formIngresada, setFormIngresada] = useState(false);
 
+  // Variable en el state utilizada para forzar un re-render
+  const [forzarUpdate, setForzarUpdate] = useState(1);
+
   const nombreRef = useRef(null);
   const apellidoRef = useRef(null);
   const emailRef = useRef(null);
@@ -22,7 +25,7 @@ export default function CrearCuenta(props) {
   // Función utilizada para actualizar el state y esconder
   // el cartel de falta de input cuando el usuario ingresa algo
   function actualizarState() {
-    setFormIngresada(false);
+    setForzarUpdate(forzarUpdate + 1);
   }
 
   function submitLogin(e) {

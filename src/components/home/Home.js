@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import {
@@ -12,53 +12,44 @@ import "./home.css";
 
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
-class Home extends React.Component {
-  state: {
-    userInfo: {},
-  };
+export default function Home(props) {
+  const [userInfo, setUserInfo] = useState(null);
 
-  navigateToSection = (section, data) => (event) => {
-    event.preventDefault();
-    this.props.history.push(
+  // Controla mostrar el loader de la sección
+  const [loader, setLoader] = useState(true);
+
+  // Cuando carga el userInfo apaga el loader
+  useEffect(() => {
+    if (userInfo) {
+      setLoader(false);
+    }
+  }, [userInfo]);
+
+  // Function llamada al inicializar el componente
+  useEffect(() => {
+    accederAPI("GET", "usuario", null, recibirDatos, errorApi);
+  }, []);
+
+  function navegarASeccion(section, data) {
+    props.history.push(
       {
         pathname: section,
       },
-      data
+      { userInfo }
     );
-  };
+  }
 
-  navegarANuevoPastillero = () => {
-    this.props.history.push(
-      {
-        pathname: "nuevoPastillero",
-      },
-      { userInfo: this.state.userInfo }
-    );
-  };
-
-  navegarAUsuario = () => {
-    this.props.history.push(
-      {
-        pathname: "usuario",
-      },
-      { userInfo: this.state.userInfo }
-    );
-  };
-
-  signOut = (event) => {
-    if (event) {
-      event.preventDefault();
-    }
+  function signOut() {
     borrarDesdeLS(variables.LSLoginToken);
-    this.props.history.push({ pathname: "/login" });
-  };
+    props.history.push({ pathname: "/login" });
+  }
 
   // Callback de la llamada a la API cuando el estado es 200
-  recibirDatos = (userInfo) => {
-    if (userInfo.pastilleros.length == 0) {
+  function recibirDatos(respuesta) {
+    if (respuesta.pastilleros.length == 0) {
       this.props.history.push(
         { pathname: "/nuevopastillero" },
-        { userInfo: userInfo }
+        { userInfo: respuesta }
       );
     } else {
       // ------------------------------------
@@ -78,131 +69,89 @@ class Home extends React.Component {
       // -------------------------
 
       // Guarda los datos en state y apaga el loader
-      this.setState({
-        userInfo: userInfo,
-        loader: { encendido: false },
-      });
+      setUserInfo(respuesta);
     }
-  };
+  }
 
   // callback de la llamada a la API cuando el estado no es 200
-  errorApi = (datos) => {
+  function errorApi(datos) {
     alert(datos.detail);
     // Error 401 significa sin permisos, desloguea al usuario
     if (datos.status == 401) {
-      this.signOut();
+      signOut();
       // Error 500+ es un error de la API, lo manda a la pantalla del error
     } else if (datos.status >= 500) {
-      this.props.history.push("error");
+      props.history.push("error");
       // Si el error es de otros tipos, muestra el mensaje de error y apaga el loader
     } else {
-      this.setState({ loader: { encendido: false } });
-    }
-  };
-
-  componentDidMount() {
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (this.props.location.state && this.props.location.state.userInfo) {
-      // Si se los pasó, verifica que tenga pastilleros,
-      // si no tiene navega
-
-      if (this.props.location.state.userInfo.pastilleros.length == 0) {
-        this.props.history.push(
-          { pathname: "/nuevopastillero" },
-          { userInfo: this.props.location.state.userInfo }
-        );
-      } else {
-        // Si tiene pastilleros, se queda
-        this.setState({
-          userInfo: this.props.location.state.userInfo,
-          loader: { encendido: false },
-        });
-      }
-    } else {
-      // Va a buscar los datos del usuario
-      accederAPI("GET", "usuario", null, this.recibirDatos, this.errorApi);
+      setLoader(false);
     }
   }
 
-  // prende el loader antes de cargar el componente
-  constructor(props) {
-    super(props);
-    this.state = {
-      loader: {
-        encendido: true,
-        texto: "Verificando login.",
-      },
-    };
-  }
-
-  render() {
-    return (
-      <div className="app-view cover">
-        <div className="scrollable">
-          {this.state && this.state.loader.encendido && (
-            <div className="loader-container">
-              <p>
-                <img className="loader" src="/images/loader.svg" />
-              </p>
-              <p className={"negrita"}>{this.state.loader.texto}</p>
-            </div>
-          )}
-          {this.state && !this.state.loader.encendido && (
-            <>
-              <Header
-                nombreCompleto={
-                  this.state.userInfo.nombre +
-                  " " +
-                  this.state.userInfo.apellido
-                }
-                mostrarBotonNotificaciones={true}
-                navegarAUsuario={this.navegarAUsuario}
-              />
-              <div className="content">
-                <div className="nav-buttons home">
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("editarDroga", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-ver-dosis"></div>
-                    <span className="single-line">ver</span>
-                    <span>mis dosis</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("verStock", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-consultar-stock"></div>
-                    <span className="single-line">consultar</span>
-                    <span>stock</span>
-                  </div>
-                  <div
-                    className="nav-button"
-                    onClick={this.navigateToSection("ingresarCompra", {
-                      userInfo: this.state.userInfo,
-                    })}
-                  >
-                    <div className="nav-icon nav-icon-ingresar-compra"></div>
-                    <span className="single-line">ingresar</span>
-                    <span>compra</span>
-                  </div>
+  return (
+    <div className="app-view cover">
+      <div className="scrollable">
+        {loader && (
+          <div className="loader-container">
+            <p>
+              <img className="loader" src="/images/loader.svg" />
+            </p>
+            <p className={"negrita"}>Verificando login</p>
+          </div>
+        )}
+        {!loader && (
+          <>
+            <Header
+              nombreCompleto={userInfo.nombre + " " + userInfo.apellido}
+              mostrarBotonNotificaciones={true}
+              navegarAUsuario={() => {
+                navegarASeccion("usuario");
+              }}
+            />
+            <div className="content">
+              <div className="nav-buttons home">
+                <div
+                  className="nav-button"
+                  onClick={() => {
+                    navegarASeccion("editarDroga");
+                  }}
+                >
+                  <div className="nav-icon nav-icon-ver-dosis"></div>
+                  <span className="single-line">ver</span>
+                  <span>mis dosis</span>
+                </div>
+                <div
+                  className="nav-button"
+                  onClick={() => {
+                    navegarASeccion("verStock");
+                  }}
+                >
+                  <div className="nav-icon nav-icon-consultar-stock"></div>
+                  <span className="single-line">consultar</span>
+                  <span>stock</span>
+                </div>
+                <div
+                  className="nav-button"
+                  onClick={() => {
+                    navegarASeccion("ingresarCompra");
+                  }}
+                >
+                  <div className="nav-icon nav-icon-ingresar-compra"></div>
+                  <span className="single-line">ingresar</span>
+                  <span>compra</span>
                 </div>
               </div>
-              <Footer
-                navegarANuevoPastillero={this.navegarANuevoPastillero}
-                pastilleros={this.state.userInfo.pastilleros}
-                cambioPastilleroHabilitado={true}
-              />
-            </>
-          )}
-        </div>
+            </div>
+            <Footer
+              navegarANuevoPastillero={() => {
+                navegarASeccion("nuevopastillero");
+              }}
+              pastilleros={userInfo.pastilleros}
+              cambioPastilleroHabilitado={true}
+            />
+          </>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
 }
-
-export default Home;

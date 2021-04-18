@@ -510,4 +510,8 @@ body {
     /* margin-top: 50%; */
     margin-left: 0%;
   }
+
+  .escondido {
+    display: none;
+  }
 }

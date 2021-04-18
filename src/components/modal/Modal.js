@@ -6,7 +6,7 @@ cerrarModal (funcion): callback al presionar el botón "cancelar"
 titulo (string): título en el modal
 submitModal (funcion): callback al presionar "aceptar"
 campos (array): campos del modal con los siguientes parámetros:
-  tipo (string): "select" o "texto" soportados por ahora
+  tipo (string): "texto", "password" o "select" soportados 
   etiqueta (string): nombre del campo para mostrar en la interfaz
   nombre (string): nombre del campo para enviar en el request
   obligatorio (boolean): indica si se debe completar el campo
@@ -99,7 +99,7 @@ export default function Modal(props) {
       props.submitModal(datos);
     } else {
       alert(
-        "Verifica los campos. Debes completar todos los obligatorios o el formato de alguno puede ser incorrecto."
+        "Verifica los campos. Es posible que no hayas copmletado todos los obligatorios o que el formato de alguno sea incorrecto."
       );
     }
   }

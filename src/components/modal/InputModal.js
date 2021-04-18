@@ -34,6 +34,16 @@ export default function InputModal(props) {
           onChange={campoEditado}
         />
       )}
+      {props.tipo == "password" && (
+        <input
+          name={props.nombre}
+          type="password"
+          ref={campoRef}
+          className="pretty-input pretty-text"
+          defaultValue={props.value}
+          onChange={campoEditado}
+        />
+      )}
       {props.tipo == "select" && (
         <Select
           className="pretty-input"

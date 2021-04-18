@@ -1,16 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Header from "../header/Header";
-import Footer from "../footer/Footer";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import { getCurrentDatePlus } from "../../utils/dataFunctions";
-import variables from "../../var/variables.js";
 
 export default function DescontarStock(props) {
-  const [userInfo, setUserInfo] = useState(
-    props.history.location.state?.userInfo
-  );
-  const [pastillero, setPastillero] = useState(null);
-
   // Controla el loader
   const [loader, setLoader] = useState(true);
   const [loaderTexto, setLoaderTexto] = useState(
@@ -21,37 +13,33 @@ export default function DescontarStock(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (!props.location.state || !props.location.state.userInfo) {
-      // Sino, los va a buscar al servidor
-      // Va a buscar los datos del usuario
-      accederAPI(
-        "GET",
-        "usuario",
-        null,
-        (respuesta) => {
-          setUserInfo(respuesta);
-        },
-        errorApi
-      );
-    }
+    props.setMostrarHeader(true);
+    props.setMostrarFooter(true);
+
+    // Va a buscar los datos del stock a la API
+    accederAPI(
+      "GET",
+      "stock/" + props.pastillero.id,
+      null,
+      (respuesta) => {
+        setStock(respuesta.drogas);
+      },
+      errorApi
+    );
   }, [props]);
 
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
   useEffect(() => {
-    if (userInfo && stock) {
+    if (stock) {
       setLoader(false);
     }
-  }, [userInfo, stock]);
+  }, [stock]);
 
   function volverAEditarDroga() {
-    props.history.push(
-      {
-        pathname: "editarDroga",
-      },
-      { userInfo }
-    );
+    props.history.push({
+      pathname: "editarDroga",
+    });
   }
 
   function volverAHome() {
@@ -96,7 +84,7 @@ export default function DescontarStock(props) {
         "POST",
         "armarpastillero",
         {
-          pastillero: pastillero.id,
+          pastillero: props.pastillero.id,
         },
         (respuesta) => {
           alert(respuesta.detail);
@@ -107,88 +95,60 @@ export default function DescontarStock(props) {
     }
   }
 
-  // Callback del footer con la información del pastillero
-  function establecerPastillero(pastillero) {
-    setPastillero(pastillero);
-
-    // Va a buscar los datos del stock a la API
-    accederAPI(
-      "GET",
-      "stock/" + pastillero.id,
-      null,
-      (respuesta) => {
-        setStock(respuesta.drogas);
-      },
-      errorApi
-    );
-  }
-
   return (
-    <div className="app-view cover">
-      <div className="scrollable">
-        {loader && (
-          <div className="loader-container">
+    <>
+      {loader && (
+        <div className="loader-container">
+          <p>
+            <img className="loader" src="/images/loader.svg" />
+          </p>
+          <p className={"negrita"}>{loaderTexto}</p>
+        </div>
+      )}
+      <div className="content">
+        {!loader && (
+          <>
             <p>
-              <img className="loader" src="/images/loader.svg" />
+              Armado del pastillero de la semana del {getCurrentDatePlus(0)} al{" "}
+              {getCurrentDatePlus(7)}.
             </p>
-            <p className={"negrita"}>{loaderTexto}</p>
-          </div>
-        )}
-        {userInfo && <Header volver={volverAEditarDroga} logoChico={true} />}
-        <div className="content">
-          {!loader && (
-            <>
-              <p>
-                Armado del pastillero de la semana del {getCurrentDatePlus(0)}{" "}
-                al {getCurrentDatePlus(7)}.
-              </p>
-
-              <p>Se descontarán:</p>
-              {stock && (
-                <ul className="dosis-armado-pastillero">
-                  {stock.map((droga) => {
-                    if (droga.dosis_semanal > 0) {
-                      return (
-                        <li
-                          key={"dosis" + droga.id}
-                          className="dosis-armado-pastillero"
-                        >
-                          {droga.nombre} - {droga.dosis_semanal} mg
-                          {droga.dias_disponible < 7 &&
-                            droga.dias_disponible != 0 && (
-                              <span className="notas-dosis">
-                                Atención: Stock para {droga.dias_disponible}{" "}
-                                días
-                              </span>
-                            )}
-                          {droga.dias_disponible == 0 && (
-                            <span className="notas-dosis rojo">
-                              Atención: Sin stock
+            <p>Se descontarán:</p>
+            {stock && (
+              <ul className="dosis-armado-pastillero">
+                {stock.map((droga) => {
+                  if (droga.dosis_semanal > 0) {
+                    return (
+                      <li
+                        key={"dosis" + droga.id}
+                        className="dosis-armado-pastillero"
+                      >
+                        {droga.nombre} - {droga.dosis_semanal} mg
+                        {droga.dias_disponible < 7 &&
+                          droga.dias_disponible != 0 && (
+                            <span className="notas-dosis">
+                              Atención: Stock para {droga.dias_disponible} días
                             </span>
                           )}
-                        </li>
-                      );
-                    }
-                  })}
-                </ul>
-              )}
-              <div className="nav-buttons">
-                <div className="nav-button" onClick={armarPastillero}>
-                  <div className="nav-icon chico nav-icon-check"></div>
-                  <span className="single-line">aceptar</span>
-                </div>
+                        {droga.dias_disponible == 0 && (
+                          <span className="notas-dosis rojo">
+                            Atención: Sin stock
+                          </span>
+                        )}
+                      </li>
+                    );
+                  }
+                })}
+              </ul>
+            )}
+            <div className="nav-buttons">
+              <div className="nav-button" onClick={armarPastillero}>
+                <div className="nav-icon chico nav-icon-check"></div>
+                <span className="single-line">aceptar</span>
               </div>
-            </>
-          )}
-        </div>
-        {userInfo && (
-          <Footer
-            pastilleros={userInfo.pastilleros}
-            navegarAHome={volverAHome}
-            establecerPastillero={establecerPastillero}
-          />
+            </div>
+          </>
         )}
       </div>
-    </div>
+    </>
   );
 }

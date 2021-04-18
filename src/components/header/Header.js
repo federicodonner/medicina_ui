@@ -3,25 +3,11 @@ import "./header.css";
 
 export default function Header(props) {
   return (
-    <div className={props.logoChico ? "header chico" : "header"}>
-      <div className={props.logoChico ? "logo chico" : "logo"} />
-      {props.nombreCompleto && (
-        <div className={"saludo"}>Hola {props.nombreCompleto}</div>
-      )}
-      {props.navegarAUsuario && (
-        <div
-          className="header-boton-usuario"
-          onClick={props.navegarAUsuario}
-        ></div>
-      )}
+    <div className="header chico">
+      <div className="logo chico" />
       {props.volver && (
         <div className="header-boton-volver" onClick={props.volver}>
           &larr; Volver
-        </div>
-      )}
-      {props.mostrarBotonNotificaciones && (
-        <div className="header-boton-notificaciones">
-          <span className="con-notificacion" />
         </div>
       )}
     </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "../header/Header";
-import Footer from "../footer/Footer";
+
 import {
   accederAPI,
   borrarDesdeLS,
@@ -23,53 +22,32 @@ export default function VerStock(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (!props.location.state || !props.location.state.userInfo) {
-      // Sino, los va a buscar al servidor
-      // Va a buscar los datos del usuario
-      accederAPI(
-        "GET",
-        "usuario",
-        null,
-        (respuesta) => {
-          setUserInfo(respuesta);
-        },
-        errorApi
-      );
-    }
-  }, [props]);
-
-  // Función que apaga el loader cuando verifica que
-  // todos los componentes terminaron de cargar su parte
-  useEffect(() => {
-    if (userInfo && stock && pastillero) {
-      setLoader(false);
-    }
-  }, [userInfo, stock, pastillero]);
-
-  function navegarASeccion(section) {
-    props.history.push(
-      {
-        pathname: section,
-      },
-      { userInfo }
-    );
-  }
-
-  // Callback del footer con la información del pastillero
-  function establecerPastillero(pastillero) {
-    // Guarda el pastillero en state y apaga el loader
-    setPastillero(pastillero);
+    props.setMostrarHeader(true);
+    props.setMostrarFooter(true);
     // Va a buscar los datos del stock a la API
     accederAPI(
       "GET",
-      "stock/" + pastillero.id,
+      "stock/" + props.pastillero.id,
       null,
       (respuesta) => {
         setStock(respuesta.drogas);
       },
       errorApi
     );
+  }, [props]);
+
+  // Función que apaga el loader cuando verifica que
+  // todos los componentes terminaron de cargar su parte
+  useEffect(() => {
+    if (stock) {
+      setLoader(false);
+    }
+  }, [stock]);
+
+  function navegarASeccion(section) {
+    props.history.push({
+      pathname: section,
+    });
   }
 
   return (
@@ -83,14 +61,7 @@ export default function VerStock(props) {
             <p className={"negrita"}>Cargando datos del pastillero.</p>
           </div>
         )}
-        {userInfo && (
-          <Header
-            volver={() => {
-              navegarASeccion("home");
-            }}
-            logoChico={true}
-          />
-        )}
+
         <div className="content">
           {!loader && (
             <>
@@ -160,15 +131,6 @@ export default function VerStock(props) {
             </>
           )}
         </div>
-        {userInfo && (
-          <Footer
-            pastilleros={userInfo.pastilleros}
-            navegarAHome={() => {
-              navegarASeccion("home");
-            }}
-            establecerPastillero={establecerPastillero}
-          />
-        )}
       </div>
     </div>
   );

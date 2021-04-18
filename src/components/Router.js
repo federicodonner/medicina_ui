@@ -10,7 +10,6 @@ import VerStock from "./verStock/VerStock";
 import DescontarStock from "./descontarStock/DescontarStock";
 import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
 import Login from "./login/Login";
-import CrearCuenta from "./crearCuenta/CrearCuenta";
 import Usuario from "./usuario/Usuario";
 import Error from "./error/Error";
 
@@ -19,19 +18,100 @@ class Router extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/home" component={Home} />
+          <Route
+            exact
+            path="/"
+            render={(props) => (
+              <Home
+                {...props}
+                userInfo={this.props.userInfo}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
           <Route exact path="/nuevopastillero" component={NuevoPastillero} />
           <Route path="/imprimirPastillero" component={Error} />
-          <Route path="/agregarDroga" component={AgregarDroga} />
-          <Route path="/editarDroga" component={EditarDroga} />
-          <Route path="/ingresarCompra" component={IngresarCompra} />
-          <Route path="/verStock" component={VerStock} />
-          <Route path="/descontarStock" component={DescontarStock} />
-          <Route path="/login" component={Login} />
-          <Route path="/crearCuenta" component={CrearCuenta} />
-          <Route path="/usuario" component={Usuario} />
-          <Route component={Error} />
+          <Route
+            path="/agregarDroga"
+            render={(props) => (
+              <AgregarDroga
+                {...props}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+                pastillero={this.props.pastillero}
+                seleccionPastillero={this.props.seleccionPastillero}
+              />
+            )}
+          />
+          <Route
+            path="/editarDroga"
+            render={(props) => (
+              <EditarDroga
+                {...props}
+                pastillero={this.props.pastillero}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
+          <Route
+            path="/ingresarCompra"
+            render={(props) => (
+              <IngresarCompra
+                {...props}
+                userInfo={this.props.userInfo}
+                pastillero={this.props.pastillero}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
+          <Route
+            path="/verStock"
+            render={(props) => (
+              <VerStock
+                {...props}
+                userInfo={this.props.userInfo}
+                pastillero={this.props.pastillero}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
+          <Route
+            path="/descontarStock"
+            render={(props) => (
+              <DescontarStock
+                {...props}
+                pastillero={this.props.pastillero}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
+          <Route
+            path="/usuario"
+            render={(props) => (
+              <Usuario
+                {...props}
+                userInfo={this.props.userInfo}
+                pastillero={this.props.pastillero}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+                cargarUsuario={this.props.cargarUsuario}
+              />
+            )}
+          />
+          <Route
+            render={(props) => (
+              <Error
+                {...props}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
         </Switch>
       </BrowserRouter>
     );

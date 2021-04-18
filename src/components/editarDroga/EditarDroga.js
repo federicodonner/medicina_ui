@@ -1,20 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import Header from "../header/Header";
-import Footer from "../footer/Footer";
 import Modal from "../modal/Modal";
 import variables from "../../var/variables.js";
-import {
-  accederAPI,
-  borrarDesdeLS,
-  errorApi,
-} from "../../utils/fetchFunctions";
+import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import "./editarDroga.css";
 
 export default function EditarDroga(props) {
-  const [userInfo, setUserInfo] = useState(
-    props.history.location.state?.userInfo
-  );
-
   // Controla el loader
   const [loader, setLoader] = useState(true);
   const [loaderTexto, setLoaderTexto] = useState(
@@ -37,26 +27,16 @@ export default function EditarDroga(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (!props.location.state || !props.location.state.userInfo) {
-      // Sino, los va a buscar al servidor
-      // Va a buscar los datos del usuario
-      accederAPI(
-        "GET",
-        "usuario",
-        null,
-        (respuesta) => {
-          setUserInfo(respuesta);
-        },
-        errorApi
-      );
-    }
+    setPastillero(props.pastillero);
+    props.setMostrarHeader(true);
+    props.setMostrarFooter(true);
   }, [props]);
 
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
   useEffect(() => {
-    if (userInfo && pastillero) {
+    console.log(pastillero);
+    if (pastillero) {
       var horarios = [];
       var horario = {};
       // Por cada horario del pastillero se carga en el array en state
@@ -71,7 +51,7 @@ export default function EditarDroga(props) {
       setHorariosModal(horarios);
       setLoader(false);
     }
-  }, [userInfo, pastillero]);
+  }, [pastillero]);
 
   // Muestra el modal cuando se cargan los datos
   useEffect(() => {
@@ -86,7 +66,7 @@ export default function EditarDroga(props) {
       {
         pathname: section,
       },
-      { userInfo }
+      { userInfo: props.userInfo }
     );
   }
 
@@ -172,165 +152,147 @@ export default function EditarDroga(props) {
   }
 
   return (
-    <div className="app-view cover">
-      <div className="scrollable">
-        {loader && (
-          <div className="loader-container">
-            <p>
-              <img className="loader" src="/images/loader.svg" />
-            </p>
-            <p className={"negrita"}>{loaderTexto}</p>
-          </div>
-        )}
-        {userInfo && (
-          <Header
-            volver={() => {
-              navegarASeccion("home");
-            }}
-            logoChico={true}
-          />
-        )}
-        <div className="content">
-          {datosModal && !loader && (
-            <>
-              {mostrarModal && (
-                <Modal
-                  defaultNavButtons={false}
-                  mostrarModal={mostrarModal}
-                  cerrarModal={() => {
-                    setMostrarModal(false);
-                  }}
-                  titulo={datosModal.droga}
-                  submitModal={submitEditarDroga}
-                  campos={[
-                    {
-                      tipo: "select",
-                      etiqueta: "Horario",
-                      nombre: "dosis_id",
-                      obligatorio: true,
-                      opciones: horariosModal,
-                      seleccionado: datosModal.horario,
-                    },
-                    {
-                      tipo: "texto",
-                      etiqueta: "Cantidad (mg)",
-                      nombre: "cantidad_mg",
-                      value: datosModal.cantidad_mg,
-                      obligatorio: true,
-                    },
-                    {
-                      tipo: "texto",
-                      etiqueta: "Notas",
-                      nombre: "notas",
-                      value: datosModal.notas,
-                      obligatorio: false,
-                    },
-                  ]}
-                  navButtons={[
-                    {
-                      textoArriba: "Cancelar",
-                      tipo: "nav-icon-cross",
-                      esCerrar: true,
-                    },
-                    {
-                      textoArriba: "Eliminar",
-                      textoAbajo: "dosis",
-                      tipo: "nav-icon-alert",
-                      funcion: submitEliminarDroga,
-                    },
-                    {
-                      textoArriba: "Guardar",
-                      textoAbajo: "cambios",
-                      tipo: "nav-icon-check",
-                      esAceptar: true,
-                    },
-                  ]}
-                />
-              )}
-            </>
-          )}
-
-          {!loader && (
-            <>
-              <p>Seleccione una dosis para editarla</p>
-              {pastillero && (
-                <ul className="dosis-horario">
-                  {pastillero.dosis.map((dosis) => {
-                    return (
-                      <li key={"dosis" + dosis.id} className="dosis-horario">
-                        {dosis.horario}
-                        <ul className="dosis-droga">
-                          {dosis.drogas.map((droga) => {
-                            return (
-                              <li
-                                key={droga.id}
-                                className="dosis-droga"
-                                onClick={() => {
-                                  setDatosModal({
-                                    horario: {
-                                      value: dosis.id,
-                                      label: dosis.horario,
-                                    },
-                                    droga: droga.nombre,
-                                    drogaxdosis_id: droga.id,
-                                    droga_id: droga.droga_id,
-                                    cantidad_mg: droga.cantidad_mg,
-                                    notas: droga.notas,
-                                    horarios: [],
-                                  });
-                                }}
-                              >
-                                {droga.nombre} - {droga.cantidad_mg} mg
-                                {droga.notas && (
-                                  <span className="notas-dosis">
-                                    {droga.notas}
-                                  </span>
-                                )}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              <div className="nav-buttons">
-                <div
-                  className="nav-button"
-                  onClick={() => {
-                    navegarASeccion("agregarDroga");
-                  }}
-                >
-                  <div className="nav-icon nav-icon-agregar-dosis chico"></div>
-                  <span className="single-line">agregar</span>
-                  <span>droga</span>
-                </div>
-
-                <div
-                  className="nav-button"
-                  onClick={() => {
-                    navegarASeccion("descontarStock");
-                  }}
-                >
-                  <div className="nav-icon nav-icon-pastillero chico"></div>
-                  <span className="single-line">pastillero</span>
-                  <span>armado</span>
-                </div>
-              </div>
-            </>
-          )}
+    <>
+      {loader && (
+        <div className="loader-container">
+          <p>
+            <img className="loader" src="/images/loader.svg" />
+          </p>
+          <p className={"negrita"}>{loaderTexto}</p>
         </div>
-        {userInfo && (
-          <Footer
-            pastilleros={userInfo.pastilleros}
-            navegarAHome={() => {
-              navegarASeccion("home");
-            }}
-            establecerPastillero={setPastillero}
-          />
+      )}
+
+      <div className="content">
+        {datosModal && !loader && (
+          <>
+            {mostrarModal && (
+              <Modal
+                defaultNavButtons={false}
+                mostrarModal={mostrarModal}
+                cerrarModal={() => {
+                  setMostrarModal(false);
+                }}
+                titulo={datosModal.droga}
+                submitModal={submitEditarDroga}
+                campos={[
+                  {
+                    tipo: "select",
+                    etiqueta: "Horario",
+                    nombre: "dosis_id",
+                    obligatorio: true,
+                    opciones: horariosModal,
+                    seleccionado: datosModal.horario,
+                  },
+                  {
+                    tipo: "texto",
+                    etiqueta: "Cantidad (mg)",
+                    nombre: "cantidad_mg",
+                    value: datosModal.cantidad_mg,
+                    obligatorio: true,
+                  },
+                  {
+                    tipo: "texto",
+                    etiqueta: "Notas",
+                    nombre: "notas",
+                    value: datosModal.notas,
+                    obligatorio: false,
+                  },
+                ]}
+                navButtons={[
+                  {
+                    textoArriba: "Cancelar",
+                    tipo: "nav-icon-cross",
+                    esCerrar: true,
+                  },
+                  {
+                    textoArriba: "Eliminar",
+                    textoAbajo: "dosis",
+                    tipo: "nav-icon-alert",
+                    funcion: submitEliminarDroga,
+                  },
+                  {
+                    textoArriba: "Guardar",
+                    textoAbajo: "cambios",
+                    tipo: "nav-icon-check",
+                    esAceptar: true,
+                  },
+                ]}
+              />
+            )}
+          </>
+        )}
+
+        {!loader && (
+          <>
+            <p>Seleccione una dosis para editarla</p>
+            {pastillero && (
+              <ul className="dosis-horario">
+                {pastillero.dosis.map((dosis) => {
+                  return (
+                    <li key={"dosis" + dosis.id} className="dosis-horario">
+                      {dosis.horario}
+                      <ul className="dosis-droga">
+                        {dosis.drogas.map((droga) => {
+                          return (
+                            <li
+                              key={droga.id}
+                              className="dosis-droga"
+                              onClick={() => {
+                                setDatosModal({
+                                  horario: {
+                                    value: dosis.id,
+                                    label: dosis.horario,
+                                  },
+                                  droga: droga.nombre,
+                                  drogaxdosis_id: droga.id,
+                                  droga_id: droga.droga_id,
+                                  cantidad_mg: droga.cantidad_mg,
+                                  notas: droga.notas,
+                                  horarios: [],
+                                });
+                              }}
+                            >
+                              {droga.nombre} - {droga.cantidad_mg} mg
+                              {droga.notas && (
+                                <span className="notas-dosis">
+                                  {droga.notas}
+                                </span>
+                              )}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            <div className="nav-buttons">
+              <div
+                className="nav-button"
+                onClick={() => {
+                  navegarASeccion("agregarDroga");
+                }}
+              >
+                <div className="nav-icon nav-icon-agregar-dosis chico"></div>
+                <span className="single-line">agregar</span>
+                <span>droga</span>
+              </div>
+
+              <div
+                className="nav-button"
+                onClick={() => {
+                  navegarASeccion("descontarStock");
+                }}
+              >
+                <div className="nav-icon nav-icon-pastillero chico"></div>
+                <span className="single-line">pastillero</span>
+                <span>armado</span>
+              </div>
+            </div>
+          </>
         )}
       </div>
-    </div>
+    </>
   );
 }

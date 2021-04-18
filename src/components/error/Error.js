@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./error.css";
 
 export default function Error(props) {
+  useEffect(() => {
+    props.setMostrarHeader(false);
+    props.setMostrarFooter(false);
+  }, []);
+
   function navegarAHome() {
     props.history.push({
-      pathname: "home",
+      pathname: "/",
     });
   }
 

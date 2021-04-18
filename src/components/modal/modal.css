@@ -9,6 +9,7 @@
   height: 80vh;
   overflow-y: scroll;
   transition: top 0.8s;
+  text-align: center;
 }
 
 .modal.show {

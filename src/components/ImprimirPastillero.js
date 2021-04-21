@@ -1,6 +1,5 @@
 import React from "react";
-import Header from "./header/Header";
-import {  } from "../utils/fetchFunctions";
+import {} from "../utils/fetchFunctions";
 import { convertDate } from "../utils/dataFunctions";
 
 class ImprimirPastillero extends React.Component {
@@ -8,7 +7,7 @@ class ImprimirPastillero extends React.Component {
     user_info: {},
     loader: true,
     pastillero: {},
-    fecha: ""
+    fecha: "",
   };
 
   componentDidMount() {
@@ -41,14 +40,13 @@ class ImprimirPastillero extends React.Component {
     //           });
     //         });
     //     }
-  //   );
-// } else {
-//   // Si no hay data en localstorage, va a la pantalla de selección de pastillero
-//   this.props.history.push({
-//     pathname: "/seleccionarPastillero"
-//   });
-// }
-
+    //   );
+    // } else {
+    //   // Si no hay data en localstorage, va a la pantalla de selección de pastillero
+    //   this.props.history.push({
+    //     pathname: "/seleccionarPastillero"
+    //   });
+    // }
   }
 
   render() {
@@ -64,18 +62,21 @@ class ImprimirPastillero extends React.Component {
             {this.state && this.state.pastillero && (
               <>
                 <h1>
-                  Este es el pastillero de <span className="negro">{this.state.pastillero.dueno}</span> al <span className="negro">{this.state.fecha}</span>.
+                  Este es el pastillero de{" "}
+                  <span className="negro">{this.state.pastillero.dueno}</span>{" "}
+                  al <span className="negro">{this.state.fecha}</span>.
                 </h1>
                 <ul className="dosis-horario">
-                  {this.state.pastillero.dosis.map(dosis => {
+                  {this.state.pastillero.dosis.map((dosis) => {
                     return (
                       <li key={"dosis" + dosis.id} className="dosis-horario">
                         {dosis.horario}
                         <ul className="dosis-droga">
-                          {dosis.drogas.map(droga => {
+                          {dosis.drogas.map((droga) => {
                             return (
                               <li key={droga.id} className="dosis-droga">
-                                {droga.nombre} - {droga.cantidad_mg} mg - {droga.notas}
+                                {droga.nombre} - {droga.cantidad_mg} mg -{" "}
+                                {droga.notas}
                               </li>
                             );
                           })}

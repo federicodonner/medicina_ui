@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import Header from "../header/Header";
+import React, { useState, useRef } from "react";
 import Modal from "../modal/Modal";
-import { guardarEnLS, accederAPI } from "../../utils/fetchFunctions";
+import { accederAPI } from "../../utils/fetchFunctions";
 import "./login.css";
 import variables from "../../var/variables.js";
 

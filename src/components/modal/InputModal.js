@@ -28,7 +28,7 @@ export default function InputModal(props) {
           {props.obligatorio ? "*" : ""}:{" "}
         </span>
       )}
-      {props.tipo == "texto" && (
+      {props.tipo === "texto" && (
         <input
           name={props.nombre}
           type="text"
@@ -38,7 +38,7 @@ export default function InputModal(props) {
           onChange={campoEditado}
         />
       )}
-      {props.tipo == "password" && (
+      {props.tipo === "password" && (
         <input
           name={props.nombre}
           type="password"
@@ -48,7 +48,7 @@ export default function InputModal(props) {
           onChange={campoEditado}
         />
       )}
-      {props.tipo == "select" && (
+      {props.tipo === "select" && (
         <Select
           className="pretty-input"
           onChange={campoEditadoSelect}

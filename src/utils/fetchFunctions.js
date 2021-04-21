@@ -71,7 +71,7 @@ export function accederAPI(
       var respuesta = {
         status: 500,
         detail:
-          "Ocurrió un error inesperado, por favor inéntalo denuevo más tarde.",
+          "Ocurrió un error inesperado, por favor inténtalo denuevo más tarde.",
       };
       callbackFallo(respuesta);
     });

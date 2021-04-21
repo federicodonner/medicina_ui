@@ -51,7 +51,7 @@ export default function Usuario(props) {
       (respuesta) => {
         // En este request, el status 403 significa contraseña incorrecta
         // No quiero navegar si devuelve ese error
-        if (respuesta.status == 403) {
+        if (respuesta.status === 403) {
           alert(respuesta.detail);
           setLoader(false);
           setMostrarModalPassword(true);
@@ -67,7 +67,7 @@ export default function Usuario(props) {
       {loader && (
         <div className="loader-container">
           <p>
-            <img className="loader" src="/images/loader.svg" />
+            <img className="loader" src="/images/loader.svg" alt="loader" />
           </p>
           <p className={"negrita"}>{loaderTexto}</p>
         </div>

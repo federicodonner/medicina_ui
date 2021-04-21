@@ -103,7 +103,7 @@ export default function DescontarStock(props) {
       {loader && (
         <div className="loader-container">
           <p>
-            <img className="loader" src="/images/loader.svg" />
+            <img className="loader" src="/images/loader.svg" alt="loader" />
           </p>
           <p className={"negrita"}>{loaderTexto}</p>
         </div>
@@ -127,12 +127,12 @@ export default function DescontarStock(props) {
                       >
                         {droga.nombre} - {droga.dosis_semanal} mg
                         {droga.dias_disponible < 7 &&
-                          droga.dias_disponible != 0 && (
+                          droga.dias_disponible !== 0 && (
                             <span className="notas-dosis">
                               Atención: Stock para {droga.dias_disponible} días
                             </span>
                           )}
-                        {droga.dias_disponible == 0 && (
+                        {droga.dias_disponible === 0 && (
                           <span className="notas-dosis rojo">
                             Atención: Sin stock
                           </span>

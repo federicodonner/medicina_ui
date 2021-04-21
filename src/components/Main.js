@@ -7,7 +7,6 @@ import {
   borrarDesdeLS,
   guardarEnLS,
   leerDesdeLS,
-  errorApi,
 } from "../utils/fetchFunctions";
 import variables from "../var/variables.js";
 import Router from "./Router";
@@ -141,7 +140,7 @@ export default function Main(props) {
         {!mostrarLogin && !userInfo && (
           <div className="loader-container">
             <p>
-              <img className="loader" src="/images/loader.svg" />
+              <img className="loader" src="/images/loader.svg" alt="loader" />
             </p>
             <p className={"negrita"}>Cargando </p>
           </div>

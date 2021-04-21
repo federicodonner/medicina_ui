@@ -23,7 +23,7 @@ export default function Footer(props) {
         pastillero.label =
           pastillero.paciente_nombre + " " + pastillero.paciente_apellido;
         pastillero.value = pastillero.id;
-        if (pastillero.id != props.pastilleroActivo.id) {
+        if (pastillero.id !== props.pastilleroActivo.id) {
           // Si no es el seleccionado lo guarda en un array para el state
           otrosPastilleros.push(pastillero);
         }

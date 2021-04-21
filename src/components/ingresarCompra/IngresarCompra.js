@@ -9,8 +9,6 @@ export default function IngresarCompra(props) {
     "Cargando datos del pastillero."
   );
 
-  const [pastillero, setPastillero] = useState(null);
-
   const [drogasParaMostrar, setDrogasParaMostrar] = useState(null);
 
   const [drogaSeleccionada, setDrogaSeleccionada] = useState(null);

@@ -75,7 +75,7 @@ export default function Main(props) {
     setMostrarLogin(true);
   }
 
-  // Una vez que el componente valida que los campos del login están comletos
+  // Una vez que el componente valida que los campos del login están completos
   // invoca esta función para hacer el login efectivo
   function camposLoginValidados(datosLogin) {
     setMostrarLogin(false);

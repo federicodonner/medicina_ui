@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Header from "../header/Header";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import { getCurrentDatePlus } from "../../utils/dataFunctions";
 
@@ -20,7 +21,6 @@ export default function DescontarStock(props) {
       navegarASeccion("/");
     }
 
-    props.setMostrarHeader(true);
     props.setMostrarFooter(true);
 
     if (props.pastillero) {
@@ -109,6 +109,11 @@ export default function DescontarStock(props) {
         </div>
       )}
       <div className="content">
+        <Header
+          volver={() => {
+            navegarASeccion("/editarDroga");
+          }}
+        />
         {!loader && (
           <>
             <p>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Header from "../header/Header";
 
 import {
   accederAPI,
@@ -18,7 +19,6 @@ export default function VerStock(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    props.setMostrarHeader(true);
     props.setMostrarFooter(true);
     // Si el usuario no tiene pastilleros, vuelvo a home
     if (props.userInfo.pastilleros?.length < 1) {
@@ -68,6 +68,11 @@ export default function VerStock(props) {
         )}
 
         <div className="content">
+          <Header
+            volver={() => {
+              navegarASeccion("/");
+            }}
+          />
           {!loader && (
             <>
               <p>Stock actual de pastillas</p>

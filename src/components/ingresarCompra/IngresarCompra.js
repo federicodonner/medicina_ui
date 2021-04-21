@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Header from "../header/Header";
 import Select from "react-select";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 
@@ -15,7 +16,6 @@ export default function IngresarCompra(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    props.setMostrarHeader(true);
     props.setMostrarFooter(true);
     // Una vez que define cuál es el pastillero seleccionado
     // busca los detalles en la API
@@ -110,6 +110,11 @@ export default function IngresarCompra(props) {
       )}
 
       <div className="content">
+        <Header
+          volver={() => {
+            navegarASeccion("/");
+          }}
+        />
         {!loader && (
           <>
             <p>Agrega una compra a tu stock</p>

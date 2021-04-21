@@ -3,7 +3,6 @@ import "./error.css";
 
 export default function Error(props) {
   useEffect(() => {
-    props.setMostrarHeader(false);
     props.setMostrarFooter(false);
   }, []);
 

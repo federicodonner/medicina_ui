@@ -4,7 +4,6 @@ import "./home.css";
 export default function Home(props) {
   // Cuando carga el componente le dice a Main que esconda el header
   useEffect(() => {
-    props.setMostrarHeader(false);
     props.setMostrarFooter(true);
   }, [props]);
 

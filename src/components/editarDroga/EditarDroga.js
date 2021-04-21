@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Header from "../header/Header";
 import Modal from "../modal/Modal";
 import variables from "../../var/variables.js";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
@@ -39,7 +40,6 @@ export default function EditarDroga(props) {
       setPastillero(props.pastillero);
     }
 
-    props.setMostrarHeader(true);
     props.setMostrarFooter(true);
   }, [props]);
 
@@ -170,6 +170,11 @@ export default function EditarDroga(props) {
       )}
 
       <div className="content">
+        <Header
+          volver={() => {
+            navegarASeccion("/");
+          }}
+        />
         {datosModal && !loader && (
           <>
             {mostrarModal && (

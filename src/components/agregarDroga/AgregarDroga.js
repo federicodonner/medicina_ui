@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Header from "../header/Header";
 import Select from "react-select";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 
@@ -31,7 +32,6 @@ export default function AgregarDroga(props) {
       navegarASeccion("/");
     }
     if (props.pastillero) {
-      props.setMostrarHeader(true);
       props.setMostrarFooter(true);
       accederAPI(
         "GET",
@@ -161,6 +161,11 @@ export default function AgregarDroga(props) {
       )}
 
       <div className="content">
+        <Header
+          volver={() => {
+            navegarASeccion("/editardroga");
+          }}
+        />
         {!loader && (
           <>
             <p>Agrega droga a tus dosis</p>

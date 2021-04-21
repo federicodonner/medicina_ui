@@ -25,7 +25,6 @@ class Router extends React.Component {
               <Home
                 {...props}
                 userInfo={this.props.userInfo}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
               />
             )}
@@ -36,7 +35,6 @@ class Router extends React.Component {
             render={(props) => (
               <NuevoPastillero
                 {...props}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
                 cargarUsuario={this.props.cargarUsuario}
               />
@@ -49,7 +47,6 @@ class Router extends React.Component {
               <AgregarDroga
                 {...props}
                 userInfo={this.props.userInfo}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
                 pastillero={this.props.pastillero}
                 seleccionPastillero={this.props.seleccionPastillero}
@@ -63,7 +60,6 @@ class Router extends React.Component {
                 {...props}
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
               />
             )}
@@ -75,7 +71,6 @@ class Router extends React.Component {
                 {...props}
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
               />
             )}
@@ -87,7 +82,6 @@ class Router extends React.Component {
                 {...props}
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
               />
             )}
@@ -99,7 +93,6 @@ class Router extends React.Component {
                 {...props}
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
               />
             )}
@@ -111,7 +104,6 @@ class Router extends React.Component {
                 {...props}
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
                 cargarUsuario={this.props.cargarUsuario}
               />
@@ -121,7 +113,6 @@ class Router extends React.Component {
             render={(props) => (
               <Error
                 {...props}
-                setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
               />
             )}

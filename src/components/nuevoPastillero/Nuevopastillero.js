@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Header from "../header/Header";
 import {
   accederAPI,
   borrarDesdeLS,
@@ -24,7 +25,6 @@ export default function NuevoPastillero(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    props.setMostrarHeader(true);
     props.setMostrarFooter(false);
     setLoader(false);
   }, [props]);
@@ -104,6 +104,11 @@ export default function NuevoPastillero(props) {
       {!loader && (
         <>
           <div className="content">
+            <Header
+              volver={() => {
+                navegarASeccion("usuario");
+              }}
+            />
             <p>Crea un nuevo pastillero</p>
             <p>
               Especifica en qué momentos del día harás las tomas de medicamentos

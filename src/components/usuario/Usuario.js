@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Header from "../header/Header";
 import Modal from "../modal/Modal";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import "./usuario.css";
@@ -13,7 +14,6 @@ export default function Usuario(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    props.setMostrarHeader(true);
     props.setMostrarFooter(false);
     setLoader(false);
   }, [props]);
@@ -74,6 +74,11 @@ export default function Usuario(props) {
       )}
 
       <div className="content">
+        <Header
+          volver={() => {
+            navegarASeccion("/");
+          }}
+        />
         {mostrarModalUsuario && (
           <Modal
             defaultNavButtons={true}
@@ -168,7 +173,7 @@ export default function Usuario(props) {
                   onClick={() => setMostrarModalPastillero(true)}
                 >
                   <div className="nav-icon chico nav-icon-pastillero"></div>
-                  <span className="single-line">editar tu</span>
+                  <span className="single-line">editar</span>
                   <span>pastillero</span>
                 </div>
               )}
@@ -178,7 +183,7 @@ export default function Usuario(props) {
                   onClick={() => navegarASeccion("nuevoPastillero")}
                 >
                   <div className="nav-icon chico nav-icon-pastillero"></div>
-                  <span className="single-line">crear tu</span>
+                  <span className="single-line">crear</span>
                   <span>pastillero</span>
                 </div>
               )}

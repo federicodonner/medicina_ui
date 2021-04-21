@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Header from "./header/Header";
 import Footer from "./footer/Footer";
 import Login from "./login/Login";
 import {
@@ -19,7 +18,6 @@ export default function Main(props) {
   const [mostrarLogin, setMostrarLogin] = useState(false);
 
   // Los hijos pueden apagar o prender el header y el footer si los necesitan
-  const [mostrarHeader, setMostrarHeader] = useState(false);
   const [mostrarFooter, setMostrarFooter] = useState(true);
 
   // Function llamada al inicializar el componente
@@ -123,11 +121,6 @@ export default function Main(props) {
     );
   }
 
-  // Función ejecutada por el botón Volver del header
-  function volver() {
-    window.history.back();
-  }
-
   return (
     <div className="app-view cover">
       <div className="scrollable">
@@ -147,12 +140,10 @@ export default function Main(props) {
         )}
         {!mostrarLogin && userInfo && (
           <>
-            {mostrarHeader && <Header volver={volver} />}
             <Router
               setUserInfo={setUserInfo}
               userInfo={userInfo}
               pastillero={pastillero}
-              setMostrarHeader={setMostrarHeader}
               setMostrarFooter={setMostrarFooter}
               seleccionPastillero={seleccionPastillero}
               cargarUsuario={cargarUsuario}

@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../header/Header";
 import Modal from "../modal/Modal";
-import variables from "../../var/variables.js";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import "./editarDroga.css";
 
@@ -20,11 +19,6 @@ export default function EditarDroga(props) {
   // Los horarios de las dosis están separados porque son los únicos
   // campos del modal que no cambian al seleccionar una nueva droga
   const [horariosModal, setHorariosModal] = useState(null);
-
-  const [horariosParaMostrar, setHorariosParaMostrar] = useState(null);
-
-  const cantidadRef = useRef(null);
-  const notasRef = useRef(null);
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
@@ -138,7 +132,7 @@ export default function EditarDroga(props) {
 
       if (dosis.drogas.length >= 0) {
         dosis.drogas.forEach((drogaxdosis, index) => {
-          if (drogaxdosis.id == drogaxdosisId) {
+          if (drogaxdosis.id === drogaxdosisId) {
             // Cuando encuentra el editado, lo elimina
             dosis.drogas.splice(index, 1);
           }
@@ -147,7 +141,7 @@ export default function EditarDroga(props) {
       // Después de eliminar el encontrado, si fue una edición
       // lo agrega en el horario seleccionado
       // (si fue elmiinada una droga, el objeto de respuesta de la API no tiene id)
-      if (dosis.id == horarioSeleccionado && drogaxdosisEditado.id) {
+      if (dosis.id === horarioSeleccionado && drogaxdosisEditado.id) {
         dosis.drogas.push(drogaxdosisEditado);
       }
     });
@@ -163,7 +157,7 @@ export default function EditarDroga(props) {
       {loader && (
         <div className="loader-container">
           <p>
-            <img className="loader" src="/images/loader.svg" />
+            <img className="loader" src="/images/loader.svg" alt="loader" />
           </p>
           <p className={"negrita"}>{loaderTexto}</p>
         </div>

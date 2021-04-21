@@ -2,12 +2,9 @@ import React, { useState, useRef } from "react";
 import Modal from "../modal/Modal";
 import { accederAPI } from "../../utils/fetchFunctions";
 import "./login.css";
-import variables from "../../var/variables.js";
 
 export default function Login(props) {
   const [formIngresada, setFormIngresada] = useState(false);
-
-  const [userInfo, setUserInfo] = useState(null);
 
   // Variable en el state utilizada para forzar un re-render del componente
   const [forzarUpdate, setForzarUpdate] = useState(1);
@@ -17,17 +14,6 @@ export default function Login(props) {
 
   const loginRef = useRef(null);
   const passwordRef = useRef(null);
-
-  // Callback de error de post a oauth
-  function errorDeLogin(data) {
-    // Verifica si es un error de la API o un problema de oauth
-    if (data.status >= 500) {
-      alert("Ocurrió un error, por favor inténtalo denuevo más tarde.");
-    } else {
-      alert(data.detail);
-      setFormIngresada(false);
-    }
-  }
 
   function submitLogin(e) {
     e.preventDefault();
@@ -153,7 +139,7 @@ export default function Login(props) {
               etiqueta: "Email",
               nombre: "email",
               obligatorio: true,
-              regexValidate: RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+              regexValidate: RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/),
             },
             {
               tipo: "password",

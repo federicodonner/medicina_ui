@@ -57,7 +57,9 @@ export default function Footer(props) {
           : "footer " + (props.escondido ? "escondido" : "")
       }
     >
-      {loader && <img className="loader-footer" src="/images/loader.svg" />}
+      {loader && (
+        <img className="loader-footer" src="/images/loader.svg" alt="loader" />
+      )}
       {!loader && (
         <>
           <div className="titulo-footer">

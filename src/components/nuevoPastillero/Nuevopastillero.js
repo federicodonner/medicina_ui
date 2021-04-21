@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../header/Header";
-import {
-  accederAPI,
-  borrarDesdeLS,
-  errorApi,
-} from "../../utils/fetchFunctions";
-import variables from "../../var/variables.js";
+import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import "./nuevoPastillero.css";
 
 export default function NuevoPastillero(props) {
@@ -96,7 +91,7 @@ export default function NuevoPastillero(props) {
       {loader && (
         <div className="loader-container">
           <p>
-            <img className="loader" src="/images/loader.svg" />
+            <img className="loader" src="/images/loader.svg" alt="loader" />
           </p>
           <p className={"negrita"}>{loaderTexto}</p>
         </div>

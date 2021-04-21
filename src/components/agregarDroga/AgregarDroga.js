@@ -4,9 +4,6 @@ import Select from "react-select";
 import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 
 export default function AgregarDroga(props) {
-  const [userInfo, setUserInfo] = useState(
-    props.history.location.state?.userInfo
-  );
   // Controla el loader
   const [loader, setLoader] = useState(true);
   const [loaderTexto, setLoaderTexto] = useState(
@@ -154,7 +151,7 @@ export default function AgregarDroga(props) {
       {loader && (
         <div className="loader-container">
           <p>
-            <img className="loader" src="/images/loader.svg" />
+            <img className="loader" src="/images/loader.svg" alt="loader" />
           </p>
           <p className={"negrita"}>{loaderTexto}</p>
         </div>

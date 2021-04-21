@@ -4,7 +4,7 @@ import "./error.css";
 export default function Error(props) {
   useEffect(() => {
     props.setMostrarFooter(false);
-  }, []);
+  }, [props]);
 
   function navegarAHome() {
     props.history.push({

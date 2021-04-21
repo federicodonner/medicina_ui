@@ -42,7 +42,7 @@ export function accederAPI(
   if (data) {
     fetchConfig.body = JSON.stringify(data);
   }
-  var promise = Promise.race([
+  Promise.race([
     // Genera dos promesas, una con el fetch y otra con el timeout
     // la que termine primero resuelve
     fetch(url, fetchConfig),
@@ -81,7 +81,7 @@ export function accederAPI(
 export function errorApi(datos) {
   alert(datos.detail);
   // Error 401 significa sin permisos, desloguea al usuario
-  if (datos.status == 401) {
+  if (datos.status === 401) {
     borrarDesdeLS(variables.LSLoginToken);
     window.location.href = "/login";
     // Error 500+ es un error de la API, lo manda a la pantalla del error

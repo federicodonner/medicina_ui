@@ -103,7 +103,7 @@ export default function IngresarCompra(props) {
       {loader && (
         <div className="loader-container">
           <p>
-            <img className="loader" src="/images/loader.svg" />
+            <img className="loader" src="/images/loader.svg" alt="loader" />
           </p>
           <p className={"negrita"}>{loaderTexto}</p>
         </div>

@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Header from "../header/Header";
-
-import {
-  accederAPI,
-  borrarDesdeLS,
-  errorApi,
-} from "../../utils/fetchFunctions";
+import { accederAPI, errorApi } from "../../utils/fetchFunctions";
 import { translateStock } from "../../utils/dataFunctions";
-import variables from "../../var/variables.js";
 import "./verStock.css";
 
 export default function VerStock(props) {
   const [loader, setLoader] = useState(true);
 
   const [stock, setStock] = useState(null);
-
-  const [pastillero, setPastillero] = useState(null);
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
@@ -61,7 +53,7 @@ export default function VerStock(props) {
         {loader && (
           <div className="loader-container">
             <p>
-              <img className="loader" src="/images/loader.svg" />
+              <img className="loader" src="/images/loader.svg" alt="loader" />
             </p>
             <p className={"negrita"}>Cargando datos del pastillero.</p>
           </div>
@@ -92,11 +84,11 @@ export default function VerStock(props) {
                           droga.dias_disponible > 0 && (
                             <span className="dias-stock amarillo">
                               - {droga.dias_disponible} día
-                              {droga.dias_disponible != 1 ? "s" : ""}
+                              {droga.dias_disponible !== 1 ? "s" : ""}
                             </span>
                           )}
 
-                        {droga.dias_disponible == 0 && (
+                        {droga.dias_disponible === 0 && (
                           <span className="dias-stock rojo single-line">
                             sin stock
                           </span>

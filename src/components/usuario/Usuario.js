@@ -107,7 +107,7 @@ export default function Usuario(props) {
                 nombre: "email",
                 value: props.userInfo.email,
                 obligatorio: true,
-                regexValidate: RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
+                regexValidate: RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/),
               },
             ]}
           />

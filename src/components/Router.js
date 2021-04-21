@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Home from "./home/Home";
-import NotFound from "./NotFound";
 import ImprimirPastillero from "./ImprimirPastillero";
 import AgregarDroga from "./agregarDroga/AgregarDroga";
 import EditarDroga from "./editarDroga/EditarDroga";
@@ -9,7 +8,6 @@ import IngresarCompra from "./ingresarCompra/IngresarCompra";
 import VerStock from "./verStock/VerStock";
 import DescontarStock from "./descontarStock/DescontarStock";
 import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
-import Login from "./login/Login";
 import Usuario from "./usuario/Usuario";
 import Error from "./error/Error";
 

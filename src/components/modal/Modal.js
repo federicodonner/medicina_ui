@@ -42,7 +42,7 @@ export default function Modal(props) {
       campo.key = cuenta;
       cuenta++;
       // Para los campos select, marca el default como seleccionado
-      if (campo.tipo == "select") {
+      if (campo.tipo === "select") {
         campo.value = campo.seleccionado.value;
       }
     });
@@ -72,7 +72,7 @@ export default function Modal(props) {
     // Recorre todos los campos buscando el editado
     campos.forEach((campo) => {
       // Cuando lo encuentra, actualiza los datos
-      if (campo.etiqueta == data.etiqueta) {
+      if (campo.etiqueta === data.etiqueta) {
         campo.value = data.value;
       }
     });
@@ -154,7 +154,7 @@ export default function Modal(props) {
         {navButtons && !props.defaultNavButtons && (
           <div
             className={
-              navButtons.length % 3 == 0 ? "nav-buttons tres" : "nav-buttons"
+              navButtons.length % 3 === 0 ? "nav-buttons tres" : "nav-buttons"
             }
           >
             {navButtons.map((boton) => {
@@ -170,7 +170,7 @@ export default function Modal(props) {
                   }
                   key={boton.key}
                 >
-                  <div className={"chico nav-icon" + " " + boton.tipo}></div>
+                  <div className={"chico nav-icon " + boton.tipo}></div>
                   <span className="single-line">{boton.textoArriba}</span>
                   <span>{boton.textoAbajo}</span>
                 </div>

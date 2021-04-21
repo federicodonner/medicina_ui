@@ -89,6 +89,6 @@ export function errorApi(datos) {
     window.location.href = "/error";
     // Si el error es de otros tipos, muestra el mensaje de error y navega al home
   } else {
-    window.location.href = "/home";
+    window.location.href = "/";
   }
 }

@@ -17,7 +17,7 @@ export default function Usuario(props) {
     setLoader(false);
   }, [props]);
 
-  function navigateToSection(section) {
+  function navegarASeccion(section) {
     props.history.push({
       pathname: section,
     });
@@ -115,6 +115,16 @@ export default function Usuario(props) {
                 >
                   <div className="nav-icon chico nav-icon-pastillero"></div>
                   <span className="single-line">editar tu</span>
+                  <span>pastillero</span>
+                </div>
+              )}
+              {!props.pastillero && (
+                <div
+                  className="nav-button"
+                  onClick={() => navegarASeccion("nuevoPastillero")}
+                >
+                  <div className="nav-icon chico nav-icon-pastillero"></div>
+                  <span className="single-line">crear tu</span>
                   <span>pastillero</span>
                 </div>
               )}

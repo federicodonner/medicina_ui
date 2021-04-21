@@ -30,13 +30,25 @@ class Router extends React.Component {
               />
             )}
           />
-          <Route exact path="/nuevopastillero" component={NuevoPastillero} />
+          <Route
+            exact
+            path="/nuevopastillero"
+            render={(props) => (
+              <NuevoPastillero
+                {...props}
+                setMostrarHeader={this.props.setMostrarHeader}
+                setMostrarFooter={this.props.setMostrarFooter}
+                cargarUsuario={this.props.cargarUsuario}
+              />
+            )}
+          />
           <Route path="/imprimirPastillero" component={Error} />
           <Route
             path="/agregarDroga"
             render={(props) => (
               <AgregarDroga
                 {...props}
+                userInfo={this.props.userInfo}
                 setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
                 pastillero={this.props.pastillero}
@@ -49,6 +61,7 @@ class Router extends React.Component {
             render={(props) => (
               <EditarDroga
                 {...props}
+                userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
                 setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}
@@ -84,6 +97,7 @@ class Router extends React.Component {
             render={(props) => (
               <DescontarStock
                 {...props}
+                userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
                 setMostrarHeader={this.props.setMostrarHeader}
                 setMostrarFooter={this.props.setMostrarFooter}

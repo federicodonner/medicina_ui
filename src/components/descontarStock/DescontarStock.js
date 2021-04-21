@@ -13,19 +13,28 @@ export default function DescontarStock(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
+    if (props.userInfo.pastilleros?.length < 1) {
+      alert(
+        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
+      );
+      navegarASeccion("/");
+    }
+
     props.setMostrarHeader(true);
     props.setMostrarFooter(true);
 
-    // Va a buscar los datos del stock a la API
-    accederAPI(
-      "GET",
-      "stock/" + props.pastillero.id,
-      null,
-      (respuesta) => {
-        setStock(respuesta.drogas);
-      },
-      errorApi
-    );
+    if (props.pastillero) {
+      // Va a buscar los datos del stock a la API
+      accederAPI(
+        "GET",
+        "stock/" + props.pastillero.id,
+        null,
+        (respuesta) => {
+          setStock(respuesta.drogas);
+        },
+        errorApi
+      );
+    }
   }, [props]);
 
   // Función que apaga el loader cuando verifica que
@@ -36,15 +45,9 @@ export default function DescontarStock(props) {
     }
   }, [stock]);
 
-  function volverAEditarDroga() {
+  function navegarASeccion(seccion) {
     props.history.push({
-      pathname: "editarDroga",
-    });
-  }
-
-  function volverAHome() {
-    props.history.push({
-      pathname: "home",
+      pathname: seccion,
     });
   }
 
@@ -88,7 +91,7 @@ export default function DescontarStock(props) {
         },
         (respuesta) => {
           alert(respuesta.detail);
-          volverAEditarDroga();
+          navegarASeccion("editardroga");
         },
         errorApi
       );

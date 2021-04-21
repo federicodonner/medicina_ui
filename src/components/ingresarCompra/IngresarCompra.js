@@ -21,23 +21,31 @@ export default function IngresarCompra(props) {
     props.setMostrarFooter(true);
     // Una vez que define cuál es el pastillero seleccionado
     // busca los detalles en la API
-    accederAPI(
-      "GET",
-      "droga?pastillero=" + props.pastillero.id,
-      null,
-      (respuesta) => {
-        const nombreDrogas = [];
-        const drogaParaGuardar = {};
-        // Crea un array con los detalles de las drogas ingresadas para el pastillero
-        respuesta.drogas.forEach(function (droga, index) {
-          drogaParaGuardar.label = droga.nombre;
-          drogaParaGuardar.value = droga.id;
-          nombreDrogas.push(Object.assign({}, drogaParaGuardar));
-        });
-        setDrogasParaMostrar(nombreDrogas);
-      },
-      errorApi
-    );
+    if (props.userInfo.pastilleros?.length < 1) {
+      alert(
+        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
+      );
+      navegarASeccion("/");
+    }
+    if (props.pastillero) {
+      accederAPI(
+        "GET",
+        "droga?pastillero=" + props.pastillero.id,
+        null,
+        (respuesta) => {
+          const nombreDrogas = [];
+          const drogaParaGuardar = {};
+          // Crea un array con los detalles de las drogas ingresadas para el pastillero
+          respuesta.drogas.forEach(function (droga, index) {
+            drogaParaGuardar.label = droga.nombre;
+            drogaParaGuardar.value = droga.id;
+            nombreDrogas.push(Object.assign({}, drogaParaGuardar));
+          });
+          setDrogasParaMostrar(nombreDrogas);
+        },
+        errorApi
+      );
+    }
   }, [props]);
 
   // Función que apaga el loader cuando verifica que
@@ -84,6 +92,12 @@ export default function IngresarCompra(props) {
       },
       errorApi
     );
+  }
+
+  function navegarASeccion(section) {
+    props.history.push({
+      pathname: section,
+    });
   }
 
   return (

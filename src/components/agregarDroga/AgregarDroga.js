@@ -24,17 +24,25 @@ export default function AgregarDroga(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    props.setMostrarHeader(true);
-    props.setMostrarFooter(true);
-    accederAPI(
-      "GET",
-      "droga?pastillero=" + props.pastillero.id,
-      null,
-      (respuesta) => {
-        setDrogas(respuesta.drogas);
-      },
-      errorApi
-    );
+    if (props.userInfo.pastilleros?.length < 1) {
+      alert(
+        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
+      );
+      navegarASeccion("/");
+    }
+    if (props.pastillero) {
+      props.setMostrarHeader(true);
+      props.setMostrarFooter(true);
+      accederAPI(
+        "GET",
+        "droga?pastillero=" + props.pastillero.id,
+        null,
+        (respuesta) => {
+          setDrogas(respuesta.drogas);
+        },
+        errorApi
+      );
+    }
   }, [props]);
 
   // Función que apaga el loader cuando verifica que

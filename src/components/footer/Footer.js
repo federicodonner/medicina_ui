@@ -14,31 +14,39 @@ export default function Footer(props) {
   const [pastilleros, setPastilleros] = useState(null);
 
   useEffect(() => {
-    var otrosPastilleros = [];
-    // Recorre los pastilleros buscando al seleccionado
-    // Necesita eliminarlo de la lista de opciones y obtener el nombre del dueño
-    props.pastilleros.forEach((pastillero) => {
-      // Procesa cada pastillero para el select
-      pastillero.label =
-        pastillero.paciente_nombre + " " + pastillero.paciente_apellido;
-      pastillero.value = pastillero.id;
-      if (pastillero.id != props.pastilleroActivo.id) {
-        // Si no es el seleccionado lo guarda en un array para el state
-        otrosPastilleros.push(pastillero);
-      }
-    });
-
-    // Guarda los datos en el state y cierra el modal por si está abierto
-    setPastilleros(otrosPastilleros);
-    setAgrandado(false);
-    setLoader(false);
-    Fitty(".fit", { maxSize: 22 });
+    if (props.pastilleros && props.pastilleroActivo) {
+      var otrosPastilleros = [];
+      // Recorre los pastilleros buscando al seleccionado
+      // Necesita eliminarlo de la lista de opciones y obtener el nombre del dueño
+      props.pastilleros.forEach((pastillero) => {
+        // Procesa cada pastillero para el select
+        pastillero.label =
+          pastillero.paciente_nombre + " " + pastillero.paciente_apellido;
+        pastillero.value = pastillero.id;
+        if (pastillero.id != props.pastilleroActivo.id) {
+          // Si no es el seleccionado lo guarda en un array para el state
+          otrosPastilleros.push(pastillero);
+        }
+      });
+      // Guarda los datos en el state y cierra el modal por si está abierto
+      setPastilleros(otrosPastilleros);
+      setAgrandado(false);
+      setLoader(false);
+      Fitty(".fit", { maxSize: 22 });
+    } else {
+      setAgrandado(false);
+      setLoader(false);
+    }
   }, [props]);
 
   function cambioDePastillero(pastillero) {
     setLoader(true);
     setAgrandado(false);
     props.seleccionPastillero(pastillero);
+  }
+
+  function navegarASeccion(seccion) {
+    window.location.href = seccion;
   }
 
   return (
@@ -70,38 +78,38 @@ export default function Footer(props) {
             )}
             {!props.pastilleroActivo && (
               <span
-                className="fit"
+                className="fit negrita"
                 onClick={() => {
                   setAgrandado(true);
                 }}
               >
-                Sin pastillero. <span className="negrita">Selecciona uno</span>.
+                No tienes pastillero seleccionado.
               </span>
             )}
           </div>
           <div className="modal-seleccion-pastillero">
-            {pastilleros && pastilleros.length > 0 && (
-              <div className="texto-con-pastilleros-footer">
+            <div className="texto-con-pastilleros-footer">
+              {pastilleros && pastilleros.length > 0 && (
                 <Select
                   className="select-pastillero"
                   options={pastilleros}
                   onChange={cambioDePastillero}
                   placeholder="Selecciona otro pastillero"
                 />
-                <p>
-                  Presiona <span className="negrita">aquí</span> para crear uno
-                  nuevo.
-                </p>
-              </div>
-            )}
-            {pastilleros && pastilleros.length < 1 && (
-              <div className="texto-sin-pastilleros-footer">
-                <p>
-                  No tienes otros pastilleros, presiona{" "}
-                  <span className="negrita">aquí</span> para crear uno nuevo.
-                </p>
-              </div>
-            )}
+              )}
+              <p>
+                Presionando{" "}
+                <span
+                  className="negrita"
+                  onClick={() => {
+                    navegarASeccion("usuario");
+                  }}
+                >
+                  aquí
+                </span>{" "}
+                puedes configurarlos.
+              </p>
+            </div>
             <span
               className="negrita"
               onClick={() => {

@@ -27,7 +27,18 @@ export default function EditarDroga(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    setPastillero(props.pastillero);
+    if (props.userInfo.pastilleros?.length < 1) {
+      alert(
+        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
+      );
+      navegarASeccion("/");
+    }
+
+    // Si tiene un pastillero determinado, lo carga
+    if (props.pastillero) {
+      setPastillero(props.pastillero);
+    }
+
     props.setMostrarHeader(true);
     props.setMostrarFooter(true);
   }, [props]);
@@ -35,7 +46,6 @@ export default function EditarDroga(props) {
   // Función que apaga el loader cuando verifica que
   // todos los componentes terminaron de cargar su parte
   useEffect(() => {
-    console.log(pastillero);
     if (pastillero) {
       var horarios = [];
       var horario = {};
@@ -62,12 +72,9 @@ export default function EditarDroga(props) {
   }, [datosModal]);
 
   function navegarASeccion(section) {
-    props.history.push(
-      {
-        pathname: section,
-      },
-      { userInfo: props.userInfo }
-    );
+    props.history.push({
+      pathname: section,
+    });
   }
 
   // Arma el objeto e invoca la API para editar la dosis

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import Header from "../header/Header";
 import {
   accederAPI,
   borrarDesdeLS,
@@ -9,10 +8,6 @@ import variables from "../../var/variables.js";
 import "./nuevoPastillero.css";
 
 export default function NuevoPastillero(props) {
-  const [userInfo, setUserInfo] = useState(
-    props.history.location.state?.userInfo
-  );
-
   // Controla el loader
   const [loader, setLoader] = useState(true);
   const [loaderTexto, setLoaderTexto] = useState("Cargando datos del usuario");
@@ -29,28 +24,10 @@ export default function NuevoPastillero(props) {
 
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
-    // Verifica que el componente anterior le haya pasado los datos del usuario
-    if (!props.location.state || !props.location.state.userInfo) {
-      // Sino, los va a buscar al servidor
-      // Va a buscar los datos del usuario
-      accederAPI(
-        "GET",
-        "usuario",
-        null,
-        (respuesta) => {
-          setUserInfo(respuesta);
-        },
-        errorApi
-      );
-    }
+    props.setMostrarHeader(true);
+    props.setMostrarFooter(false);
+    setLoader(false);
   }, [props]);
-
-  // Cuando cargó el userInfo apaga el loader
-  useEffect(() => {
-    if (userInfo) {
-      setLoader(false);
-    }
-  }, [userInfo]);
 
   function crearPastillero(e) {
     e.preventDefault();
@@ -93,7 +70,10 @@ export default function NuevoPastillero(props) {
         "POST",
         "pastillero",
         data,
-        () => props.history.push("home"),
+        () => {
+          props.cargarUsuario();
+          navegarASeccion("/");
+        },
         errorApi
       );
     }
@@ -112,112 +92,101 @@ export default function NuevoPastillero(props) {
   }
 
   return (
-    <div className="app-view cover">
-      <div className="scrollable">
-        {loader && (
-          <div className="loader-container">
+    <>
+      {loader && (
+        <div className="loader-container">
+          <p>
+            <img className="loader" src="/images/loader.svg" />
+          </p>
+          <p className={"negrita"}>{loaderTexto}</p>
+        </div>
+      )}
+      {!loader && (
+        <>
+          <div className="content">
+            <p>Crea un nuevo pastillero</p>
             <p>
-              <img className="loader" src="/images/loader.svg" />
+              Especifica en qué momentos del día harás las tomas de medicamentos
+              de tu nuevo pastillero. Tienes hasta 6. Puedes ponerles el nombre
+              que quieras.
             </p>
-            <p className={"negrita"}>{loaderTexto}</p>
-          </div>
-        )}
-        {!loader && (
-          <>
-            <Header
-              volver={
-                userInfo.pastilleros.length > 0
-                  ? () => navegarASeccion("home")
-                  : null
-              }
-              logoChico={true}
-            />
+            <p>Tomas de medicamentos:</p>
 
-            <div className="content">
-              <p>Crea un nuevo pastillero</p>
-              <p>
-                Especifica en qué momentos del día harás las tomas de
-                medicamentos de tu nuevo pastillero. Tienes hasta 6. Puedes
-                ponerles el nombre que quieras.
-              </p>
-              <p>Tomas de medicamentos:</p>
-
-              <div className={"dosis-form"}>
+            <div className={"dosis-form"}>
+              <input
+                rows="8"
+                name="toma1"
+                type="text"
+                ref={dosis1Ref}
+                className="dosis-input"
+                onChange={refrescarState}
+              />
+              {((dosis1Ref.current && dosis1Ref.current.value) ||
+                (dosis2Ref.current && dosis2Ref.current.value)) && (
                 <input
                   rows="8"
-                  name="toma1"
+                  name="toma2"
                   type="text"
-                  ref={dosis1Ref}
+                  ref={dosis2Ref}
+                  className="login-input"
+                  onChange={refrescarState}
+                />
+              )}
+              {((dosis2Ref.current && dosis2Ref.current.value) ||
+                (dosis3Ref.current && dosis3Ref.current.value)) && (
+                <input
+                  rows="8"
+                  name="toma2"
+                  type="text"
+                  ref={dosis3Ref}
                   className="dosis-input"
                   onChange={refrescarState}
                 />
-                {((dosis1Ref.current && dosis1Ref.current.value) ||
-                  (dosis2Ref.current && dosis2Ref.current.value)) && (
-                  <input
-                    rows="8"
-                    name="toma2"
-                    type="text"
-                    ref={dosis2Ref}
-                    className="login-input"
-                    onChange={refrescarState}
-                  />
-                )}
-                {((dosis2Ref.current && dosis2Ref.current.value) ||
-                  (dosis3Ref.current && dosis3Ref.current.value)) && (
-                  <input
-                    rows="8"
-                    name="toma2"
-                    type="text"
-                    ref={dosis3Ref}
-                    className="dosis-input"
-                    onChange={refrescarState}
-                  />
-                )}
-                {((dosis3Ref.current && dosis3Ref.current.value) ||
-                  (dosis4Ref.current && dosis4Ref.current.value)) && (
-                  <input
-                    rows="8"
-                    name="toma2"
-                    type="text"
-                    ref={dosis4Ref}
-                    className="dosis-input"
-                    onChange={refrescarState}
-                  />
-                )}
-                {((dosis4Ref.current && dosis4Ref.current.value) ||
-                  (dosis5Ref.current && dosis5Ref.current.value)) && (
-                  <input
-                    rows="8"
-                    name="toma2"
-                    type="text"
-                    ref={dosis5Ref}
-                    className="dosis-input"
-                    onChange={refrescarState}
-                  />
-                )}
-                {((dosis5Ref.current && dosis5Ref.current.value) ||
-                  (dosis6Ref.current && dosis6Ref.current.value)) && (
-                  <input
-                    rows="8"
-                    name="toma2"
-                    type="text"
-                    ref={dosis6Ref}
-                    className="dosis-input"
-                    onChange={refrescarState}
-                  />
-                )}
-              </div>
-              <div className="nav-buttons">
-                <div className="nav-button" onClick={crearPastillero}>
-                  <div className="nav-icon chico nav-icon-check"></div>
-                  <span className="newLine">Crear</span>
-                  <span>pastillero</span>
-                </div>
+              )}
+              {((dosis3Ref.current && dosis3Ref.current.value) ||
+                (dosis4Ref.current && dosis4Ref.current.value)) && (
+                <input
+                  rows="8"
+                  name="toma2"
+                  type="text"
+                  ref={dosis4Ref}
+                  className="dosis-input"
+                  onChange={refrescarState}
+                />
+              )}
+              {((dosis4Ref.current && dosis4Ref.current.value) ||
+                (dosis5Ref.current && dosis5Ref.current.value)) && (
+                <input
+                  rows="8"
+                  name="toma2"
+                  type="text"
+                  ref={dosis5Ref}
+                  className="dosis-input"
+                  onChange={refrescarState}
+                />
+              )}
+              {((dosis5Ref.current && dosis5Ref.current.value) ||
+                (dosis6Ref.current && dosis6Ref.current.value)) && (
+                <input
+                  rows="8"
+                  name="toma2"
+                  type="text"
+                  ref={dosis6Ref}
+                  className="dosis-input"
+                  onChange={refrescarState}
+                />
+              )}
+            </div>
+            <div className="nav-buttons">
+              <div className="nav-button" onClick={crearPastillero}>
+                <div className="nav-icon chico nav-icon-check"></div>
+                <span className="newLine">Crear</span>
+                <span>pastillero</span>
               </div>
             </div>
-          </>
-        )}
-      </div>
-    </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }

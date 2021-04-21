@@ -34,29 +34,32 @@ export default function Main(props) {
   // Una vez que lo tiene, define cuál es el pastillero seleccionado
   useEffect(() => {
     if (userInfo) {
-      // Verifica que ya haya un pastillero por defecto ya guardado
-      var pastilleroActual = JSON.parse(
-        leerDesdeLS(variables.LSPastilleroPorDefecto)
-      );
+      // verifica que el usuario tenga pastilleros
+      if (userInfo.pastilleros?.length > 0) {
+        // Si tiene, verifica que ya haya un pastillero por defecto ya guardado
+        var pastilleroActual = JSON.parse(
+          leerDesdeLS(variables.LSPastilleroPorDefecto)
+        );
 
-      if (!pastilleroActual) {
-        // Si no hay un pastillero actual
-        // guarda el primer pastillero como pastillero por defecto
-        // el LS y en el state
-        pastilleroActual = userInfo.pastilleros[0].id;
-        guardarEnLS(
-          variables.LSPastilleroPorDefecto,
-          JSON.stringify(pastilleroActual)
+        if (!pastilleroActual) {
+          // Si no hay un pastillero actual
+          // guarda el primer pastillero como pastillero por defecto
+          // el LS y en el state
+          pastilleroActual = userInfo.pastilleros[0].id;
+          guardarEnLS(
+            variables.LSPastilleroPorDefecto,
+            JSON.stringify(pastilleroActual)
+          );
+        }
+
+        accederAPI(
+          "GET",
+          "pastillero/" + pastilleroActual,
+          null,
+          setPastillero,
+          errorUserInfo
         );
       }
-
-      accederAPI(
-        "GET",
-        "pastillero/" + pastilleroActual,
-        null,
-        setPastillero,
-        errorUserInfo
-      );
     }
   }, [userInfo]);
 
@@ -143,7 +146,7 @@ export default function Main(props) {
             <p className={"negrita"}>Cargando </p>
           </div>
         )}
-        {!mostrarLogin && userInfo && pastillero && (
+        {!mostrarLogin && userInfo && (
           <>
             {mostrarHeader && <Header volver={volver} />}
             <Router

@@ -10,10 +10,6 @@ import variables from "../../var/variables.js";
 import "./verStock.css";
 
 export default function VerStock(props) {
-  const [userInfo, setUserInfo] = useState(
-    props.history.location.state?.userInfo
-  );
-
   const [loader, setLoader] = useState(true);
 
   const [stock, setStock] = useState(null);
@@ -24,16 +20,25 @@ export default function VerStock(props) {
   useEffect(() => {
     props.setMostrarHeader(true);
     props.setMostrarFooter(true);
-    // Va a buscar los datos del stock a la API
-    accederAPI(
-      "GET",
-      "stock/" + props.pastillero.id,
-      null,
-      (respuesta) => {
-        setStock(respuesta.drogas);
-      },
-      errorApi
-    );
+    // Si el usuario no tiene pastilleros, vuelvo a home
+    if (props.userInfo.pastilleros?.length < 1) {
+      alert(
+        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
+      );
+      navegarASeccion("/");
+    }
+    if (props.pastillero) {
+      // Va a buscar los datos del stock a la API
+      accederAPI(
+        "GET",
+        "stock/" + props.pastillero.id,
+        null,
+        (respuesta) => {
+          setStock(respuesta.drogas);
+        },
+        errorApi
+      );
+    }
   }, [props]);
 
   // Función que apaga el loader cuando verifica que

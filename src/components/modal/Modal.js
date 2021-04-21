@@ -6,7 +6,7 @@ cerrarModal (funcion): callback al presionar el botón "cancelar"
 titulo (string): título en el modal
 submitModal (funcion): callback al presionar "aceptar"
 campos (array): campos del modal con los siguientes parámetros:
-  tipo (string): "texto", "password" o "select" soportados 
+  tipo (string): "texto", "password" o "select" soportados
   etiqueta (string): nombre del campo para mostrar en la interfaz
   nombre (string): nombre del campo para enviar en el request
   obligatorio (boolean): indica si se debe completar el campo
@@ -134,6 +134,7 @@ export default function Modal(props) {
                 opciones={campo.opciones}
                 seleccionado={campo.seleccionado}
                 cambioInput={cambioInput}
+                obligatorio={campo.obligatorio}
               />
             );
           })}

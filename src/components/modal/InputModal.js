@@ -22,7 +22,11 @@ export default function InputModal(props) {
   return (
     <div>
       {props.etiqueta && (
-        <span className="single-line"> {props.etiqueta}: </span>
+        <span className="single-line">
+          {" "}
+          {props.etiqueta}
+          {props.obligatorio ? "*" : ""}:{" "}
+        </span>
       )}
       {props.tipo == "texto" && (
         <input

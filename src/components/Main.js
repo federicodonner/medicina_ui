@@ -24,6 +24,8 @@ export default function Main(props) {
   // Va a buscar los datos del usuario que después se los va a pasar
   // a los componentes hijo
   useEffect(() => {
+    // Precarga el loader para conexiones lentas
+    new Image().src = "/images/loader.svg";
     cargarUsuario();
   }, []);
 

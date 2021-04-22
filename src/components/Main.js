@@ -26,6 +26,7 @@ export default function Main(props) {
   useEffect(() => {
     // Precarga el loader para conexiones lentas
     new Image().src = "/images/loader.svg";
+    new Image().src = "/images/loader_dots.svg";
     cargarUsuario();
   }, []);
 

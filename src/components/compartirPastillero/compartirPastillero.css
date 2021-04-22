@@ -1,0 +1,27 @@
+.hashPastillero {
+  width: 74vw;
+  height: 18vh;
+  background-color: #3a506b;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 17px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.hashPastillero .hash {
+  font-size: 40pt;
+}
+
+.hashPastillero .mensaje {
+}
+
+.hashLoader {
+  width: 70px;
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -58,7 +58,11 @@ export default function Footer(props) {
       }
     >
       {loader && (
-        <img className="loader-footer" src="/images/loader.svg" alt="loader" />
+        <img
+          className="loader-footer"
+          src="/images/loader_dots.svg"
+          alt="loader"
+        />
       )}
       {!loader && (
         <>

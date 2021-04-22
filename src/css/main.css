@@ -112,6 +112,14 @@ body {
   background-image: url("/images/icono_pastillero.png");
 }
 
+.nav-icon-compartir-pastillero {
+  background-image: url("/images/icono_compartir_pastillero.png");
+}
+
+.nav-icon-compartir-pastillero-invert {
+  background-image: url("/images/icono_compartir_pastillero_invert.png");
+}
+
 .nav-icon-password {
   background-image: url("/images/icono_password.png");
 }
@@ -219,7 +227,7 @@ a:active.boton-guardar {
 .content p {
   color: white;
   padding-left: 16px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .content p .reviewText {
@@ -479,7 +487,7 @@ body {
     color: #aab1b7;
     padding-left: 6%;
     padding-right: 6%;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
   .separador {

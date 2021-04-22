@@ -8,6 +8,8 @@ import IngresarCompra from "./ingresarCompra/IngresarCompra";
 import VerStock from "./verStock/VerStock";
 import DescontarStock from "./descontarStock/DescontarStock";
 import NuevoPastillero from "./nuevoPastillero/Nuevopastillero";
+import CompartirPastillero from "./compartirPastillero/CompartirPastillero";
+import AgregarPastillero from "./agregarPastillero/AgregarPastillero";
 import Usuario from "./usuario/Usuario";
 import Error from "./error/Error";
 
@@ -102,6 +104,28 @@ class Router extends React.Component {
                 {...props}
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
+                setMostrarFooter={this.props.setMostrarFooter}
+                cargarUsuario={this.props.cargarUsuario}
+              />
+            )}
+          />
+          <Route
+            path="/compartirpastillero"
+            render={(props) => (
+              <CompartirPastillero
+                {...props}
+                userInfo={this.props.userInfo}
+                setMostrarFooter={this.props.setMostrarFooter}
+              />
+            )}
+          />
+
+          <Route
+            path="/agregarpastillero"
+            render={(props) => (
+              <AgregarPastillero
+                {...props}
+                userInfo={this.props.userInfo}
                 setMostrarFooter={this.props.setMostrarFooter}
                 cargarUsuario={this.props.cargarUsuario}
               />

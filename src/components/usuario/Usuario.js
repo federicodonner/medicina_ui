@@ -139,35 +139,14 @@ export default function Usuario(props) {
 
         {!loader && props.userInfo && (
           <>
-            <p>Datos personales:</p>
             <p>
               <span className="newline">
-                Nombre: {props.userInfo.nombre + " " + props.userInfo.apellido}
+                {props.userInfo.nombre + " " + props.userInfo.apellido}
               </span>
-              <span className="newLine">Email: {props.userInfo.email}</span>
+              <span className="newLine">{props.userInfo.email}</span>
             </p>
 
-            {props.pastillero && <p>Tienes un pastillero ingresado</p>}
-
             <div className="nav-buttons tres">
-              <div
-                className="nav-button"
-                onClick={() => setMostrarModalUsuario(true)}
-              >
-                <div className="nav-icon chico nav-icon-edit"></div>
-                <span className="single-line">editar</span>
-                <span>datos</span>
-              </div>
-              <div
-                className="nav-button"
-                onClick={() => {
-                  setMostrarModalPassword(true);
-                }}
-              >
-                <div className="nav-icon chico nav-icon-password"></div>
-                <span className="single-line">cambiar</span>
-                <span>contraseña</span>
-              </div>
               {props.pastillero && (
                 <div
                   className="nav-button"
@@ -193,8 +172,34 @@ export default function Usuario(props) {
                 onClick={() => navegarASeccion("compartirpastillero")}
               >
                 <div className="nav-icon chico nav-icon-compartir-pastillero"></div>
-                <span className="single-line">compartir o </span>
-                <span>agregar pastillero</span>
+                <span className="single-line">compartir</span>
+                <span>pastillero</span>
+              </div>
+              <div
+                className="nav-button"
+                onClick={() => navegarASeccion("agregarpastillero")}
+              >
+                <div className="nav-icon chico nav-icon-compartir-pastillero-invert"></div>
+                <span className="single-line">agregar</span>
+                <span>pastillero</span>
+              </div>
+              <div
+                className="nav-button"
+                onClick={() => setMostrarModalUsuario(true)}
+              >
+                <div className="nav-icon chico nav-icon-edit"></div>
+                <span className="single-line">editar</span>
+                <span>datos</span>
+              </div>
+              <div
+                className="nav-button"
+                onClick={() => {
+                  setMostrarModalPassword(true);
+                }}
+              >
+                <div className="nav-icon chico nav-icon-password"></div>
+                <span className="single-line">cambiar</span>
+                <span>contraseña</span>
               </div>
             </div>
           </>

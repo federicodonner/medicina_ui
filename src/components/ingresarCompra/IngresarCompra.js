@@ -20,9 +20,11 @@ export default function IngresarCompra(props) {
     // Una vez que define cuál es el pastillero seleccionado
     // busca los detalles en la API
     if (props.userInfo.pastilleros?.length < 1) {
-      alert(
-        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
-      );
+      props.setConfiguracionMensaje({
+        textoMensaje:
+          "No tienes un pastillero ingresado, configura uno en la sección de usuario",
+        tipoMensaje: "error",
+      });
       navegarASeccion("/");
     }
     if (props.pastillero) {
@@ -61,13 +63,19 @@ export default function IngresarCompra(props) {
   function ingresarCompra(event) {
     // Verifica que todos los campos se hayan ingresado
     if (!drogaSeleccionada) {
-      alert("Debes seleccionar una droga");
+      props.setConfiguracionMensaje({
+        textoMensaje: "Debes seleccionar una droga",
+      });
       return false;
     } else if (!comprimidoRef.current.value) {
-      alert("Debes ingresar una dosis en miligramos");
+      props.setConfiguracionMensaje({
+        textoMensaje: "Debes ingresar una dosis en miligramos",
+      });
       return false;
     } else if (!cantidadRef.current.value) {
-      alert("Debes ingresar una cantidad de comprimidos");
+      props.setConfiguracionMensaje({
+        textoMensaje: "Debes ingresar una cantidad de comprimidos",
+      });
       return false;
     }
 

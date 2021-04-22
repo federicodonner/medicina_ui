@@ -50,6 +50,7 @@ class Router extends React.Component {
                 setMostrarFooter={this.props.setMostrarFooter}
                 pastillero={this.props.pastillero}
                 seleccionPastillero={this.props.seleccionPastillero}
+                setConfiguracionMensaje={this.props.setConfiguracionMensaje}
               />
             )}
           />
@@ -61,6 +62,7 @@ class Router extends React.Component {
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
                 setMostrarFooter={this.props.setMostrarFooter}
+                setConfiguracionMensaje={this.props.setConfiguracionMensaje}
               />
             )}
           />
@@ -72,6 +74,7 @@ class Router extends React.Component {
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
                 setMostrarFooter={this.props.setMostrarFooter}
+                setConfiguracionMensaje={this.props.setConfiguracionMensaje}
               />
             )}
           />
@@ -94,6 +97,7 @@ class Router extends React.Component {
                 userInfo={this.props.userInfo}
                 pastillero={this.props.pastillero}
                 setMostrarFooter={this.props.setMostrarFooter}
+                setConfiguracionMensaje={this.props.setConfiguracionMensaje}
               />
             )}
           />
@@ -106,6 +110,7 @@ class Router extends React.Component {
                 pastillero={this.props.pastillero}
                 setMostrarFooter={this.props.setMostrarFooter}
                 cargarUsuario={this.props.cargarUsuario}
+                setConfiguracionMensaje={this.props.setConfiguracionMensaje}
               />
             )}
           />
@@ -128,6 +133,7 @@ class Router extends React.Component {
                 userInfo={this.props.userInfo}
                 setMostrarFooter={this.props.setMostrarFooter}
                 cargarUsuario={this.props.cargarUsuario}
+                setConfiguracionMensaje={this.props.setConfiguracionMensaje}
               />
             )}
           />

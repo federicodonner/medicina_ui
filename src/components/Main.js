@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Footer from "./footer/Footer";
 import Login from "./login/Login";
+import MensajeAlerta from "./mensajeAlerta/MensajeAlerta";
 import {
   accederAPI,
   borrarDesdeLS,
@@ -19,6 +20,9 @@ export default function Main(props) {
 
   // Los hijos pueden apagar o prender el header y el footer si los necesitan
   const [mostrarFooter, setMostrarFooter] = useState(true);
+
+  // Objeto de configuración de mensaje
+  const [configuracionMensaje, setConfiguracionMensaje] = useState({});
 
   // Function llamada al inicializar el componente
   // Va a buscar los datos del usuario que después se los va a pasar
@@ -126,11 +130,16 @@ export default function Main(props) {
 
   return (
     <div className="app-view cover">
+      <MensajeAlerta
+        configuracionMensaje={configuracionMensaje}
+        setConfiguracionMensaje={setConfiguracionMensaje}
+      />
       <div className="scrollable">
         {mostrarLogin && (
           <Login
             camposLoginValidados={camposLoginValidados}
             cuentaCreada={cuentaCreada}
+            setConfiguracionMensaje={setConfiguracionMensaje}
           />
         )}
         {!mostrarLogin && !userInfo && (
@@ -150,6 +159,7 @@ export default function Main(props) {
               setMostrarFooter={setMostrarFooter}
               seleccionPastillero={seleccionPastillero}
               cargarUsuario={cargarUsuario}
+              setConfiguracionMensaje={setConfiguracionMensaje}
             />
 
             <Footer

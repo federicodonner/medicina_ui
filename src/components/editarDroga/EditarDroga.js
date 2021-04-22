@@ -23,9 +23,11 @@ export default function EditarDroga(props) {
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
     if (props.userInfo.pastilleros?.length < 1) {
-      alert(
-        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
-      );
+      props.setConfiguracionMensaje({
+        textoMensaje:
+          "No tienes un pastillero ingresado, configura uno en la sección de usuario",
+        tipoMensaje: "error",
+      });
       navegarASeccion("/");
     }
 
@@ -92,25 +94,27 @@ export default function EditarDroga(props) {
     );
   }
 
+  // Callback del botón de elminiar droga del modal
   function submitEliminarDroga() {
-    if (
-      window.confirm(
-        "¿Seguro que desea eliminar la dósis de " + datosModal.droga + "?"
-      )
-    ) {
-      // Enciende el loader
-      setLoaderTexto("Eliminando la dosis");
-      setLoader(true);
+    // Pregunta si el usuario quiere eliminar la droga
+    props.setConfiguracionMensaje({
+      textoMensaje:
+        "¿Seguro que desea eliminar la dósis de " + datosModal.droga + "?",
+      callbackOK: () => {
+        // Si responde ok, enciende el loader
+        setLoaderTexto("Eliminando la dosis");
+        setLoader(true);
 
-      // Envía la request a la API con el callback para recargar la página
-      accederAPI(
-        "DELETE",
-        "drogaxdosis/" + datosModal.drogaxdosis_id,
-        null,
-        editarDrogaEnState,
-        errorApi
-      );
-    }
+        // Envía la request a la API con el callback para recargar la página
+        accederAPI(
+          "DELETE",
+          "drogaxdosis/" + datosModal.drogaxdosis_id,
+          null,
+          editarDrogaEnState,
+          errorApi
+        );
+      },
+    });
   }
 
   // Si se editó una dosis, la edita en state para matchear con la db
@@ -173,6 +177,7 @@ export default function EditarDroga(props) {
           <>
             {mostrarModal && (
               <Modal
+                setConfiguracionMensaje={props.setConfiguracionMensaje}
                 defaultNavButtons={false}
                 mostrarModal={mostrarModal}
                 cerrarModal={() => {

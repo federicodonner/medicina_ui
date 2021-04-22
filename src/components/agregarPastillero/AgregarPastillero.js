@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Header from "../header/Header";
-import { accederAPI, errorApi } from "../../utils/fetchFunctions";
+import { accederAPI } from "../../utils/fetchFunctions";
 import "./agregarPastillero.css";
 
 export default function AgregarPastillero(props) {
@@ -26,7 +26,7 @@ export default function AgregarPastillero(props) {
   function agregarPastillero() {
     // Verifica que se haya ingresado un hash
     if (!hashRef.current?.value) {
-      alert("Debes ingresar un hash");
+      props.setConfiguracionMensaje({ textoMensaje: "Debes ingresar un hash" });
       return false;
     }
 
@@ -36,12 +36,15 @@ export default function AgregarPastillero(props) {
       "agregarpastillero",
       { hash: hashRef.current.value },
       (respuesta) => {
-        alert(respuesta.detail);
+        props.setConfiguracionMensaje({ textoMensaje: respuesta.detail });
         props.cargarUsuario();
         navegarASeccion("/");
       },
       (respuesta) => {
-        alert(respuesta.detail);
+        props.setConfiguracionMensaje({
+          textoMensaje: respuesta.detail,
+          tipoMensaje: "error",
+        });
         setLoader(false);
       }
     );

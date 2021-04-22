@@ -23,9 +23,11 @@ export default function AgregarDroga(props) {
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
     if (props.userInfo.pastilleros?.length < 1) {
-      alert(
-        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
-      );
+      props.setConfiguracionMensaje({
+        textoMensaje:
+          "No tienes un pastillero ingresado, configura uno en la sección de usuario",
+        tipoMensaje: "error",
+      });
       navegarASeccion("/");
     }
     if (props.pastillero) {
@@ -78,13 +80,19 @@ export default function AgregarDroga(props) {
   function ingresarDroga() {
     // Verifica que todos los campos se hayan ingresado
     if (!drogaSeleccionada && !drogaRef.current.value) {
-      alert("Debes ingresar o seleccionar una droga");
+      props.setConfiguracionMensaje({
+        textoMensaje: "Debes ingresar o seleccionar una droga",
+      });
       return false;
     } else if (!horarioSeleccionado) {
-      alert("Debes seleccionar un horario para la dosis");
+      props.setConfiguracionMensaje({
+        textoMensaje: "Debes seleccionar un horario para la dosis",
+      });
       return false;
     } else if (!concentracionRef.current.value) {
-      alert("Debes ingresar una dosis en miligramos");
+      props.setConfiguracionMensaje({
+        textoMensaje: "Debes ingresar una dosis en miligramos",
+      });
       return false;
     }
 

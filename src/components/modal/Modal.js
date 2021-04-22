@@ -21,6 +21,10 @@ navButtons (array): configuración de botones en caso de defaultButtons en false
   esAceptar (boolean): indica si el botón es el de aceptar. Invoca a submitModal al presionarlo
   funcion (funcion): función invocada al presionarlo. Debe tener esCerrar y esAceptar en false
   tipo (string): nombre de la clase correspondiente al ícono
+
+IMPORTANTE: DEBE RECIBIR setConfiguracionMensaje DESDE MAIN PARA MOSTRAR EL MENSAJE
+
+
 */
 
 import React, { useEffect, useState } from "react";
@@ -98,9 +102,17 @@ export default function Modal(props) {
     if (camposCompletos) {
       props.submitModal(datos);
     } else {
-      alert(
-        "Verifica los campos. Es posible que no hayas copmletado todos los obligatorios o que el formato de alguno sea incorrecto."
-      );
+      if (props.setConfiguracionMensaje) {
+        props.setConfiguracionMensaje({
+          textoMensaje:
+            "Verifica los campos. Es posible que no hayas completado todos los obligatorios o que el formato de alguno sea incorrecto.",
+          tipoMensaje: "error",
+        });
+      } else {
+        alert(
+          "Verifica los campos. Es posible que no hayas completado todos los obligatorios o que el formato de alguno sea incorrecto."
+        );
+      }
     }
   }
 

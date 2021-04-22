@@ -114,6 +114,7 @@ export default function Login(props) {
 
       {mostrarCrearCuenta && (
         <Modal
+          setConfiguracionMensaje={props.setConfiguracionMensaje}
           defaultNavButtons={true}
           mostrarModal={mostrarCrearCuenta}
           cerrarModal={() => {

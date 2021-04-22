@@ -15,9 +15,11 @@ export default function DescontarStock(props) {
   // Función ejecutada en la primera carga del componente
   useEffect(() => {
     if (props.userInfo.pastilleros?.length < 1) {
-      alert(
-        "No tienes un pastillero ingresado, configura uno en la sección de usuario"
-      );
+      props.setConfiguracionMensaje({
+        textoMensaje:
+          "No tienes un pastillero ingresado, configura uno en la sección de usuario",
+        tipoMensaje: "error",
+      });
       navegarASeccion("/");
     }
 
@@ -75,27 +77,31 @@ export default function DescontarStock(props) {
       mensajeConfirmacion =
         "Presione OK para descontar el stock correspondiente a esta semana.";
     }
-    if (window.confirm(mensajeConfirmacion)) {
-      // Estoy aquí si el cliente presionó OK a la alerta
-      // Si todos los datos están correctos, se enciende el loader
 
-      setLoaderTexto("Procesando pastillero");
-      setLoader(true);
+    props.setConfiguracionMensaje({
+      textoMensaje: mensajeConfirmacion,
+      callbackOK: () => {
+        // Estoy aquí si el cliente presionó OK a la alerta
+        // Si todos los datos están correctos, se enciende el loader
 
-      // Procesa el pastillero a través del endpoint
-      accederAPI(
-        "POST",
-        "armarpastillero",
-        {
-          pastillero: props.pastillero.id,
-        },
-        (respuesta) => {
-          alert(respuesta.detail);
-          navegarASeccion("editardroga");
-        },
-        errorApi
-      );
-    }
+        setLoaderTexto("Procesando pastillero");
+        setLoader(true);
+
+        // Procesa el pastillero a través del endpoint
+        accederAPI(
+          "POST",
+          "armarpastillero",
+          {
+            pastillero: props.pastillero.id,
+          },
+          (respuesta) => {
+            props.setConfiguracionMensaje({ textoMensaje: respuesta.detail });
+            navegarASeccion("editardroga");
+          },
+          errorApi
+        );
+      },
+    });
   }
 
   return (

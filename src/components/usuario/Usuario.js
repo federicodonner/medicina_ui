@@ -45,14 +45,17 @@ export default function Usuario(props) {
       "cambiopassword",
       datos,
       (respuesta) => {
-        alert(respuesta.detail);
+        props.setConfiguracionMensaje({ textoMensaje: respuesta.detail });
         navegarASeccion("/");
       },
       (respuesta) => {
         // En este request, el status 403 significa contraseña incorrecta
         // No quiero navegar si devuelve ese error
         if (respuesta.status === 403) {
-          alert(respuesta.detail);
+          props.setConfiguracionMensaje({
+            textoMensaje: respuesta.detail,
+            tipoMensaje: "error",
+          });
           setLoader(false);
           setMostrarModalPassword(true);
         } else {
@@ -115,6 +118,7 @@ export default function Usuario(props) {
         )}
         {mostrarModalPassword && (
           <Modal
+            setConfiguracionMensaje={props.setConfiguracionMensaje}
             defaultNavButtons={true}
             mostrarModal={mostrarModalPassword}
             cerrarModal={() => setMostrarModalPassword(false)}

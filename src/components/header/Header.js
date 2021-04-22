@@ -10,6 +10,11 @@ export default function Header(props) {
           &larr; Volver
         </div>
       )}
+      {props.cerrarSesion && (
+        <div className="header-boton-cerrarsesion" onClick={props.cerrarSesion}>
+          Cerrar sesión
+        </div>
+      )}
     </div>
   );
 }

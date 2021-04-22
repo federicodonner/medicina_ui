@@ -19,6 +19,13 @@
   font-size: 14pt;
 }
 
+.header-boton-cerrarsesion {
+  position: absolute;
+  top: -17px;
+  right: 22px;
+  font-size: 14pt;
+}
+
 .header-boton-notificaciones {
   position: absolute;
   top: -35px;

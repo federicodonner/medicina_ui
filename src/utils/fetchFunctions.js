@@ -92,3 +92,9 @@ export function errorApi(datos) {
     window.location.href = "/";
   }
 }
+
+export function logOut() {
+  borrarDesdeLS(variables.LSLoginToken);
+  borrarDesdeLS(variables.LSPastilleroPorDefecto);
+  window.location.href = "/";
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../header/Header";
 import Modal from "../modal/Modal";
-import { accederAPI, errorApi } from "../../utils/fetchFunctions";
+import { accederAPI, errorApi, logOut } from "../../utils/fetchFunctions";
 import "./usuario.css";
 
 export default function Usuario(props) {
@@ -78,6 +78,7 @@ export default function Usuario(props) {
           volver={() => {
             navegarASeccion("/");
           }}
+          cerrarSesion={logOut}
         />
         {mostrarModalUsuario && (
           <Modal
@@ -187,6 +188,14 @@ export default function Usuario(props) {
                   <span>pastillero</span>
                 </div>
               )}
+              <div
+                className="nav-button"
+                onClick={() => navegarASeccion("compartirpastillero")}
+              >
+                <div className="nav-icon chico nav-icon-compartir-pastillero"></div>
+                <span className="single-line">compartir o </span>
+                <span>agregar pastillero</span>
+              </div>
             </div>
           </>
         )}

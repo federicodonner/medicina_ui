@@ -62,6 +62,7 @@ export default function Login(props) {
         <p>
           Bienvenido a MiDosis la plataforma online de gestión de medicamentos.
         </p>
+        <p>Hola Sofi!</p>
         <form onSubmit={submitLogin}>
           <div className={"login-form"}>
             <span className="label">Nombre de usuario:</span>

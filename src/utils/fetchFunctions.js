@@ -1,9 +1,7 @@
-import variables from "../var/variables.js";
-
 // Devuelve el token de local storage para los requests
 // No se exporta porque es utilizada sólo desde este archivo
 function getTokenDesdeLS() {
-  return localStorage.getItem(variables.LSLoginToken);
+  return localStorage.getItem(process.env.REACT_APP_LS_LOGIN_TOKEN);
 }
 
 // Guarda datos en LS
@@ -30,7 +28,7 @@ export function accederAPI(
   callbackFallo
 ) {
   var accessToken = getTokenDesdeLS();
-  const url = variables.api_url + "/" + endpoint;
+  const url = process.env.REACT_APP_API_URL + "/" + endpoint;
   var fetchConfig = {
     method: verbo,
     headers: {
@@ -49,7 +47,7 @@ export function accederAPI(
     new Promise(function (resolve, reject) {
       setTimeout(
         () => reject(new Error("request timeout")),
-        variables.APITimeout
+        process.env.REACT_APP_API_TIMEOUT
       );
     }),
   ])
@@ -82,7 +80,7 @@ export function errorApi(datos) {
   alert(datos.detail);
   // Error 401 significa sin permisos, desloguea al usuario
   if (datos.status === 401) {
-    borrarDesdeLS(variables.LSLoginToken);
+    borrarDesdeLS(process.env.REACT_APP_LS_LOGIN_TOKEN);
     window.location.href = "/login";
     // Error 500+ es un error de la API, lo manda a la pantalla del error
   } else if (datos.status >= 500) {
@@ -94,7 +92,6 @@ export function errorApi(datos) {
 }
 
 export function logOut() {
-  borrarDesdeLS(variables.LSLoginToken);
-  borrarDesdeLS(variables.LSPastilleroPorDefecto);
+  borrarDesdeLS(process.env.REACT_APP_LS_LOGIN_TOKEN);
   window.location.href = "/";
 }

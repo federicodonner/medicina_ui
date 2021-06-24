@@ -8,7 +8,6 @@ import {
   guardarEnLS,
   leerDesdeLS,
 } from "../utils/fetchFunctions";
-import variables from "../var/variables.js";
 import Router from "./Router";
 
 export default function Main(props) {
@@ -42,7 +41,7 @@ export default function Main(props) {
       if (userInfo.pastilleros?.length > 0) {
         // Si tiene, verifica que ya haya un pastillero por defecto ya guardado
         var pastilleroActual = JSON.parse(
-          leerDesdeLS(variables.LSPastilleroPorDefecto)
+          leerDesdeLS(process.env.REACT_APP_LS_PASTILLERO_POR_DEFECTO)
         );
 
         if (!pastilleroActual) {
@@ -51,7 +50,7 @@ export default function Main(props) {
           // el LS y en el state
           pastilleroActual = userInfo.pastilleros[0].id;
           guardarEnLS(
-            variables.LSPastilleroPorDefecto,
+            process.env.REACT_APP_LS_PASTILLERO_POR_DEFECTO,
             JSON.stringify(pastilleroActual)
           );
         }
@@ -75,7 +74,7 @@ export default function Main(props) {
 
   // Callback del error del GET de usuario
   function errorUserInfo(respuesta) {
-    borrarDesdeLS(variables.LSLoginToken);
+    borrarDesdeLS(process.env.REACT_APP_LS_LOGIN_TOKEN);
     setMostrarLogin(true);
   }
 
@@ -88,7 +87,7 @@ export default function Main(props) {
       "oauth",
       datosLogin,
       (respuesta) => {
-        guardarEnLS(variables.LSLoginToken, respuesta.token);
+        guardarEnLS(process.env.REACT_APP_LS_LOGIN_TOKEN, respuesta.token);
         setMostrarLogin(false);
         accederAPI("GET", "usuario", null, setUserInfo, errorUserInfo);
       },
@@ -102,7 +101,7 @@ export default function Main(props) {
   // Callback ejecutado por Login cuando crea una nueva cuenta
   function cuentaCreada(respuesta) {
     // Guarda el login token del nuevo usuario<
-    guardarEnLS(variables.LSLoginToken, respuesta.token);
+    guardarEnLS(process.env.REACT_APP_LS_LOGIN_TOKEN, respuesta.token);
     // Lo elimina y guarda los datos del usuario
     delete respuesta.token;
     setUserInfo(respuesta);
@@ -120,7 +119,7 @@ export default function Main(props) {
       (respuesta) => {
         setPastillero(respuesta);
         guardarEnLS(
-          variables.LSPastilleroPorDefecto,
+          process.env.REACT_APP_LS_PASTILLERO_POR_DEFECTO,
           JSON.stringify(respuesta.id)
         );
       },
